@@ -31,6 +31,9 @@ function train(model::DecisionTreeNode, featureset, labels)
   best_index = index(improvements, best_improvement)
   best_split = splits[best_index]
 
+  #left_featureset, right_featureset = split_featureset()
+
+
   decision_function = split
   #if the split is < threshhold make 2 leaves
   #if the split it > threshhold make 2 nodes
@@ -50,7 +53,8 @@ function all_splits(featureset, labels)
   splits = Array[]
 
   for i=size(featureset, 1)
-    improvement, split = find_split(featureset[i], labels)
+    println(featureset[:,i])
+    improvement, split = find_split(featureset[:,i], labels)
     push!(improvements, improvement)
     push(splits, split)
   end
@@ -91,35 +95,57 @@ end
 
 
 function train_decision_tree(features, labels)
-  node = Node()
+  node = DecisionTreeNode(x -> x, DecisionTreeLeaf(0), DecisionTreeLeaf(0))
   train(node, features, labels)
   return node
 end
 
 
 
-# main
+function test_toy()
+  data = [1.0 2 3 1; 1 3 2 0; 2 1 3 0]
+  features = data[:,1:3]
+  println("features")
+  println(features)
+  truth = data[:,4]
+  println("truth")
+  println(truth)
+  model = train_decision_tree(features, truth)
+  println("model")
+  println(model)
+  guess = classify(model, [ 2.0 3 1]) 
+  println("guess")
+  println(guess)
+  # guess should be 0
+end
+
 data_dir = "../../data/HW1/"
+function test_spambase()
+  # spam
+  spam_data_file = string(data_dir, "spambase/spambase.data")
 
-# spam
-spam_data_file = string(data_dir, "spambase/spambase.data")
+  println("reading in $spam_data_file")
+  spam_data = readcsv(spam_data_file)
+end
 
-println("reading in $spam_data_file")
-spam_data = readcsv(spam_data_file)
+function test_housing()
+  # housing
+  housing_train_data_file = string(data_dir, "housing/housing_train.txt")
+  housing_test_data_file = string(data_dir, "housing/housing_test.txt")
 
-# housing
-housing_train_data_file = string(data_dir, "housing/housing_train.txt")
-housing_test_data_file = string(data_dir, "housing/housing_test.txt")
+  println("reading in $housing_train_data_file")
+  housing_train_data = readcsv(housing_train_data_file)
+  housing_test_data = readcsv(housing_test_data_file)
 
-println("reading in $housing_train_data_file")
-housing_train_data = readcsv(housing_train_data_file)
-housing_test_data = readcsv(housing_test_data_file)
-
-model = train_decision_tree(housing_train_data[2:], housing_train_data[1])
-guesses = classify(model, housing_test_data[2:])
-println("Guesses")
-println(guesses)
-println("Truth")
-println(housing_test_data[1])
+  model = train_decision_tree(housing_train_data[2:], housing_train_data[1])
+  guesses = classify(model, housing_test_data[2:])
+  println("Guesses")
+  println(guesses)
+  println("Truth")
+  println(housing_test_data[1])
+end
 
 
+
+# main
+test_toy()
