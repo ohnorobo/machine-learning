@@ -31,7 +31,7 @@ function train(model::DecisionTreeNode, featureset, labels)
   best_index = index(improvements, best_improvement)
   best_split = splits[best_index]
 
-  #left_featureset, right_featureset = split_featureset()
+  #left_featureset, right_featureset = split_featureset(best_split)
 
 
   decision_function = split
@@ -53,10 +53,11 @@ function all_splits(featureset, labels)
   splits = Array[]
 
   for i=size(featureset, 1)
-    println(featureset[:,i])
-    improvement, split = find_split(featureset[:,i], labels)
+    feature = featureset[:,i]
+    println(feature)
+    improvement, split = find_split(feature, labels)
     push!(improvements, improvement)
-    push(splits, split)
+    push!(splits, split)
   end
 
   return (improvements, splits)
@@ -148,4 +149,8 @@ end
 
 
 # main
+
+a = find_split([ 3.0, 2, 3], [ 1.0, 0, 0])
+println(a)
+
 test_toy()
