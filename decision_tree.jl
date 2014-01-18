@@ -1,7 +1,5 @@
 #!/usr/bin/julia
 
-# problem 1
-
 threshhold = 10 # decreace in entropy under which we stop splitting
 
 abstract DecisionTree
@@ -17,14 +15,18 @@ function train(featureset, labels)
   #calculate entropy/split for each feature
   improvements, splits = all_splits(featureset, labels)
 
+  println("calculated improvements/splits")
+  println(improvements)
+  println(splits)
+
   #pick the best split
   best_improvement = maximum(improvements)
-  best_index = findin(improvements, best_improvement)
+  best_index = findfirst(improvements, best_improvement)
   best_split = splits[best_index]
 
   #split features
-  left_featureset, right_featureset = split_featureset(best_split, best_index, featureset)
-  left_labels, right_labels = split_labels(best_split, best_index, featureset, labels)
+  left_featureset, right_featureset, left_labels, right_labels =
+    split_featureset(best_split, best_index, featureset, labels)
 
   if best_improvement > threshhold  #child nodes
     leftchild = train(left_featureset, left_labels)
@@ -38,19 +40,24 @@ function train(featureset, labels)
 end
 
 #splits a featureset into two featuresets with a boolean function
-function split_featureset(split, feature_index, featureset)
+function split_featureset(split::Function, feature_index::Int,
+                          featureset::Array{Float64,2}, labels::Array{Float64,1})
   left_set = Array{Float64,2}[]
   right_set = Array{Float64,2}[]
+  left_labels = Float64[]
+  right_labels = Float64[]
 
   for i=size(featureset, 2) #for each item
-    if split(featureset[i:feature_index])
-      push!(left_set, featureset[i])
+    if split(featureset[i,feature_index])
+      push!(left_set, featureset[i,:])
+      push!(left_labels, labels[i])
     else
-      push!(right_set, featureset[i])
+      push!(right_set, featureset[i,:])
+      push!(right_labels, labels[i])
     end
   end
 
-  return left_set, right_set
+  return left_set, right_set, left_labels, right_labels
 end
 
 # find the optimal (boolean) splitting function for a numeric feature
@@ -66,9 +73,8 @@ function all_splits(featureset, labels)
   improvements = Float64[]
   splits = Function[]
 
-  for i=size(featureset, 1) #for each feature
+  for i=1:size(featureset, 1) #for each feature
     feature = featureset[:,i]
-    println(feature)
     (improvement, split) = find_split(feature, labels)
     push!(improvements, improvement)
     push!(splits, split)
@@ -86,11 +92,11 @@ function information_gain_and_split(features, labels, feature_index)
 end
 
 function classify(model::DecisionTreeNode, item)
-  result = model.decision_function(item)
+  result = model.decision_function(item[model.feature_index])
   if result
-    return classify(model.leftsubtree, remaining_features)
+    return classify(model.leftsubtree, item)
   else
-    return classify(model.rightsubtree, remaining_features)
+    return classify(model.rightsubtree, item)
   end
 end
 
@@ -100,7 +106,7 @@ type DecisionTreeLeaf <:DecisionTree
 end
 
 function train(labels)
-  classification = mode(labels)
+  classification = mean(labels)
   return DecisionTreeLeaf(classification)
 end
 
@@ -117,7 +123,7 @@ end
 
 
 function test_toy()
-  data = [1.0 2 3 1; 1 3 2 0; 2 1 3 0]
+  data = [1.0 2 3 0; 1 3 2 1; 2 1 3 1]
   features = data[:,1:3]
   println("features")
   println(features)
@@ -130,7 +136,7 @@ function test_toy()
   guess = classify(model, [ 2.0 3 1]) 
   println("guess")
   println(guess)
-  # guess should be 0
+  # guess should be 1
 end
 
 data_dir = "../../data/HW1/"
@@ -162,8 +168,4 @@ end
 
 
 # main
-
-improvement, split = find_split([ 3.0, 2, 3], [ 1.0, 0, 0])
-println(split)
-
 test_toy()
