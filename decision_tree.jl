@@ -2,60 +2,74 @@
 
 # problem 1
 
-# training_features = [[1.1, 1.2, 1.3, 0],
-#                      [4.5, 0.0, 5.3, 1],
-#                      [1.1, 5.4, 6.7, 1]]
-# training_labels = ["a", "b", "c", "s"]
-# model = train_decision_tree(training_features, training_labels)
-# test_feature_set = [1.1, 1.1, 1.1]
-# classification = classify(model, test_feature_set)
-# 1
-
 threshhold = 10 # decreace in entropy under which we stop splitting
-
 
 abstract DecisionTree
 
 type DecisionTreeNode <:DecisionTree
-  decision_function
+  decision_function  #boolean function to decide which child to choose
+  feature_index  #which feature to split on
   leftsubtree::DecisionTree
   rightsubtree::DecisionTree
 end
 
-function train(model::DecisionTreeNode, featureset, labels)
+function train(featureset, labels)
   #calculate entropy/split for each feature
   improvements, splits = all_splits(featureset, labels)
 
   #pick the best split
-  best_improvement = max(improvements)
-  best_index = index(improvements, best_improvement)
+  best_improvement = maximum(improvements)
+  best_index = findin(improvements, best_improvement)
   best_split = splits[best_index]
 
-  #left_featureset, right_featureset = split_featureset(best_split)
+  #split features
+  left_featureset, right_featureset = split_featureset(best_split, best_index, featureset)
+  left_labels, right_labels = split_labels(best_split, best_index, featureset, labels)
 
+  if best_improvement > threshhold  #child nodes
+    leftchild = train(left_featureset, left_labels)
+    rightchild = train(right_featureset, right_labels)
+  else   #child leaves
+    leftchild = train(left_labels)
+    rightchild = train(right_labels)
+  end
 
-  decision_function = split
-  #if the split is < threshhold make 2 leaves
-  #if the split it > threshhold make 2 nodes
-  #train both children
+  return DecisionTreeNode(best_split, best_index, leftchild, rightchild)
+end
+
+#splits a featureset into two featuresets with a boolean function
+function split_featureset(split, feature_index, featureset)
+  left_set = Array{Float64,2}[]
+  right_set = Array{Float64,2}[]
+
+  for i=size(featureset, 2) #for each item
+    if split(featureset[i:feature_index])
+      push!(left_set, featureset[i])
+    else
+      push!(right_set, featureset[i])
+    end
+  end
+
+  return left_set, right_set
 end
 
 # find the optimal (boolean) splitting function for a numeric feature
 # which returns the best decreace in entropy
 function find_split(features::Array{Float64, 1}, labels)
-  return x -> x > mean(features)
+  improvement = 0.0
+  return improvement, x -> x > mean(features)
 end
 
 
 #return all the possible splits (1/feature) and the improvement caused by that split
 function all_splits(featureset, labels)
-  improvements = Array[]
-  splits = Array[]
+  improvements = Float64[]
+  splits = Function[]
 
-  for i=size(featureset, 1)
+  for i=size(featureset, 1) #for each feature
     feature = featureset[:,i]
     println(feature)
-    improvement, split = find_split(feature, labels)
+    (improvement, split) = find_split(feature, labels)
     push!(improvements, improvement)
     push!(splits, split)
   end
@@ -71,8 +85,8 @@ function information_gain_and_split(features, labels, feature_index)
   return 0, split
 end
 
-function classify(model::DecisionTreeNode, featureset)
-  (result, remaining_features) = model.decision_function(featureset)
+function classify(model::DecisionTreeNode, item)
+  result = model.decision_function(item)
   if result
     return classify(model.leftsubtree, remaining_features)
   else
@@ -85,20 +99,19 @@ type DecisionTreeLeaf <:DecisionTree
   classification
 end
 
-function train(model::DecisionTreeLeaf, featureset, labels)
-  model.classification = mode(labels)
+function train(labels)
+  classification = mode(labels)
+  return DecisionTreeLeaf(classification)
 end
 
-function classify(model::DecisionTreeLeaf, test_feature_set)
+function classify(model::DecisionTreeLeaf, item)
   return model.classification
 end
 
 
 
 function train_decision_tree(features, labels)
-  node = DecisionTreeNode(x -> x, DecisionTreeLeaf(0), DecisionTreeLeaf(0))
-  train(node, features, labels)
-  return node
+  return train(features, labels)
 end
 
 
@@ -150,7 +163,7 @@ end
 
 # main
 
-a = find_split([ 3.0, 2, 3], [ 1.0, 0, 0])
-println(a)
+improvement, split = find_split([ 3.0, 2, 3], [ 1.0, 0, 0])
+println(split)
 
 test_toy()
