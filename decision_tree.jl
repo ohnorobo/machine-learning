@@ -1,6 +1,6 @@
 #!/usr/bin/julia
 
-threshhold = 10 # decreace in entropy under which we stop splitting
+threshhold = 3 # improvement under which we stop splitting
 
 abstract DecisionTree
 
@@ -11,7 +11,7 @@ type DecisionTreeNode <:DecisionTree
   rightsubtree::DecisionTree
 end
 
-function train(featureset, labels)
+function train(featureset::Array{Float64,2}, labels::Array{Float64,1})
   #calculate entropy/split for each feature
   improvements, splits = all_splits(featureset, labels)
 
@@ -42,13 +42,16 @@ end
 #splits a featureset into two featuresets with a boolean function
 function split_featureset(split::Function, feature_index::Int,
                           featureset::Array{Float64,2}, labels::Array{Float64,1})
-  left_set = Array{Float64,2}[]
-  right_set = Array{Float64,2}[]
-  left_labels = Float64[]
+  left_set = Array(Float64,0,0)
+  right_set = Array(Float64,0,0)
+  left_label = Float64[]
   right_labels = Float64[]
 
-  for i=size(featureset, 2) #for each item
+  for i=size(featureset, 1) #for each item
     if split(featureset[i,feature_index])
+
+      println(typeof(featureset[i,:]))
+      println(featureset[i,:])
       push!(left_set, featureset[i,:])
       push!(left_labels, labels[i])
     else
@@ -63,8 +66,13 @@ end
 # find the optimal (boolean) splitting function for a numeric feature
 # which returns the best decreace in entropy
 function find_split(features::Array{Float64, 1}, labels)
-  improvement = 0.0
-  return improvement, x -> x > mean(features)
+  split = x -> x < mean(features)
+  improved = improvement(features, labels, split)
+  return improved, split
+end
+
+function improvement(features::Array{Float64, 1}, labels, split)
+  return size(labels, 1)
 end
 
 
@@ -73,7 +81,7 @@ function all_splits(featureset, labels)
   improvements = Float64[]
   splits = Function[]
 
-  for i=1:size(featureset, 1) #for each feature
+  for i=1:size(featureset, 2) #for each feature
     feature = featureset[:,i]
     (improvement, split) = find_split(feature, labels)
     push!(improvements, improvement)
@@ -157,15 +165,16 @@ function test_housing()
   housing_train_data = readcsv(housing_train_data_file)
   housing_test_data = readcsv(housing_test_data_file)
 
-  model = train_decision_tree(housing_train_data[2:], housing_train_data[1])
-  guesses = classify(model, housing_test_data[2:])
+  model = train_decision_tree(housing_train_data[:,2:], housing_train_data[:,1])
+  guesses = map(x -> classify(model, x), housing_test_data[:,2:])
   println("Guesses")
   println(guesses)
   println("Truth")
-  println(housing_test_data[1])
+  println(housing_test_data[:,1])
 end
 
 
 
 # main
-test_toy()
+#test_toy()
+test_housing()
