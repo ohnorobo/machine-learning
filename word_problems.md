@@ -84,9 +84,14 @@ data is
     X = [x0 ... xn]
     Y = [y0 ...yn]
 
+since we want to get a B we add some 1s to X
+
+    X = [[x0 ... xn], [1 ... 1]]
+
 General formula
 
-    = inverse(transpose(X) * X) * transpose(X) * Y
+    [A,B] = inverse(transpose(X) * X) * transpose(X) * Y
+
 
 
 
