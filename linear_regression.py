@@ -6,9 +6,9 @@ import csv
 
 def get_linear_reg_function(X, Y):
   thetas = (X.T * X).I * X.T * Y
-  pprint("thetas")
-  pprint(thetas.A1)
-  return lambda x: np.cross(x, thetas.A1)
+  #pprint("thetas")
+  #pprint(thetas.A1)
+  return lambda x: np.dot(x, thetas.A1)
 
 def least_squares_error(regression, features, truths):
   error = 0
@@ -17,10 +17,7 @@ def least_squares_error(regression, features, truths):
     item = features[i,:].A1
     truth = truths.A1[i]
 
-    pprint("item")
-    pprint(item)
-    pprint(truth)
-    pprint(regression(item))
+    #pprint((truth, regression(item)))
 
     error += pow(abs(truth - regression(item)), 2)
 
@@ -30,6 +27,20 @@ def least_squares_error(regression, features, truths):
 
 def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),delimiter=','))).astype('float')
+
+def mean_squared_error(guesses, truths):
+  error = 0
+  for guess, truth in zip(guesses, truths):
+    error += pow(abs(guess - truth),2)
+  return error / truth.size
+
+
+def guess_all(regression, features):
+  guesses = []
+  for item in features:
+    guesses.append(regression(item.A1))
+  return guesses
+
 
 
 
@@ -43,9 +54,6 @@ class TestLinearReg(unittest.TestCase):
     data = np.matrix('3 3 -2; 5 0 3; 4 4 4')
     regression = get_linear_reg_function(data[:,1:], data[:,0])
     error = least_squares_error(regression, data[:,1:], data[:,0])
-    self.assertAlmostEqual(error, 74.630399999)
-
-    self.assertTrue(False)
 
   def test_housing(self):
     housing_train_filename = data_dir + "housing/housing_train.txt"
@@ -54,16 +62,30 @@ class TestLinearReg(unittest.TestCase):
     train_data = read_csv_as_numpy_matrix(housing_train_filename)
     test_data = read_csv_as_numpy_matrix(housing_test_filename)
 
-    regression = get_linear_reg_function(train_data[:,1:], train_data[:,0])
+    features = train_data[:,:12]
+    truth = train_data[:,13]
+    regression = get_linear_reg_function(features, truth)
 
-    error = least_squares_error(regression, test_data[:,1:], test_data[:,0])
+    features = test_data[:,:12]
+    truth = test_data[:,13]
+    error = least_squares_error(regression, features, truth)
 
+    pprint("MSE housing")
+    pprint(error / truth.size)
+
+    self.assertTrue(False)
 
   def test_spam(self):
     spam_filename = data_dir + "spambase/spambase.data"
     data = read_csv_as_numpy_matrix(spam_filename)
 
-    regression = get_linear_reg_function(data[:,1:], data[:,0])
-    error = least_squares_error(regression, data[:,1:], data[:,0])
+    features = data[:,1:]
+    truth = data[:,0]
+    regression = get_linear_reg_function(features, truth)
 
+    error = least_squares_error(regression, features, truth)
 
+    pprint("MSE spam")
+    pprint(error / truth.size)
+
+    self.assertTrue(False)

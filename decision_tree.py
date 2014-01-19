@@ -10,8 +10,9 @@ threshold = 3
 class DecisionTreeNode:
 
   def __init__(self, features, truths):
-    pprint(features)
-    pprint(truths)
+    #pprint("features, init")
+    #pprint(features)
+    #pprint(truths)
 
     improvements, splits = self.all_splits(features, truths)
 
@@ -20,14 +21,14 @@ class DecisionTreeNode:
     self.split = splits[self.featureindex]
 
     left_features, right_features, left_truth, right_truth =\
-      self.split_features(self.split, self.featureindex, features, truths)
+        self.split_features(features, truths)
 
-    if best_improvement > threshold: #child nodes
+    if best_improvement > threshold and len(left_truth) > 0 and len(right_truth) > 0:
       self.left = DecisionTreeNode(left_features, left_truth)
       self.right = DecisionTreeNode(right_features, right_truth)
     else:
-      self.left = DecisionTreeLeaf(left_features, left_truth)
-      self.right = DecisionTreeLeaf(right_features, right_truth)
+      self.left = DecisionTreeLeaf(features, truths)
+      self.right = DecisionTreeLeaf(features, truths)
 
   #returns the best split for each feature, and the improvement from each
   def all_splits(self, features, truths):
@@ -40,10 +41,12 @@ class DecisionTreeNode:
       improvements.append(improvement)
       splits.append(split)
 
+    #pprint("improvements")
+    #pprint(improvements)
     return improvements, splits
 
   def find_split(self, feature, truths):
-    split = lambda x: x < mean(feature)
+    split = lambda x: x < np.mean(feature)
     improved = len(truths)
     return improved, split
 
@@ -55,7 +58,7 @@ class DecisionTreeNode:
     #more 'even' splits are preferred
     return min(left_length, right_length)
 
-  def split_features(self, split, featureindex, features, truths):
+  def split_features(self, features, truths):
     left_set = []
     right_set = []
     left_truths = []
@@ -63,30 +66,29 @@ class DecisionTreeNode:
 
     for item, truth in zip(features, truths):
       item = item.A1
-      pprint(item)
-      pprint(featureindex)
-      if split(item[featureindex]):
+      if self.split(item[self.featureindex]):
         left_set.append(item)
         left_truths.append(truth)
       else:
         right_set.append(item)
         right_truths.append(truth)
 
-    return left_set, right_set, left_truths, right_truths
+    return np.matrix(left_set), np.matrix(right_set), left_truths, right_truths
 
-  def classify(item):
-    result = self.decision_function(item[self.feature_index])
-
-    if result:
-      return self.left_child.classify(item)
+  def classify(self, item):
+    if self.split(item[self.featureindex]):
+      return self.left.classify(item)
     else:
-      return self.right_child.classify(item)
+      return self.right.classify(item)
+
+  def classify_all(self, items):
+    return map(lambda x: self.classify(x.A1), items)
 
 
 class DecisionTreeLeaf:
 
   def __init__(self, features, truths):
-    self.solution = mean(truths)
+    self.solution = np.mean(truths)
 
   def classify(self, item):
     return self.solution
@@ -95,21 +97,25 @@ class DecisionTreeLeaf:
 def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),delimiter=','))).astype('float')
 
-def mean(l):
-  sum(l) / len(l)
+def mean_squared_error(guesses, truths):
+  error = 0
+  for guess, truth in zip(guesses, truths):
+    error += pow(abs(guess - truth),2)
+  return error / truth.size
+
 
 data_dir = "../../data/HW1/"
 class TestLinearReg(unittest.TestCase):
 
-  '''
   def test_simple_case(self):
     data = np.matrix('3 3 -2; 5 0 3; 4 4 4')
     features = data[:,1:]
-    truth = data[:,0]
+    truth = data[:,0].A1
 
-    model = DecisionTreeNode(features, truth)
-    self.assertTrue(model.classify(np.array([3, -2]), 3))
-  '''
+    #model = DecisionTreeNode(features, truth)
+    #self.assertEqual(model.classify(np.array([3, -2])), 3)
+    #self.assertEqual(model.classify(np.array([0, 3])), 5)
+    #self.assertEqual(model.classify(np.array([4, 4])), 4)
 
   def test_housing(self):
     housing_train_filename = data_dir + "housing/housing_train.txt"
@@ -119,16 +125,32 @@ class TestLinearReg(unittest.TestCase):
     test_data = read_csv_as_numpy_matrix(housing_test_filename)
 
     features = train_data[:,1:]
-    truth = train_data[:,0]
+    truth = train_data[:,0].A1
 
     model = DecisionTreeNode(features, truth)
+
+    features = test_data[:,1:]
+    truth = test_data[:,0].A1
+    guesses = model.classify_all(features)
+    #pprint(zip(guesses, truth))
+    pprint("MSE housing")
+    pprint(mean_squared_error(guesses, truth))
+
+    self.assertTrue(False)
 
   def test_spam(self):
     spam_filename = data_dir + "spambase/spambase.data"
     data = read_csv_as_numpy_matrix(spam_filename)
 
     features = data[:,1:]
-    truth = data[:,0]
+    truth = data[:,0].A1
 
     model = DecisionTreeNode(features, truth)
+
+    guesses = model.classify_all(features)
+    #pprint(zip(guesses, truth))
+    pprint("MSE spam")
+    pprint(mean_squared_error(guesses, truth))
+
+    self.assertTrue(False)
 
