@@ -5,7 +5,8 @@ import csv
 from pprint import pprint
 
 
-threshold = 3
+threshold = 0.4 #when to stop splitting
+steps = 10.0 #how many different split thresholds to try for each feature
 
 class DecisionTreeNode:
 
@@ -20,6 +21,8 @@ class DecisionTreeNode:
     self.featureindex = improvements.index(best_improvement)
     self.split = splits[self.featureindex]
 
+    pprint("splitting on feature: " + str(self.featureindex))
+
     left_features, right_features, left_truth, right_truth =\
         self.split_features(features, truths)
 
@@ -29,6 +32,11 @@ class DecisionTreeNode:
     else:
       self.left = DecisionTreeLeaf(features, truths)
       self.right = DecisionTreeLeaf(features, truths)
+
+  def structure(self):
+    return {"feature":self.featureindex,
+            "left":self.left.structure(),
+            "right":self.right.structure()}
 
   #returns the best split for each feature, and the improvement from each
   def all_splits(self, features, truths):
@@ -41,23 +49,44 @@ class DecisionTreeNode:
       improvements.append(improvement)
       splits.append(split)
 
-    #pprint("improvements")
-    #pprint(improvements)
     return improvements, splits
 
+  #finds the best splitting function for a particular feature
   def find_split(self, feature, truths):
-    split = lambda x: x < np.mean(feature)
-    improved = len(truths)
-    return improved, split
+    feature = feature.A1
+    #pprint(str(min(feature)) + " - " + str(max(feature)))
+    section_length = (max(feature) - min(feature)) / steps
 
+    if section_length == 0: #no variation in the feature
+      return 0, lambda x: True
+
+    else:
+      potential_split_threshholds = np.arange(min(feature), max(feature), section_length)[1:]
+
+      improvements = map(lambda x: self.calculate_improvement(feature, truths, lambda y: y < x), potential_split_threshholds)
+
+      best_improvement = max(improvements)
+      best_split = potential_split_threshholds[improvements.index(best_improvement)]
+
+      #pprint("best_split: " + str(best_split) + "  best improvement: " + str(best_improvement) )
+
+      #pprint(best_split)
+      split = lambda x: x < best_split
+      return best_improvement, split
+
+  #calculate the improvement on a given feature with a given split
   def calculate_improvement(self, feature, truths, split):
-    left_length = len(filter(split, feature))
-    total_length = len(truths)
-    right_length = total_length - left_length
+    left_truths = map(lambda x: x[1], filter(lambda y: split(y[0]), zip(feature, truths)))
+    right_truths = map(lambda x: x[1], filter(lambda y: not split(y[0]), zip(feature, truths)))
 
-    #more 'even' splits are preferred
-    return min(left_length, right_length)
+    #pprint("calculating improvements")
+    #pprint(left_truths)
+    #pprint(right_truths)
 
+    #more divisive splits are preferred
+    return abs(mean(left_truths) - mean(right_truths))
+
+  #split features and truths for the child nodes
   def split_features(self, features, truths):
     left_set = []
     right_set = []
@@ -93,6 +122,9 @@ class DecisionTreeLeaf:
   def classify(self, item):
     return self.solution
 
+  def structure(self):
+    return {"solution":self.solution}
+
 
 def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),delimiter=','))).astype('float')
@@ -102,6 +134,9 @@ def mean_squared_error(guesses, truths):
   for guess, truth in zip(guesses, truths):
     error += pow(abs(guess - truth),2)
   return error / truth.size
+
+def mean(list):
+  return sum(list) / len(list)
 
 
 data_dir = "../../data/HW1/"
@@ -136,6 +171,8 @@ class TestLinearReg(unittest.TestCase):
     pprint("MSE housing")
     pprint(mean_squared_error(guesses, truth))
 
+    pprint(model.structure())
+
     self.assertTrue(False)
 
   def test_spam(self):
@@ -151,6 +188,8 @@ class TestLinearReg(unittest.TestCase):
     #pprint(zip(guesses, truth))
     pprint("MSE spam")
     pprint(mean_squared_error(guesses, truth))
+
+    pprint(model.structure())
 
     self.assertTrue(False)
 
