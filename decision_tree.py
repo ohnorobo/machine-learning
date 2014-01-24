@@ -2,6 +2,7 @@
 import numpy as np
 import unittest
 import csv
+import math
 from pprint import pprint
 
 
@@ -24,16 +25,17 @@ class DecisionTreeNode:
     improvements, splits = self.all_splits(features, truths)
 
     pprint("splits / improvements")
-    pprint([i for i in enumerate(zip(splits, improvements))])
+    #featureindex, split, improvement, min-max
+    pprint([(x[0], x[1][0], x[1][1], minmax(x[1][2]))
+           for x in enumerate(zip(splits, improvements, features.T))])
 
     best_improvement = max(improvements)
     self.featureindex = improvements.index(best_improvement)
     self.split = splits[self.featureindex]
 
-    pprint("selected improvement, index, split")
-    pprint(best_improvement)
-    pprint(self.featureindex)
-    pprint(self.split)
+    pprint({"improvement":best_improvement,
+            "index":self.featureindex,
+            "split":self.split})
 
     left_features, right_features, left_truth, right_truth =\
         self.split_features(features, truths)
@@ -46,10 +48,10 @@ class DecisionTreeNode:
       self.right = DecisionTreeLeaf(features, truths)
 
   def structure(self):
-    return {"s": self.split,
-            "f": self.featureindex,
-            "l": self.left.structure(),
-            "r": self.right.structure()}
+    return {"0s": self.split,
+            "1f": self.featureindex,
+            "2l": self.left.structure(),
+            "3r": self.right.structure()}
 
   #returns the best split for each feature, and the improvement from each
   def all_splits(self, features, truths):
@@ -95,7 +97,9 @@ class DecisionTreeNode:
       elif curr_feature == next_feature:
         improvements.append(0) #skip duplicate features
       else:
-        improvement = abs(left_sum/left_count - right_sum/right_count)
+        mean_difference = abs(left_sum/left_count - right_sum/right_count)
+        entropy = DecisionTreeNode.calculate_entropy(left_count, right_count)
+        improvement = entropy * mean_difference
         improvements.append(improvement)
 
       left_count += 1
@@ -114,6 +118,13 @@ class DecisionTreeNode:
     #pprint(best_split)
 
     return best_improvement, best_split
+
+  @staticmethod
+  def calculate_entropy(left_len, right_len):
+    total = 1.0 + left_len + right_len
+    pl = left_len / total
+    pr = right_len / total
+    return pl * math.log(pl,2) * pr * math.log(pr,2)
 
   #calculate the improvement on a given feature with a given split
   @staticmethod
@@ -187,6 +198,9 @@ def sum_count(item, accum, split):
     accum["right_count"] += 1
   return accum
 
+def minmax(list):
+  return (round(min(list.A1),2), round(max(list.A1),2))
+
 #given a matrix return a list of arrays with the same elements, but each column sorted ascending
 def sort_columns(m):
   sorted_columns = []
@@ -244,24 +258,26 @@ class TestLinearReg(unittest.TestCase):
 
 
 def test_housing():
-  THRESHHOLD = 1000
+  global THRESHHOLD
+  THRESHHOLD = 0.01
+
   housing_train_filename = data_dir + "housing/housing_train.txt"
   housing_test_filename = data_dir + "housing/housing_test.txt"
 
   train_data = read_csv_as_numpy_matrix(housing_train_filename)
   test_data = read_csv_as_numpy_matrix(housing_test_filename)
 
-  features = train_data[:,1:]
-  truth = train_data[:,0].A1
+  features = train_data[:,:12]
+  truth = train_data[:,13].A1
 
   model = DecisionTreeNode(features, truth)
 
-  features = test_data[:,1:]
-  truth = test_data[:,0].A1
+  features = test_data[:,:12]
+  truth = test_data[:,13].A1
   guesses = model.classify_all(features)
   #pprint(zip(guesses, truth))
 
-  #pprint(model.structure())
+  pprint(model.structure())
   pprint("MSE housing")
   pprint(mean_squared_error(guesses, truth))
 
@@ -269,7 +285,8 @@ def test_housing():
 
 
 def test_spam():
-  THRESHHOLD = 0
+  global THRESHHOLD
+  THRESHHOLD = 0.5
   spam_filename = data_dir + "spambase/spambase.data"
   data = read_csv_as_numpy_matrix(spam_filename)
 
