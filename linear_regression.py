@@ -79,8 +79,8 @@ class TestLinearReg(unittest.TestCase):
     spam_filename = data_dir + "spambase/spambase.data"
     data = read_csv_as_numpy_matrix(spam_filename)
 
-    features = data[:,1:]
-    truth = data[:,0]
+    features = data[:,:56]
+    truth = data[:,57]
     regression = get_linear_reg_function(features, truth)
 
     error = least_squares_error(regression, features, truth)

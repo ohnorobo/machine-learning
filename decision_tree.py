@@ -5,28 +5,40 @@ import csv
 from pprint import pprint
 
 
-threshold = 0.4 #when to stop splitting
+THRESHHOLD = 0 #when to stop splitting
 steps = 10.0 #how many different split thresholds to try for each feature
 
 class DecisionTreeNode:
+  # self.featureindex  #int, index of the feature to split on at this node
+  # self.split         #float, threshold to split the feature at
+  # self.left          #DecisionTreeNode/Leaf, left child
+  # self.right         #DecisionTreeNode/Leaf, right child
+  #
+  # if the feature at featureindex is < split we go to the left
+  # if it is >= we go to the right
 
   def __init__(self, features, truths):
-    #pprint("features, init")
-    #pprint(features)
-    #pprint(truths)
+    #if not sorted_features:
+    #  sorted_features = sort_columns(features)
 
     improvements, splits = self.all_splits(features, truths)
+
+    pprint("splits / improvements")
+    pprint([i for i in enumerate(zip(splits, improvements))])
 
     best_improvement = max(improvements)
     self.featureindex = improvements.index(best_improvement)
     self.split = splits[self.featureindex]
 
-    pprint("splitting on feature: " + str(self.featureindex))
+    pprint("selected improvement, index, split")
+    pprint(best_improvement)
+    pprint(self.featureindex)
+    pprint(self.split)
 
     left_features, right_features, left_truth, right_truth =\
         self.split_features(features, truths)
 
-    if best_improvement > threshold and len(left_truth) > 0 and len(right_truth) > 0:
+    if best_improvement > THRESHHOLD and len(left_truth) > 0 and len(right_truth) > 0:
       self.left = DecisionTreeNode(left_features, left_truth)
       self.right = DecisionTreeNode(right_features, right_truth)
     else:
@@ -34,16 +46,20 @@ class DecisionTreeNode:
       self.right = DecisionTreeLeaf(features, truths)
 
   def structure(self):
-    return {"feature":self.featureindex,
-            "left":self.left.structure(),
-            "right":self.right.structure()}
+    return {"s": self.split,
+            "f": self.featureindex,
+            "l": self.left.structure(),
+            "r": self.right.structure()}
 
   #returns the best split for each feature, and the improvement from each
   def all_splits(self, features, truths):
     improvements = []
     splits = []
 
+    i = 0
     for feature in features.T:
+      #pprint("feature: " + str(i))
+      i += 1
       improvement, split = self.find_split(feature, truths)
 
       improvements.append(improvement)
@@ -52,39 +68,57 @@ class DecisionTreeNode:
     return improvements, splits
 
   #finds the best splitting function for a particular feature
-  def find_split(self, feature, truths):
+  @staticmethod
+  def find_split(feature, truths):
     feature = feature.A1
-    #pprint(str(min(feature)) + " - " + str(max(feature)))
-    section_length = (max(feature) - min(feature)) / steps
 
-    if section_length == 0: #no variation in the feature
-      return 0, lambda x: True
+    possible_splits = zip(feature, truths)
+    possible_splits.sort(key=lambda x: x[0]) #sort by feature value
 
-    else:
-      potential_split_threshholds = np.arange(min(feature), max(feature), section_length)[1:]
+    improvements = []
 
-      improvements = map(lambda x: self.calculate_improvement(feature, truths, lambda y: y < x), potential_split_threshholds)
+    left_sum = 0
+    right_sum = sum(truths)
+    left_count = 0
+    right_count = len(truths)
+    prev_feature = None
 
-      best_improvement = max(improvements)
-      best_split = potential_split_threshholds[improvements.index(best_improvement)]
+    for i in xrange(len(possible_splits)):
+      curr_feature = possible_splits[i][0]
+      truth = possible_splits[i][1]
 
-      #pprint("best_split: " + str(best_split) + "  best improvement: " + str(best_improvement) )
+      if i > 0:
+        next_feature = possible_splits[i-1][0]
 
-      #pprint(best_split)
-      split = lambda x: x < best_split
-      return best_improvement, split
+      if left_count == 0 or right_count == 0:
+        improvements.append(0) #no improvement from splitting at an edge
+      elif curr_feature == next_feature:
+        improvements.append(0) #skip duplicate features
+      else:
+        improvement = abs(left_sum/left_count - right_sum/right_count)
+        improvements.append(improvement)
+
+      left_count += 1
+      right_count -= 1
+      left_sum += truth
+      right_sum -= truth
+
+    best_improvement = max(improvements)
+    best_index = improvements.index(best_improvement)
+    best_split = possible_splits[best_index][0]
+
+    #pprint(possible_splits)
+    #pprint("best improvement index and split")
+    #pprint(best_improvement)
+    #pprint(best_index)
+    #pprint(best_split)
+
+    return best_improvement, best_split
 
   #calculate the improvement on a given feature with a given split
-  def calculate_improvement(self, feature, truths, split):
-    left_truths = map(lambda x: x[1], filter(lambda y: split(y[0]), zip(feature, truths)))
-    right_truths = map(lambda x: x[1], filter(lambda y: not split(y[0]), zip(feature, truths)))
-
-    #pprint("calculating improvements")
-    #pprint(left_truths)
-    #pprint(right_truths)
-
-    #more divisive splits are preferred
-    return abs(mean(left_truths) - mean(right_truths))
+  @staticmethod
+  def calculate_improvement(feature, truths, split):
+    pass
 
   #split features and truths for the child nodes
   def split_features(self, features, truths):
@@ -95,7 +129,10 @@ class DecisionTreeNode:
 
     for item, truth in zip(features, truths):
       item = item.A1
-      if self.split(item[self.featureindex]):
+      #pprint(item)
+      #pprint(item[self.featureindex])
+      #pprint(self.split)
+      if item[self.featureindex] < self.split:
         left_set.append(item)
         left_truths.append(truth)
       else:
@@ -105,7 +142,7 @@ class DecisionTreeNode:
     return np.matrix(left_set), np.matrix(right_set), left_truths, right_truths
 
   def classify(self, item):
-    if self.split(item[self.featureindex]):
+    if item[self.featureindex] < self.split:
       return self.left.classify(item)
     else:
       return self.right.classify(item)
@@ -117,13 +154,14 @@ class DecisionTreeNode:
 class DecisionTreeLeaf:
 
   def __init__(self, features, truths):
+    #pprint(truths)
     self.solution = np.mean(truths)
 
   def classify(self, item):
     return self.solution
 
   def structure(self):
-    return {"solution":self.solution}
+    return {"s":self.solution}
 
 
 def read_csv_as_numpy_matrix(filename):
@@ -137,6 +175,28 @@ def mean_squared_error(guesses, truths):
 
 def mean(list):
   return sum(list) / len(list)
+
+def sum_count(item, accum, split):
+  #pprint("item")
+  #pprint(item)
+  if item[0] < split:
+    accum["left_sum"] += item[1]
+    accum["left_count"] += 1
+  else:
+    accum["right_sum"] += item[1]
+    accum["right_count"] += 1
+  return accum
+
+#given a matrix return a list of arrays with the same elements, but each column sorted ascending
+def sort_columns(m):
+  sorted_columns = []
+  for column in m:
+    sorted_column = column.A1.sort()
+    sorted_columns.append(sorted_column)
+
+  #pprint(sorted_columns)
+  return sorted_columns
+
 
 
 data_dir = "../../data/HW1/"
@@ -152,44 +212,81 @@ class TestLinearReg(unittest.TestCase):
     #self.assertEqual(model.classify(np.array([0, 3])), 5)
     #self.assertEqual(model.classify(np.array([4, 4])), 4)
 
-  def test_housing(self):
-    housing_train_filename = data_dir + "housing/housing_train.txt"
-    housing_test_filename = data_dir + "housing/housing_test.txt"
-
-    train_data = read_csv_as_numpy_matrix(housing_train_filename)
-    test_data = read_csv_as_numpy_matrix(housing_test_filename)
-
-    features = train_data[:,1:]
-    truth = train_data[:,0].A1
-
-    model = DecisionTreeNode(features, truth)
-
-    features = test_data[:,1:]
-    truth = test_data[:,0].A1
-    guesses = model.classify_all(features)
-    #pprint(zip(guesses, truth))
-    pprint("MSE housing")
-    pprint(mean_squared_error(guesses, truth))
-
-    pprint(model.structure())
-
-    self.assertTrue(False)
-
-  def test_spam(self):
-    spam_filename = data_dir + "spambase/spambase.data"
-    data = read_csv_as_numpy_matrix(spam_filename)
-
+  def test_split(self):
+    data = np.matrix('0 1; 0 2; 1 3')
     features = data[:,1:]
     truth = data[:,0].A1
 
     model = DecisionTreeNode(features, truth)
 
-    guesses = model.classify_all(features)
-    #pprint(zip(guesses, truth))
-    pprint("MSE spam")
-    pprint(mean_squared_error(guesses, truth))
+    pprint("testing find split")
+    improvement, split = model.find_split(data[:,1], truth)
 
-    pprint(model.structure())
+    self.assertEqual(split, 3)
 
-    self.assertTrue(False)
+  def test_split_2(self):
+    feature = np.matrix([0,0,0,1])
+    truth = [0,0,1,1]
 
+    pprint("testing find split")
+    improvement, split = DecisionTreeNode.find_split(feature, truth)
+
+    self.assertEqual(split, 1)
+
+  def test_split_long(self):
+    feature = np.matrix([0, 0, 0, 0, 1, 2])
+    truth = [0, 0, 1, 0, 1, 1]
+    imp, split = DecisionTreeNode.find_split(feature, truth)
+
+    self.assertEqual(split, 1)
+    self.assertEqual(imp, 1)
+
+
+
+def test_housing():
+  THRESHHOLD = 1000
+  housing_train_filename = data_dir + "housing/housing_train.txt"
+  housing_test_filename = data_dir + "housing/housing_test.txt"
+
+  train_data = read_csv_as_numpy_matrix(housing_train_filename)
+  test_data = read_csv_as_numpy_matrix(housing_test_filename)
+
+  features = train_data[:,1:]
+  truth = train_data[:,0].A1
+
+  model = DecisionTreeNode(features, truth)
+
+  features = test_data[:,1:]
+  truth = test_data[:,0].A1
+  guesses = model.classify_all(features)
+  #pprint(zip(guesses, truth))
+
+  #pprint(model.structure())
+  pprint("MSE housing")
+  pprint(mean_squared_error(guesses, truth))
+
+
+
+
+def test_spam():
+  THRESHHOLD = 0
+  spam_filename = data_dir + "spambase/spambase.data"
+  data = read_csv_as_numpy_matrix(spam_filename)
+
+  features = data[:,:56]
+  truth = data[:,57].A1
+
+  model = DecisionTreeNode(features, truth)
+
+  guesses = model.classify_all(features)
+  #pprint(sorted(zip(guesses, truth)))
+
+  #pprint(model.structure())
+  pprint("MSE spam")
+  pprint(mean_squared_error(guesses, truth))
+
+
+
+if __name__ == "__main__":
+  test_housing()
+  #test_spam()
