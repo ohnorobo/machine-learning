@@ -32,7 +32,7 @@ def mean_squared_error(guesses, truths):
   error = 0
   for guess, truth in zip(guesses, truths):
     error += pow(abs(guess - truth),2)
-  return error / truth.size
+  return error / len(truths)
 
 
 def guess_all(regression, features):

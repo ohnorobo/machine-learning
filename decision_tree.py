@@ -24,18 +24,18 @@ class DecisionTreeNode:
 
     improvements, splits = self.all_splits(features, truths)
 
-    pprint("splits / improvements")
+    #pprint("splits / improvements")
     #featureindex, split, improvement, min-max
-    pprint([(x[0], x[1][0], x[1][1], minmax(x[1][2]))
-           for x in enumerate(zip(splits, improvements, features.T))])
+    #pprint([(x[0], x[1][0], x[1][1], minmax(x[1][2]))
+    #       for x in enumerate(zip(splits, improvements, features.T))])
 
     best_improvement = max(improvements)
     self.featureindex = improvements.index(best_improvement)
     self.split = splits[self.featureindex]
 
-    pprint({"improvement":best_improvement,
-            "index":self.featureindex,
-            "split":self.split})
+    #pprint({"improvement":best_improvement,
+    #        "index":self.featureindex,
+    #        "split":self.split})
 
     left_features, right_features, left_truth, right_truth =\
         self.split_features(features, truths)
@@ -182,7 +182,7 @@ def mean_squared_error(guesses, truths):
   error = 0
   for guess, truth in zip(guesses, truths):
     error += pow(abs(guess - truth),2)
-  return error / truth.size
+  return error / len(truths)
 
 def mean(list):
   return sum(list) / len(list)
@@ -277,7 +277,7 @@ def test_housing():
   guesses = model.classify_all(features)
   #pprint(zip(guesses, truth))
 
-  pprint(model.structure())
+  #pprint(model.structure())
   pprint("MSE housing")
   pprint(mean_squared_error(guesses, truth))
 
@@ -289,11 +289,16 @@ def test_spam():
   THRESHHOLD = 0.5
   spam_filename = data_dir + "spambase/spambase.data"
   data = read_csv_as_numpy_matrix(spam_filename)
+  train = data[:4000,:]
+  test = data[4001:,:]
 
-  features = data[:,:56]
-  truth = data[:,57].A1
+  features = train[:,:56]
+  truth = train[:,57].A1
 
   model = DecisionTreeNode(features, truth)
+
+  features = test[:,:56]
+  truth = test[:,57].A1
 
   guesses = model.classify_all(features)
   #pprint(sorted(zip(guesses, truth)))
@@ -306,4 +311,4 @@ def test_spam():
 
 if __name__ == "__main__":
   test_housing()
-  #test_spam()
+  test_spam()
