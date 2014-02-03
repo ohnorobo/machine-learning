@@ -1,34 +1,44 @@
 #!/usr/bin/python
 import numpy as np
 from pprint import pprint
-import inspect
 import csv
-from copy import deepcopy
 
-learning_rate = .5
+LEARNING_RATE = .5
 
 def get_gd_function(X, Y):
   ws = np.random.random(X.shape[1])
   #find ws by grad
 
-  for step in range(100):
+  while True:
 
     pprint("old")
     pprint(ws)
 
     new_ws = np.array([0]*len(ws))
-    for i in range(len(ws)):
-      new_ws[i] = ws[i] - learning_rate * derivative(ws, X)
 
-    ws = new_ws
+    for i in range(len(ws)):
+      deltas = derivatives(ws, X)
+      new_ws[i] = ws[i] - LEARNING_RATE * deltas[i]
+      ws = new_ws
+      pprint(ws)
+
+    if stop(deltas):
+      break
 
   pprint(ws)
 
   return lambda x: np.dot(x, ws)
 
+STOP_THRESH = 10
+def stop(deltas):
+  magnitude = np.linalg.norm(deltas)
+  return magnitude < STOP_THRESH
+
+
 #get the derivative of function <ws . x> around x
-def derivative(ws, x):
-  return ws[0]
+def derivatives(ws, x):
+  # derivative w/ respect to x0, x1, ... xn
+  return np.gradient(ws)
 
 def least_squares_error(regression, features, truths):
   error = 0
