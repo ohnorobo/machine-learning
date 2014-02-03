@@ -98,8 +98,8 @@ class DecisionTreeNode:
         improvements.append(0) #skip duplicate features
       else:
         mean_difference = abs(left_sum/left_count - right_sum/right_count)
-        entropy = DecisionTreeNode.calculate_entropy(left_count, right_count)
-        improvement = entropy * mean_difference
+        #entropy = DecisionTreeNode.calculate_entropy(left_count, right_count)
+        improvement = mean_difference #entropy * mean_difference
         improvements.append(improvement)
 
       left_count += 1
@@ -259,7 +259,7 @@ class TestLinearReg(unittest.TestCase):
 
 def test_housing():
   global THRESHHOLD
-  THRESHHOLD = 0.01
+  THRESHHOLD = 5
 
   housing_train_filename = data_dir + "housing/housing_train.txt"
   housing_test_filename = data_dir + "housing/housing_test.txt"
@@ -272,13 +272,18 @@ def test_housing():
 
   model = DecisionTreeNode(features, truth)
 
+  guesses = model.classify_all(features)
+  pprint("MSE housing - training")
+  pprint(mean_squared_error(guesses, truth))
+
   features = test_data[:,:12]
   truth = test_data[:,13].A1
+
   guesses = model.classify_all(features)
   #pprint(zip(guesses, truth))
 
   #pprint(model.structure())
-  pprint("MSE housing")
+  pprint("MSE housing - testing")
   pprint(mean_squared_error(guesses, truth))
 
 
@@ -286,7 +291,7 @@ def test_housing():
 
 def test_spam():
   global THRESHHOLD
-  THRESHHOLD = 0.5
+  THRESHHOLD = 0.090
   spam_filename = data_dir + "spambase/spambase.data"
   data = read_csv_as_numpy_matrix(spam_filename)
   train = data[:4000,:]
@@ -297,14 +302,20 @@ def test_spam():
 
   model = DecisionTreeNode(features, truth)
 
+  guesses = model.classify_all(features)
+  pprint("")
+  pprint("MSE spam - training")
+  pprint(mean_squared_error(guesses, truth))
+
   features = test[:,:56]
   truth = test[:,57].A1
 
+  #guesses = map(round, model.classify_all(features))
   guesses = model.classify_all(features)
   #pprint(sorted(zip(guesses, truth)))
 
   #pprint(model.structure())
-  pprint("MSE spam")
+  pprint("MSE spam - testing")
   pprint(mean_squared_error(guesses, truth))
 
 

@@ -1,0 +1,5 @@
+improvements
+  don't use a threshold, this requires a speedup
+
+speedup
+  keep a sorted copy of each feature around, use those copies to measure means, by picking a threshold between each point and moving one point as a time between the left and the right.
