@@ -38,7 +38,12 @@ def stop(deltas):
 #get the derivative of function <ws . x> around x
 def derivatives(ws, x):
   # derivative w/ respect to x0, x1, ... xn
-  return np.gradient(ws)
+  all = np.vstack((x, ws))
+  pprint("all")
+  pprint(all)
+  pprint("grad")
+  pprint(np.gradient(all)[0])
+  return np.gradient(all)[0][:,-1]
 
 def least_squares_error(regression, features, truths):
   error = 0
