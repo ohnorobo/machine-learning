@@ -5,7 +5,7 @@ import csv
 import math
 
 LEARNING_RATE = 0.1
-THRESHHOLD = 0.00001
+THRESHHOLD = 0.01
 
 def get_gd_function(X, Y):
   thetas = np.random.random(X.shape[1])
@@ -23,10 +23,13 @@ def get_gd_function(X, Y):
     for i in range(len(thetas)):
       new_thetas[i] = thetas[i] - LEARNING_RATE * delta(X, Y, thetas, i)
 
+    #if sum(map(abs, np.setdiff1d(thetas, new_thetas))) < THRESHHOLD:
     if sum(np.setdiff1d(thetas, new_thetas)) < THRESHHOLD:
       break
-    #else:
-    #  pprint("diff sum: " + str(sum(np.setdiff1d(thetas, new_thetas))))
+    else:
+      #pprint("diff sum: " + str(sum(np.setdiff1d(thetas, new_thetas))))
+      error = least_squares_error(lambda x: np.dot(x, thetas), X, Y)
+      pprint("error: " + str(error/Y.size))
 
     thetas = new_thetas
     round += 1
@@ -118,6 +121,8 @@ def test_housing():
 def test_spam():
   spam_filename = data_dir + "spambase/spambase.data"
   data = normalize_data(read_csv_as_numpy_matrix(spam_filename))
+
+  pprint(data)
 
   features = data[:,:56]
   truth = data[:,57]
