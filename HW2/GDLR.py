@@ -77,13 +77,14 @@ def guess_all(regression, features):
     guesses.append(regression(item.A1))
   return guesses
 
-def normalize_data(a):
-  row_sums = a.sum(axis=1)
+def normalize_columns(data):
+  a = data.T
+  row_maxes = a.max(axis=1)
   new_matrix = np.zeros(a.shape)
-  for i, (row, row_sum) in enumerate(zip(a, row_sums)):
-        new_matrix[i,:] = row / row_sum
+  for i, (row, row_max) in enumerate(zip(a, row_maxes)):
+        new_matrix[i,:] = row / row_max
 
-  return new_matrix
+  return new_matrix.T
 
 import unittest
 
@@ -103,7 +104,7 @@ def test_housing():
   test_data = read_csv_as_numpy_matrix(housing_test_filename)
 
   all_data = np.vstack((train_data, test_data))
-  all_data = normalize_data(all_data)
+  all_data = normalize_columns(all_data)
   train_data = all_data[:433,:]
   test_data = all_data[433:,:]
 
@@ -120,7 +121,7 @@ def test_housing():
 
 def test_spam():
   spam_filename = data_dir + "spambase/spambase.data"
-  data = normalize_data(read_csv_as_numpy_matrix(spam_filename))
+  data = normalize_columns(read_csv_as_numpy_matrix(spam_filename))
 
   pprint(data)
 
@@ -134,5 +135,5 @@ def test_spam():
   pprint(error / truth.size)
 
 if __name__ == "__main__":
-  test_housing()
+  #test_housing()
   test_spam()

@@ -4,19 +4,19 @@ table
 
     decision tree
     spam
-    test:
-    train:
+    test: 0.22420294697213022
+    train: 0.015287836100290475
     housing
-    test:
-    train:
+    test: 55.9635359129718
+    train: 8.7948615499824019
 
     regression, normal
     spam
-    test:
-    train:
+    test: 0.22745483944643188
+    train: 0.11278389586859197
     housing
-    test:
-    train:
+    test: 21.483099127900058
+    train: 28.793140665812356
 
     regression, grad decent
     spam
