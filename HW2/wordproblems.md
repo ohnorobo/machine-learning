@@ -20,11 +20,11 @@ table
 
     regression, grad decent
     spam
-    test:
-    train:
+    test: 128.8881744492665
+    train: 404.75251502724228
     housing
-    test:
-    train:
+    test: 145.17677234162036
+    train: 18.459930216322494
 
     log regression:
     spam

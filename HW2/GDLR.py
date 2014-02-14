@@ -1,94 +1,117 @@
 #!/usr/bin/python
 import numpy as np
 from pprint import pprint
-import csv
-import math
+import csv, time, math
 
-LEARNING_RATE = 0.1
-THRESHHOLD = 0.01
+LEARNING_RATE = .0000000001
+STOP = .0001
 
 def get_gd_function(X, Y):
-  thetas = np.random.random(X.shape[1])
-  #find thetas by grad
+  # add a column of 1s
+  X_with_bias = np.hstack((X, np.matrix(np.ones(X.shape[0])).T))
+  X = X_with_bias
 
-  round = 0
+  ws = np.matrix(np.ones(X.shape[1]))
+  iterations = 1
 
   while True:
 
-    pprint("round: " + str(round))
-    #pprint(thetas)
+    #pprint("old")
+    #pprint(ws)
 
-    new_thetas = np.zeros(len(thetas))
+    new_ws = np.array([0]*len(ws))
 
-    for i in range(len(thetas)):
-      new_thetas[i] = thetas[i] - LEARNING_RATE * delta(X, Y, thetas, i)
+    deltas = derivatives(ws, X, Y)
+    new_ws = ws - ( LEARNING_RATE * iterations * deltas )
+    ws = new_ws
 
-    #if sum(map(abs, np.setdiff1d(thetas, new_thetas))) < THRESHHOLD:
-    if sum(np.setdiff1d(thetas, new_thetas)) < THRESHHOLD:
+    #pprint("error")
+    pprint(least_squares_error_no_bias(ws.A1, X, Y))
+
+    if np.absolute(deltas).mean() < STOP:
       break
-    else:
-      #pprint("diff sum: " + str(sum(np.setdiff1d(thetas, new_thetas))))
-      error = least_squares_error(lambda x: np.dot(x, thetas), X, Y)
-      pprint("error: " + str(error/Y.size))
 
-    thetas = new_thetas
-    round += 1
+  pprint(ws)
 
-  pprint("final")
-  pprint(thetas)
-
-  return lambda x: np.dot(x, thetas)
+  return ws.A1
 
 STOP_THRESH = 10
 def stop(deltas):
   magnitude = np.linalg.norm(deltas)
   return magnitude < STOP_THRESH
 
-def delta(X, Y, thetas, i):
-  xs = X[i,:]
-  theta = thetas[i]
 
-  sum = 0
-  for x, y in zip(xs, Y):
-    sum += (h(theta, x) - y) * x
+#get the derivative of function <ws . x> around x
+def derivatives(ws, x, y):
+  hyp = np.dot(x, ws.A1)
+  loss = hyp - y.T
+  complement = np.ones(hyp.shape) - hyp
 
-  return sum
+  terms = np.zeros(hyp.shape).T
+  #pprint(terms)
 
-def h(theta, x):
-  return 1 / (1 + pow(math.e, -1 * theta * x))
+  for i, (h, l, c) in enumerate(zip(hyp.T, loss.T, complement.T)):
+    terms[i] = h * l * c
 
+  grad = np.dot(terms.T, x)
 
-def least_squares_error(regression, features, truths):
+  return grad.A1
+
+def least_squares_error(regression_weights, features, truths):
   error = 0
 
+  #pprint(regression_weights)
+
+  for i in range(0,len(truths)):
+    item = np.append(features[i,:], 1) #add in bias term
+    truth = truths[i]
+
+    #pprint(item)
+
+    error += pow(abs(truth - sigmoid(np.inner(regression_weights, item))), 2)
+  return error / truth.size
+
+def least_squares_error_no_bias(regression_weights, features, truths):
+  error = 0
   for i in range(0,len(truths)):
     item = features[i,:]
     truth = truths[i]
-    error += pow(abs(truth - regression(item)), 2)
-  return error
+    error += pow(abs(truth - sigmoid(np.inner(regression_weights, item))), 2)
+  return error / truth.size
 
 def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),
                    delimiter=','))).astype('float')
 
-def guess_all(regression, features):
-  guesses = []
-  for item in features:
-    guesses.append(regression(item.A1))
-  return guesses
-
-def normalize_columns(data):
+def normalize_data(data):
   a = data.T
-  row_maxes = a.max(axis=1)
+  row_maxs = a.max(axis=1)
+  row_mins = a.min(axis=1)
   new_matrix = np.zeros(a.shape)
-  for i, (row, row_max) in enumerate(zip(a, row_maxes)):
-        new_matrix[i,:] = row / row_max
-
+  for i, (row, row_min, row_max) in enumerate(zip(a, row_mins, row_maxs)):
+    if row_min < 0:
+      new_matrix[i,:] = (row + row_min) / (row_max + row_min)
+    else:
+      new_matrix[i,:] = row / row_max
   return new_matrix.T
+
+def standardize_data(data):
+  a = data.T
+  new_matrix = np.zeros(a.shape)
+
+  mus = a.mean(axis=1)
+  sigmas = a.std(axis=1)
+  for i, (a, mu, sigma) in enumerate(zip(a, mus, sigmas)):
+    #pprint(i)
+    new_matrix[i,:] = (a - mu) / sigma
+  return new_matrix.T
+
+def sigmoid(y):
+  return 1 / ( 1 + math.e ** y)
+
 
 import unittest
 
-data_dir = "../../data/HW1/"
 class TestLinearReg(unittest.TestCase):
 
   def test_simple_case(self):
@@ -96,6 +119,8 @@ class TestLinearReg(unittest.TestCase):
     regression = get_gd_function(data[:,1:], data[:,0])
     error = least_squares_error(regression, data[:,1:], data[:,0])
 
+
+data_dir = "../../data/HW1/"
 def test_housing():
   housing_train_filename = data_dir + "housing/housing_train.txt"
   housing_test_filename = data_dir + "housing/housing_test.txt"
@@ -104,36 +129,74 @@ def test_housing():
   test_data = read_csv_as_numpy_matrix(housing_test_filename)
 
   all_data = np.vstack((train_data, test_data))
-  all_data = normalize_columns(all_data)
+  all_data = standardize_data(all_data)
   train_data = all_data[:433,:]
   test_data = all_data[433:,:]
 
   features = train_data[:,:12]
   truth = train_data[:,13]
+
+  print(features.shape, truth.shape)
+
   regression = get_gd_function(features, truth)
+
+  error = least_squares_error(regression, features, truth)
+  pprint("MSE housing training")
+  pprint(error)
 
   features = test_data[:,:12]
   truth = test_data[:,13]
   error = least_squares_error(regression, features, truth)
-
-  pprint("MSE housing")
-  pprint(error / truth.size)
+  pprint("MSE housing testing")
+  pprint(error)
 
 def test_spam():
   spam_filename = data_dir + "spambase/spambase.data"
-  data = normalize_columns(read_csv_as_numpy_matrix(spam_filename))
+  data = standardize_data(read_csv_as_numpy_matrix(spam_filename))
 
-  pprint(data)
+  train = data[:4000,:]
+  test = data[4001:,:]
 
-  features = data[:,:56]
-  truth = data[:,57]
+  features = train[:,:56]
+  truth = train[:,57]
+
+  print(features.shape, truth.shape)
+  #pprint(features)
+  #pprint(truth)
+
+  regression = get_gd_function(features, truth)
+
+  error = least_squares_error(regression, features, truth)
+  pprint("MSE spam train")
+  pprint(error)
+
+  features = test[:,:56]
+  truth = test[:,57]
+  error = least_squares_error(regression, features, truth)
+  pprint("MSE spam")
+  pprint(error)
+
+PORT_DATA = "../../data/HW2/ex3Data/"
+def test_portland_housing():
+  x_filename = PORT_DATA + "ex3x.dat"
+  y_filename = PORT_DATA + "ex3y.dat"
+
+  features = standardize_data(read_csv_as_numpy_matrix(x_filename))
+  truth = np.matrix(standardize_data(read_csv_as_numpy_matrix(y_filename)))
+
+  print(features.shape, truth.shape)
+
   regression = get_gd_function(features, truth)
 
   error = least_squares_error(regression, features, truth)
 
-  pprint("MSE spam")
-  pprint(error / truth.size)
+  pprint("Portland Housing Error")
+  pprint(error)
+
+
+
 
 if __name__ == "__main__":
   #test_housing()
   test_spam()
+  #test_portland_housing()
