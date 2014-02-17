@@ -66,26 +66,37 @@ def test_housing():
   features = train_data[:,:12]
   truth = train_data[:,13]
   regression = get_linear_reg_function(features, truth)
+  error = least_squares_error(regression, features, truth)
+  pprint("MSE housing train")
+  pprint(error / truth.size)
 
   features = test_data[:,:12]
   truth = test_data[:,13]
   error = least_squares_error(regression, features, truth)
-
-  pprint("MSE housing")
+  pprint("MSE housing test")
   pprint(error / truth.size)
 
 def test_spam():
   spam_filename = data_dir + "spambase/spambase.data"
   data = read_csv_as_numpy_matrix(spam_filename)
+  train = data[:4000,:]
+  test = data[4001:,:]
 
-  features = data[:,:56]
-  truth = data[:,57]
+  features = train[:,:56]
+  truth = train[:,57]
   regression = get_linear_reg_function(features, truth)
-
   error = least_squares_error(regression, features, truth)
-
-  pprint("MSE spam")
+  pprint("MSE spam train")
   pprint(error / truth.size)
+
+  features = test[:,:56]
+  truth = test[:,57]
+  error = least_squares_error(regression, features, truth)
+  pprint("MSE spam test")
+  pprint(error / truth.size)
+
+
+
 
 def cross_validate_spam():
   spam_filename = data_dir + "spambase/spambase.data"
@@ -126,7 +137,7 @@ def cross_validate_spam():
 
 
 if __name__ == "__main__":
-  #test_housing()
+  test_housing()
   test_spam()
   pprint("cross validating")
   cross_validate_spam()

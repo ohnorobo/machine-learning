@@ -3,7 +3,7 @@ import numpy as np
 from pprint import pprint
 import csv, time
 
-LEARNING_RATE = .000001
+LEARNING_RATE = .00001
 STOP = .00001
 
 def get_gd_function(X, Y):
@@ -27,11 +27,11 @@ def get_gd_function(X, Y):
     new_ws = ws - ( LEARNING_RATE * iterations * deltas )
     ws = new_ws
 
-    #pprint("error")
+    pprint("error")
     pprint(least_squares_error_no_bias(ws.A1, X, Y))
     #time.sleep(1)
 
-    if deltas.mean() < STOP:
+    if np.absolute(deltas).mean() < STOP:
       break
 
   pprint(ws)
@@ -78,6 +78,7 @@ def least_squares_error(regression_weights, features, truths):
     item = np.append(features[i,:], 1) #add in bias term
     truth = truths[i]
 
+    pprint({"truth": truth, "guess": np.inner(regression_weights, item)})
     #pprint(item)
 
     error += pow(abs(truth - np.inner(regression_weights, item)), 2)
@@ -88,7 +89,7 @@ def least_squares_error_no_bias(regression_weights, features, truths):
   for i in range(0,len(truths)):
     item = features[i,:]
     truth = truths[i]
-    pprint({"truth": truth, "guess": np.inner(regression_weights, item)})
+    #pprint({"truth": truth, "guess": np.inner(regression_weights, item)})
     error += abs(truth - np.inner(regression_weights, item))
   return error / truth.size
 
