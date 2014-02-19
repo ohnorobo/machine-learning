@@ -1,0 +1,3422 @@
+((4000, 56), (4000,))
+array([[ 0.        ,  0.04481793,  0.1254902 , ...,  0.        ,
+         0.0034068 ,  0.00610672],
+       [ 0.04625551,  0.01960784,  0.09803922, ...,  0.0024207 ,
+         0.00463855,  0.01011112],
+       [ 0.01321586,  0.        ,  0.13921569, ...,  0.00050431,
+         0.00890794,  0.04855341],
+       ..., 
+       [ 0.        ,  0.        ,  0.        , ...,  0.        ,
+         0.00145578,  0.00120132],
+       [ 0.        ,  0.        ,  0.        , ...,  0.        ,
+         0.0010458 ,  0.00030033],
+       [ 0.0154185 ,  0.        ,  0.04509804, ...,  0.        ,
+         0.00221497,  0.00260286]])
+array([ 1.,  1.,  1., ...,  0.,  0.,  0.])
+'error'
+array([ 2.4816446])
+'error'
+array([ 2.32280038])
+'error'
+array([ 2.17673054])
+'error'
+array([ 2.04240406])
+'error'
+array([ 1.91887316])
+'error'
+array([ 1.80526655])
+'error'
+array([ 1.70078327])
+'error'
+array([ 1.60468701])
+'error'
+array([ 1.51630089])
+'error'
+array([ 1.43500266])
+'error'
+array([ 1.36022032])
+'error'
+array([ 1.291428])
+'error'
+array([ 1.2281423])
+'error'
+array([ 1.16991885])
+'error'
+array([ 1.11634911])
+'error'
+array([ 1.06705755])
+'error'
+array([ 1.02169894])
+'error'
+array([ 0.9799559])
+'error'
+array([ 0.9415367])
+'error'
+array([ 0.90617313])
+'error'
+array([ 0.87361863])
+'error'
+array([ 0.84364655])
+'error'
+array([ 0.81604854])
+'error'
+array([ 0.79063305])
+'error'
+array([ 0.76722401])
+'error'
+array([ 0.74565955])
+'error'
+array([ 0.72579085])
+'error'
+array([ 0.70748114])
+'error'
+array([ 0.69060466])
+'error'
+array([ 0.6750458])
+'error'
+array([ 0.66069831])
+'error'
+array([ 0.64746448])
+'error'
+array([ 0.6352545])
+'error'
+array([ 0.62398583])
+'error'
+array([ 0.61358256])
+'error'
+array([ 0.60397492])
+'error'
+array([ 0.59509877])
+'error'
+array([ 0.58689516])
+'error'
+array([ 0.57930988])
+'error'
+array([ 0.5722931])
+'error'
+array([ 0.56579903])
+'error'
+array([ 0.55978554])
+'error'
+array([ 0.55421392])
+'error'
+array([ 0.54904861])
+'error'
+array([ 0.54425687])
+'error'
+array([ 0.53980863])
+'error'
+array([ 0.53567626])
+'error'
+array([ 0.53183433])
+'error'
+array([ 0.52825949])
+'error'
+array([ 0.52493025])
+'error'
+array([ 0.52182687])
+'error'
+array([ 0.51893119])
+'error'
+array([ 0.51622654])
+'error'
+array([ 0.51369758])
+'error'
+array([ 0.51133019])
+'error'
+array([ 0.50911143])
+'error'
+array([ 0.50702936])
+'error'
+array([ 0.50507305])
+'error'
+array([ 0.50323241])
+'error'
+array([ 0.50149818])
+'error'
+array([ 0.49986186])
+'error'
+array([ 0.49831562])
+'error'
+array([ 0.49685227])
+'error'
+array([ 0.49546519])
+'error'
+array([ 0.49414831])
+'error'
+array([ 0.49289604])
+'error'
+array([ 0.49170323])
+'error'
+array([ 0.49056518])
+'error'
+array([ 0.48947752])
+'error'
+array([ 0.48843629])
+'error'
+array([ 0.48743779])
+'error'
+array([ 0.48647866])
+'error'
+array([ 0.4855558])
+'error'
+array([ 0.48466636])
+'error'
+array([ 0.48380772])
+'error'
+array([ 0.48297746])
+'error'
+array([ 0.48217337])
+'error'
+array([ 0.48139341])
+'error'
+array([ 0.48063572])
+'error'
+array([ 0.47989856])
+'error'
+array([ 0.47918036])
+'error'
+array([ 0.47847967])
+'error'
+array([ 0.47779513])
+'error'
+array([ 0.47712553])
+'error'
+array([ 0.47646973])
+'error'
+array([ 0.4758267])
+'error'
+array([ 0.47519547])
+'error'
+array([ 0.47457517])
+'error'
+array([ 0.47396499])
+'error'
+array([ 0.47336419])
+'error'
+array([ 0.47277208])
+'error'
+array([ 0.47218803])
+'error'
+array([ 0.47161147])
+'error'
+array([ 0.47104187])
+'error'
+array([ 0.47047874])
+'error'
+array([ 0.46992162])
+'error'
+array([ 0.46937011])
+'error'
+array([ 0.46882383])
+'error'
+array([ 0.46828242])
+'error'
+array([ 0.46774557])
+'error'
+array([ 0.46721298])
+'error'
+array([ 0.46668437])
+'error'
+array([ 0.4661595])
+'error'
+array([ 0.46563814])
+'error'
+array([ 0.46512008])
+'error'
+array([ 0.46460512])
+'error'
+array([ 0.46409308])
+'error'
+array([ 0.46358379])
+'error'
+array([ 0.46307712])
+'error'
+array([ 0.46257291])
+'error'
+array([ 0.46207103])
+'error'
+array([ 0.46157138])
+'error'
+array([ 0.46107384])
+'error'
+array([ 0.46057831])
+'error'
+array([ 0.4600847])
+'error'
+array([ 0.45959292])
+'error'
+array([ 0.4591029])
+'error'
+array([ 0.45861456])
+'error'
+array([ 0.45812784])
+'error'
+array([ 0.45764268])
+'error'
+array([ 0.45715902])
+'error'
+array([ 0.4566768])
+'error'
+array([ 0.45619599])
+'error'
+array([ 0.45571653])
+'error'
+array([ 0.45523838])
+'error'
+array([ 0.45476152])
+'error'
+array([ 0.4542859])
+'error'
+array([ 0.45381148])
+'error'
+array([ 0.45333825])
+'error'
+array([ 0.45286618])
+'error'
+array([ 0.45239523])
+'error'
+array([ 0.45192539])
+'error'
+array([ 0.45145664])
+'error'
+array([ 0.45098894])
+'error'
+array([ 0.4505223])
+'error'
+array([ 0.45005668])
+'error'
+array([ 0.44959207])
+'error'
+array([ 0.44912846])
+'error'
+array([ 0.44866584])
+'error'
+array([ 0.44820419])
+'error'
+array([ 0.4477435])
+'error'
+array([ 0.44728375])
+'error'
+array([ 0.44682495])
+'error'
+array([ 0.44636707])
+'error'
+array([ 0.44591011])
+'error'
+array([ 0.44545407])
+'error'
+array([ 0.44499893])
+'error'
+array([ 0.44454468])
+'error'
+array([ 0.44409133])
+'error'
+array([ 0.44363885])
+'error'
+array([ 0.44318726])
+'error'
+array([ 0.44273654])
+'error'
+array([ 0.44228668])
+'error'
+array([ 0.44183768])
+'error'
+array([ 0.44138954])
+'error'
+array([ 0.44094226])
+'error'
+array([ 0.44049582])
+'error'
+array([ 0.44005022])
+'error'
+array([ 0.43960546])
+'error'
+array([ 0.43916154])
+'error'
+array([ 0.43871845])
+'error'
+array([ 0.4382762])
+'error'
+array([ 0.43783476])
+'error'
+array([ 0.43739415])
+'error'
+array([ 0.43695436])
+'error'
+array([ 0.43651539])
+'error'
+array([ 0.43607723])
+'error'
+array([ 0.43563988])
+'error'
+array([ 0.43520335])
+'error'
+array([ 0.43476761])
+'error'
+array([ 0.43433269])
+'error'
+array([ 0.43389856])
+'error'
+array([ 0.43346524])
+'error'
+array([ 0.43303271])
+'error'
+array([ 0.43260098])
+'error'
+array([ 0.43217004])
+'error'
+array([ 0.43173989])
+'error'
+array([ 0.43131053])
+'error'
+array([ 0.43088196])
+'error'
+array([ 0.43045417])
+'error'
+array([ 0.43002717])
+'error'
+array([ 0.42960095])
+'error'
+array([ 0.42917551])
+'error'
+array([ 0.42875084])
+'error'
+array([ 0.42832695])
+'error'
+array([ 0.42790384])
+'error'
+array([ 0.4274815])
+'error'
+array([ 0.42705993])
+'error'
+array([ 0.42663913])
+'error'
+array([ 0.42621909])
+'error'
+array([ 0.42579982])
+'error'
+array([ 0.42538132])
+'error'
+array([ 0.42496358])
+'error'
+array([ 0.4245466])
+'error'
+array([ 0.42413037])
+'error'
+array([ 0.42371491])
+'error'
+array([ 0.4233002])
+'error'
+array([ 0.42288624])
+'error'
+array([ 0.42247304])
+'error'
+array([ 0.42206059])
+'error'
+array([ 0.42164889])
+'error'
+array([ 0.42123794])
+'error'
+array([ 0.42082773])
+'error'
+array([ 0.42041827])
+'error'
+array([ 0.42000955])
+'error'
+array([ 0.41960157])
+'error'
+array([ 0.41919434])
+'error'
+array([ 0.41878784])
+'error'
+array([ 0.41838208])
+'error'
+array([ 0.41797706])
+'error'
+array([ 0.41757277])
+'error'
+array([ 0.41716921])
+'error'
+array([ 0.41676639])
+'error'
+array([ 0.41636429])
+'error'
+array([ 0.41596293])
+'error'
+array([ 0.41556229])
+'error'
+array([ 0.41516237])
+'error'
+array([ 0.41476318])
+'error'
+array([ 0.41436472])
+'error'
+array([ 0.41396697])
+'error'
+array([ 0.41356994])
+'error'
+array([ 0.41317364])
+'error'
+array([ 0.41277805])
+'error'
+array([ 0.41238317])
+'error'
+array([ 0.41198901])
+'error'
+array([ 0.41159556])
+'error'
+array([ 0.41120282])
+'error'
+array([ 0.4108108])
+'error'
+array([ 0.41041948])
+'error'
+array([ 0.41002886])
+'error'
+array([ 0.40963896])
+'error'
+array([ 0.40924975])
+'error'
+array([ 0.40886125])
+'error'
+array([ 0.40847346])
+'error'
+array([ 0.40808636])
+'error'
+array([ 0.40769996])
+'error'
+array([ 0.40731425])
+'error'
+array([ 0.40692925])
+'error'
+array([ 0.40654493])
+'error'
+array([ 0.40616131])
+'error'
+array([ 0.40577838])
+'error'
+array([ 0.40539615])
+'error'
+array([ 0.4050146])
+'error'
+array([ 0.40463373])
+'error'
+array([ 0.40425356])
+'error'
+array([ 0.40387407])
+'error'
+array([ 0.40349526])
+'error'
+array([ 0.40311713])
+'error'
+array([ 0.40273969])
+'error'
+array([ 0.40236292])
+'error'
+array([ 0.40198684])
+'error'
+array([ 0.40161143])
+'error'
+array([ 0.40123669])
+'error'
+array([ 0.40086263])
+'error'
+array([ 0.40048924])
+'error'
+array([ 0.40011652])
+'error'
+array([ 0.39974447])
+'error'
+array([ 0.39937309])
+'error'
+array([ 0.39900238])
+'error'
+array([ 0.39863234])
+'error'
+array([ 0.39826295])
+'error'
+array([ 0.39789424])
+'error'
+array([ 0.39752618])
+'error'
+array([ 0.39715878])
+'error'
+array([ 0.39679205])
+'error'
+array([ 0.39642597])
+'error'
+array([ 0.39606055])
+'error'
+array([ 0.39569578])
+'error'
+array([ 0.39533167])
+'error'
+array([ 0.39496821])
+'error'
+array([ 0.39460541])
+'error'
+array([ 0.39424325])
+'error'
+array([ 0.39388174])
+'error'
+array([ 0.39352088])
+'error'
+array([ 0.39316067])
+'error'
+array([ 0.3928011])
+'error'
+array([ 0.39244218])
+'error'
+array([ 0.39208389])
+'error'
+array([ 0.39172625])
+'error'
+array([ 0.39136925])
+'error'
+array([ 0.39101289])
+'error'
+array([ 0.39065717])
+'error'
+array([ 0.39030208])
+'error'
+array([ 0.38994763])
+'error'
+array([ 0.38959381])
+'error'
+array([ 0.38924062])
+'error'
+array([ 0.38888807])
+'error'
+array([ 0.38853614])
+'error'
+array([ 0.38818484])
+'error'
+array([ 0.38783417])
+'error'
+array([ 0.38748413])
+'error'
+array([ 0.38713471])
+'error'
+array([ 0.38678592])
+'error'
+array([ 0.38643775])
+'error'
+array([ 0.3860902])
+'error'
+array([ 0.38574327])
+'error'
+array([ 0.38539696])
+'error'
+array([ 0.38505126])
+'error'
+array([ 0.38470619])
+'error'
+array([ 0.38436172])
+'error'
+array([ 0.38401788])
+'error'
+array([ 0.38367464])
+'error'
+array([ 0.38333202])
+'error'
+array([ 0.38299])
+'error'
+array([ 0.3826486])
+'error'
+array([ 0.3823078])
+'error'
+array([ 0.38196761])
+'error'
+array([ 0.38162803])
+'error'
+array([ 0.38128905])
+'error'
+array([ 0.38095067])
+'error'
+array([ 0.3806129])
+'error'
+array([ 0.38027573])
+'error'
+array([ 0.37993915])
+'error'
+array([ 0.37960318])
+'error'
+array([ 0.3792678])
+'error'
+array([ 0.37893302])
+'error'
+array([ 0.37859883])
+'error'
+array([ 0.37826523])
+'error'
+array([ 0.37793223])
+'error'
+array([ 0.37759982])
+'error'
+array([ 0.377268])
+'error'
+array([ 0.37693677])
+'error'
+array([ 0.37660613])
+'error'
+array([ 0.37627607])
+'error'
+array([ 0.3759466])
+'error'
+array([ 0.37561772])
+'error'
+array([ 0.37528941])
+'error'
+array([ 0.37496169])
+'error'
+array([ 0.37463455])
+'error'
+array([ 0.37430799])
+'error'
+array([ 0.37398201])
+'error'
+array([ 0.3736566])
+'error'
+array([ 0.37333178])
+'error'
+array([ 0.37300752])
+'error'
+array([ 0.37268385])
+'error'
+array([ 0.37236074])
+'error'
+array([ 0.37203821])
+'error'
+array([ 0.37171624])
+'error'
+array([ 0.37139485])
+'error'
+array([ 0.37107402])
+'error'
+array([ 0.37075377])
+'error'
+array([ 0.37043407])
+'error'
+array([ 0.37011495])
+'error'
+array([ 0.36979639])
+'error'
+array([ 0.36947839])
+'error'
+array([ 0.36916095])
+'error'
+array([ 0.36884407])
+'error'
+array([ 0.36852775])
+'error'
+array([ 0.36821199])
+'error'
+array([ 0.36789679])
+'error'
+array([ 0.36758214])
+'error'
+array([ 0.36726805])
+'error'
+array([ 0.36695452])
+'error'
+array([ 0.36664153])
+'error'
+array([ 0.3663291])
+'error'
+array([ 0.36601722])
+'error'
+array([ 0.36570589])
+'error'
+array([ 0.36539511])
+'error'
+array([ 0.36508487])
+'error'
+array([ 0.36477518])
+'error'
+array([ 0.36446604])
+'error'
+array([ 0.36415744])
+'error'
+array([ 0.36384939])
+'error'
+array([ 0.36354187])
+'error'
+array([ 0.3632349])
+'error'
+array([ 0.36292847])
+'error'
+array([ 0.36262257])
+'error'
+array([ 0.36231722])
+'error'
+array([ 0.3620124])
+'error'
+array([ 0.36170812])
+'error'
+array([ 0.36140437])
+'error'
+array([ 0.36110115])
+'error'
+array([ 0.36079847])
+'error'
+array([ 0.36049632])
+'error'
+array([ 0.3601947])
+'error'
+array([ 0.35989361])
+'error'
+array([ 0.35959305])
+'error'
+array([ 0.35929302])
+'error'
+array([ 0.35899351])
+'error'
+array([ 0.35869453])
+'error'
+array([ 0.35839607])
+'error'
+array([ 0.35809813])
+'error'
+array([ 0.35780072])
+'error'
+array([ 0.35750383])
+'error'
+array([ 0.35720746])
+'error'
+array([ 0.35691161])
+'error'
+array([ 0.35661627])
+'error'
+array([ 0.35632145])
+'error'
+array([ 0.35602715])
+'error'
+array([ 0.35573337])
+'error'
+array([ 0.3554401])
+'error'
+array([ 0.35514734])
+'error'
+array([ 0.35485509])
+'error'
+array([ 0.35456336])
+'error'
+array([ 0.35427213])
+'error'
+array([ 0.35398142])
+'error'
+array([ 0.35369121])
+'error'
+array([ 0.35340151])
+'error'
+array([ 0.35311232])
+'error'
+array([ 0.35282363])
+'error'
+array([ 0.35253544])
+'error'
+array([ 0.35224776])
+'error'
+array([ 0.35196058])
+'error'
+array([ 0.3516739])
+'error'
+array([ 0.35138772])
+'error'
+array([ 0.35110204])
+'error'
+array([ 0.35081686])
+'error'
+array([ 0.35053218])
+'error'
+array([ 0.35024799])
+'error'
+array([ 0.3499643])
+'error'
+array([ 0.3496811])
+'error'
+array([ 0.34939839])
+'error'
+array([ 0.34911618])
+'error'
+array([ 0.34883446])
+'error'
+array([ 0.34855323])
+'error'
+array([ 0.34827249])
+'error'
+array([ 0.34799223])
+'error'
+array([ 0.34771247])
+'error'
+array([ 0.34743319])
+'error'
+array([ 0.3471544])
+'error'
+array([ 0.34687609])
+'error'
+array([ 0.34659826])
+'error'
+array([ 0.34632092])
+'error'
+array([ 0.34604406])
+'error'
+array([ 0.34576768])
+'error'
+array([ 0.34549179])
+'error'
+array([ 0.34521637])
+'error'
+array([ 0.34494142])
+'error'
+array([ 0.34466696])
+'error'
+array([ 0.34439297])
+'error'
+array([ 0.34411946])
+'error'
+array([ 0.34384642])
+'error'
+array([ 0.34357385])
+'error'
+array([ 0.34330176])
+'error'
+array([ 0.34303014])
+'error'
+array([ 0.34275899])
+'error'
+array([ 0.34248831])
+'error'
+array([ 0.3422181])
+'error'
+array([ 0.34194835])
+'error'
+array([ 0.34167908])
+'error'
+array([ 0.34141027])
+'error'
+array([ 0.34114192])
+'error'
+array([ 0.34087404])
+'error'
+array([ 0.34060662])
+'error'
+array([ 0.34033967])
+'error'
+array([ 0.34007317])
+'error'
+array([ 0.33980714])
+'error'
+array([ 0.33954156])
+'error'
+array([ 0.33927645])
+'error'
+array([ 0.33901179])
+'error'
+array([ 0.33874759])
+'error'
+array([ 0.33848385])
+'error'
+array([ 0.33822056])
+'error'
+array([ 0.33795773])
+'error'
+array([ 0.33769535])
+'error'
+array([ 0.33743342])
+'error'
+array([ 0.33717194])
+'error'
+array([ 0.33691092])
+'error'
+array([ 0.33665034])
+'error'
+array([ 0.33639021])
+'error'
+array([ 0.33613054])
+'error'
+array([ 0.3358713])
+'error'
+array([ 0.33561252])
+'error'
+array([ 0.33535418])
+'error'
+array([ 0.33509629])
+'error'
+array([ 0.33483884])
+'error'
+array([ 0.33458183])
+'error'
+array([ 0.33432526])
+'error'
+array([ 0.33406914])
+'error'
+array([ 0.33381346])
+'error'
+array([ 0.33355821])
+'error'
+array([ 0.33330341])
+'error'
+array([ 0.33304904])
+'error'
+array([ 0.33279511])
+'error'
+array([ 0.33254161])
+'error'
+array([ 0.33228855])
+'error'
+array([ 0.33203593])
+'error'
+array([ 0.33178374])
+'error'
+array([ 0.33153198])
+'error'
+array([ 0.33128065])
+'error'
+array([ 0.33102976])
+'error'
+array([ 0.33077929])
+'error'
+array([ 0.33052925])
+'error'
+array([ 0.33027965])
+'error'
+array([ 0.33003047])
+'error'
+array([ 0.32978171])
+'error'
+array([ 0.32953339])
+'error'
+array([ 0.32928548])
+'error'
+array([ 0.32903801])
+'error'
+array([ 0.32879095])
+'error'
+array([ 0.32854432])
+'error'
+array([ 0.32829811])
+'error'
+array([ 0.32805232])
+'error'
+array([ 0.32780695])
+'error'
+array([ 0.32756201])
+'error'
+array([ 0.32731748])
+'error'
+array([ 0.32707336])
+'error'
+array([ 0.32682967])
+'error'
+array([ 0.32658639])
+'error'
+array([ 0.32634352])
+'error'
+array([ 0.32610108])
+'error'
+array([ 0.32585904])
+'error'
+array([ 0.32561742])
+'error'
+array([ 0.32537621])
+'error'
+array([ 0.32513541])
+'error'
+array([ 0.32489502])
+'error'
+array([ 0.32465504])
+'error'
+array([ 0.32441547])
+'error'
+array([ 0.32417631])
+'error'
+array([ 0.32393755])
+'error'
+array([ 0.3236992])
+'error'
+array([ 0.32346126])
+'error'
+array([ 0.32322372])
+'error'
+array([ 0.32298659])
+'error'
+array([ 0.32274986])
+'error'
+array([ 0.32251353])
+'error'
+array([ 0.32227761])
+'error'
+array([ 0.32204209])
+'error'
+array([ 0.32180696])
+'error'
+array([ 0.32157224])
+'error'
+array([ 0.32133791])
+'error'
+array([ 0.32110398])
+'error'
+array([ 0.32087045])
+'error'
+array([ 0.32063732])
+'error'
+array([ 0.32040458])
+'error'
+array([ 0.32017224])
+'error'
+array([ 0.31994029])
+'error'
+array([ 0.31970873])
+'error'
+array([ 0.31947757])
+'error'
+array([ 0.31924679])
+'error'
+array([ 0.31901641])
+'error'
+array([ 0.31878642])
+'error'
+array([ 0.31855682])
+'error'
+array([ 0.31832761])
+'error'
+array([ 0.31809879])
+'error'
+array([ 0.31787035])
+'error'
+array([ 0.3176423])
+'error'
+array([ 0.31741463])
+'error'
+array([ 0.31718735])
+'error'
+array([ 0.31696046])
+'error'
+array([ 0.31673395])
+'error'
+array([ 0.31650782])
+'error'
+array([ 0.31628207])
+'error'
+array([ 0.3160567])
+'error'
+array([ 0.31583172])
+'error'
+array([ 0.31560711])
+'error'
+array([ 0.31538289])
+'error'
+array([ 0.31515904])
+'error'
+array([ 0.31493557])
+'error'
+array([ 0.31471248])
+'error'
+array([ 0.31448976])
+'error'
+array([ 0.31426742])
+'error'
+array([ 0.31404545])
+'error'
+array([ 0.31382386])
+'error'
+array([ 0.31360264])
+'error'
+array([ 0.31338179])
+'error'
+array([ 0.31316131])
+'error'
+array([ 0.31294121])
+'error'
+array([ 0.31272148])
+'error'
+array([ 0.31250211])
+'error'
+array([ 0.31228312])
+'error'
+array([ 0.31206449])
+'error'
+array([ 0.31184623])
+'error'
+array([ 0.31162834])
+'error'
+array([ 0.31141081])
+'error'
+array([ 0.31119365])
+'error'
+array([ 0.31097685])
+'error'
+array([ 0.31076042])
+'error'
+array([ 0.31054435])
+'error'
+array([ 0.31032864])
+'error'
+array([ 0.3101133])
+'error'
+array([ 0.30989831])
+'error'
+array([ 0.30968369])
+'error'
+array([ 0.30946942])
+'error'
+array([ 0.30925552])
+'error'
+array([ 0.30904197])
+'error'
+array([ 0.30882878])
+'error'
+array([ 0.30861595])
+'error'
+array([ 0.30840348])
+'error'
+array([ 0.30819136])
+'error'
+array([ 0.30797959])
+'error'
+array([ 0.30776818])
+'error'
+array([ 0.30755712])
+'error'
+array([ 0.30734642])
+'error'
+array([ 0.30713607])
+'error'
+array([ 0.30692607])
+'error'
+array([ 0.30671642])
+'error'
+array([ 0.30650712])
+'error'
+array([ 0.30629817])
+'error'
+array([ 0.30608957])
+'error'
+array([ 0.30588132])
+'error'
+array([ 0.30567341])
+'error'
+array([ 0.30546585])
+'error'
+array([ 0.30525864])
+'error'
+array([ 0.30505177])
+'error'
+array([ 0.30484525])
+'error'
+array([ 0.30463907])
+'error'
+array([ 0.30443324])
+'error'
+array([ 0.30422774])
+'error'
+array([ 0.30402259])
+'error'
+array([ 0.30381779])
+'error'
+array([ 0.30361332])
+'error'
+array([ 0.30340919])
+'error'
+array([ 0.3032054])
+'error'
+array([ 0.30300195])
+'error'
+array([ 0.30279884])
+'error'
+array([ 0.30259607])
+'error'
+array([ 0.30239363])
+'error'
+array([ 0.30219153])
+'error'
+array([ 0.30198977])
+'error'
+array([ 0.30178834])
+'error'
+array([ 0.30158724])
+'error'
+array([ 0.30138648])
+'error'
+array([ 0.30118605])
+'error'
+array([ 0.30098596])
+'error'
+array([ 0.30078619])
+'error'
+array([ 0.30058676])
+'error'
+array([ 0.30038766])
+'error'
+array([ 0.30018888])
+'error'
+array([ 0.29999044])
+'error'
+array([ 0.29979233])
+'error'
+array([ 0.29959454])
+'error'
+array([ 0.29939708])
+'error'
+array([ 0.29919994])
+'error'
+array([ 0.29900314])
+'error'
+array([ 0.29880666])
+'error'
+array([ 0.2986105])
+'error'
+array([ 0.29841467])
+'error'
+array([ 0.29821916])
+'error'
+array([ 0.29802397])
+'error'
+array([ 0.29782911])
+'error'
+array([ 0.29763456])
+'error'
+array([ 0.29744034])
+'error'
+array([ 0.29724644])
+'error'
+array([ 0.29705286])
+'error'
+array([ 0.2968596])
+'error'
+array([ 0.29666665])
+'error'
+array([ 0.29647403])
+'error'
+array([ 0.29628172])
+'error'
+array([ 0.29608973])
+'error'
+array([ 0.29589805])
+'error'
+array([ 0.29570669])
+'error'
+array([ 0.29551565])
+'error'
+array([ 0.29532492])
+'error'
+array([ 0.2951345])
+'error'
+array([ 0.2949444])
+'error'
+array([ 0.29475461])
+'error'
+array([ 0.29456513])
+'error'
+array([ 0.29437596])
+'error'
+array([ 0.29418711])
+'error'
+array([ 0.29399856])
+'error'
+array([ 0.29381032])
+'error'
+array([ 0.29362239])
+'error'
+array([ 0.29343477])
+'error'
+array([ 0.29324746])
+'error'
+array([ 0.29306046])
+'error'
+array([ 0.29287376])
+'error'
+array([ 0.29268737])
+'error'
+array([ 0.29250128])
+'error'
+array([ 0.2923155])
+'error'
+array([ 0.29213002])
+'error'
+array([ 0.29194485])
+'error'
+array([ 0.29175997])
+'error'
+array([ 0.29157541])
+'error'
+array([ 0.29139114])
+'error'
+array([ 0.29120717])
+'error'
+array([ 0.29102351])
+'error'
+array([ 0.29084015])
+'error'
+array([ 0.29065708])
+'error'
+array([ 0.29047432])
+'error'
+array([ 0.29029185])
+'error'
+array([ 0.29010968])
+'error'
+array([ 0.28992781])
+'error'
+array([ 0.28974623])
+'error'
+array([ 0.28956495])
+'error'
+array([ 0.28938397])
+'error'
+array([ 0.28920328])
+'error'
+array([ 0.28902289])
+'error'
+array([ 0.28884279])
+'error'
+array([ 0.28866298])
+'error'
+array([ 0.28848347])
+'error'
+array([ 0.28830425])
+'error'
+array([ 0.28812532])
+'error'
+array([ 0.28794668])
+'error'
+array([ 0.28776833])
+'error'
+array([ 0.28759027])
+'error'
+array([ 0.2874125])
+'error'
+array([ 0.28723502])
+'error'
+array([ 0.28705783])
+'error'
+array([ 0.28688093])
+'error'
+array([ 0.28670431])
+'error'
+array([ 0.28652798])
+'error'
+array([ 0.28635194])
+'error'
+array([ 0.28617618])
+'error'
+array([ 0.28600071])
+'error'
+array([ 0.28582552])
+'error'
+array([ 0.28565062])
+'error'
+array([ 0.285476])
+'error'
+array([ 0.28530166])
+'error'
+array([ 0.2851276])
+'error'
+array([ 0.28495383])
+'error'
+array([ 0.28478034])
+'error'
+array([ 0.28460713])
+'error'
+array([ 0.28443419])
+'error'
+array([ 0.28426154])
+'error'
+array([ 0.28408917])
+'error'
+array([ 0.28391708])
+'error'
+array([ 0.28374526])
+'error'
+array([ 0.28357372])
+'error'
+array([ 0.28340246])
+'error'
+array([ 0.28323148])
+'error'
+array([ 0.28306077])
+'error'
+array([ 0.28289033])
+'error'
+array([ 0.28272017])
+'error'
+array([ 0.28255029])
+'error'
+array([ 0.28238068])
+'error'
+array([ 0.28221134])
+'error'
+array([ 0.28204228])
+'error'
+array([ 0.28187349])
+'error'
+array([ 0.28170497])
+'error'
+array([ 0.28153672])
+'error'
+array([ 0.28136874])
+'error'
+array([ 0.28120103])
+'error'
+array([ 0.2810336])
+'error'
+array([ 0.28086643])
+'error'
+array([ 0.28069953])
+'error'
+array([ 0.2805329])
+'error'
+array([ 0.28036653])
+'error'
+array([ 0.28020043])
+'error'
+array([ 0.2800346])
+'error'
+array([ 0.27986904])
+'error'
+array([ 0.27970374])
+'error'
+array([ 0.27953871])
+'error'
+array([ 0.27937394])
+'error'
+array([ 0.27920943])
+'error'
+array([ 0.27904519])
+'error'
+array([ 0.27888122])
+'error'
+array([ 0.2787175])
+'error'
+array([ 0.27855405])
+'error'
+array([ 0.27839086])
+'error'
+array([ 0.27822793])
+'error'
+array([ 0.27806526])
+'error'
+array([ 0.27790285])
+'error'
+array([ 0.2777407])
+'error'
+array([ 0.27757881])
+'error'
+array([ 0.27741717])
+'error'
+array([ 0.2772558])
+'error'
+array([ 0.27709468])
+'error'
+array([ 0.27693382])
+'error'
+array([ 0.27677322])
+'error'
+array([ 0.27661288])
+'error'
+array([ 0.27645279])
+'error'
+array([ 0.27629295])
+'error'
+array([ 0.27613337])
+'error'
+array([ 0.27597404])
+'error'
+array([ 0.27581497])
+'error'
+array([ 0.27565615])
+'error'
+array([ 0.27549759])
+'error'
+array([ 0.27533927])
+'error'
+array([ 0.27518121])
+'error'
+array([ 0.2750234])
+'error'
+array([ 0.27486584])
+'error'
+array([ 0.27470853])
+'error'
+array([ 0.27455147])
+'error'
+array([ 0.27439466])
+'error'
+array([ 0.2742381])
+'error'
+array([ 0.27408179])
+'error'
+array([ 0.27392573])
+'error'
+array([ 0.27376991])
+'error'
+array([ 0.27361434])
+'error'
+array([ 0.27345902])
+'error'
+array([ 0.27330394])
+'error'
+array([ 0.27314911])
+'error'
+array([ 0.27299453])
+'error'
+array([ 0.27284019])
+'error'
+array([ 0.27268609])
+'error'
+array([ 0.27253224])
+'error'
+array([ 0.27237863])
+'error'
+array([ 0.27222526])
+'error'
+array([ 0.27207214])
+'error'
+array([ 0.27191926])
+'error'
+array([ 0.27176662])
+'error'
+array([ 0.27161422])
+'error'
+array([ 0.27146206])
+'error'
+array([ 0.27131015])
+'error'
+array([ 0.27115847])
+'error'
+array([ 0.27100703])
+'error'
+array([ 0.27085583])
+'error'
+array([ 0.27070487])
+'error'
+array([ 0.27055415])
+'error'
+array([ 0.27040366])
+'error'
+array([ 0.27025341])
+'error'
+array([ 0.2701034])
+'error'
+array([ 0.26995362])
+'error'
+array([ 0.26980408])
+'error'
+array([ 0.26965478])
+'error'
+array([ 0.26950571])
+'error'
+array([ 0.26935687])
+'error'
+array([ 0.26920827])
+'error'
+array([ 0.2690599])
+'error'
+array([ 0.26891177])
+'error'
+array([ 0.26876387])
+'error'
+array([ 0.26861619])
+'error'
+array([ 0.26846876])
+'error'
+array([ 0.26832155])
+'error'
+array([ 0.26817457])
+'error'
+array([ 0.26802783])
+'error'
+array([ 0.26788131])
+'error'
+array([ 0.26773502])
+'error'
+array([ 0.26758897])
+'error'
+array([ 0.26744314])
+'error'
+array([ 0.26729754])
+'error'
+array([ 0.26715217])
+'error'
+array([ 0.26700702])
+'error'
+array([ 0.2668621])
+'error'
+array([ 0.26671741])
+'error'
+array([ 0.26657295])
+'error'
+array([ 0.26642871])
+'error'
+array([ 0.26628469])
+'error'
+array([ 0.2661409])
+'error'
+array([ 0.26599734])
+'error'
+array([ 0.265854])
+'error'
+array([ 0.26571088])
+'error'
+array([ 0.26556799])
+'error'
+array([ 0.26542532])
+'error'
+array([ 0.26528287])
+'error'
+array([ 0.26514064])
+'error'
+array([ 0.26499864])
+'error'
+array([ 0.26485685])
+'error'
+array([ 0.26471529])
+'error'
+array([ 0.26457394])
+'error'
+array([ 0.26443282])
+'error'
+array([ 0.26429192])
+'error'
+array([ 0.26415123])
+'error'
+array([ 0.26401076])
+'error'
+array([ 0.26387052])
+'error'
+array([ 0.26373048])
+'error'
+array([ 0.26359067])
+'error'
+array([ 0.26345107])
+'error'
+array([ 0.2633117])
+'error'
+array([ 0.26317253])
+'error'
+array([ 0.26303358])
+'error'
+array([ 0.26289485])
+'error'
+array([ 0.26275633])
+'error'
+array([ 0.26261803])
+'error'
+array([ 0.26247994])
+'error'
+array([ 0.26234207])
+'error'
+array([ 0.2622044])
+'error'
+array([ 0.26206696])
+'error'
+array([ 0.26192972])
+'error'
+array([ 0.2617927])
+'error'
+array([ 0.26165588])
+'error'
+array([ 0.26151928])
+'error'
+array([ 0.26138289])
+'error'
+array([ 0.26124671])
+'error'
+array([ 0.26111074])
+'error'
+array([ 0.26097498])
+'error'
+array([ 0.26083943])
+'error'
+array([ 0.26070409])
+'error'
+array([ 0.26056896])
+'error'
+array([ 0.26043403])
+'error'
+array([ 0.26029932])
+'error'
+array([ 0.26016481])
+'error'
+array([ 0.2600305])
+'error'
+array([ 0.25989641])
+'error'
+array([ 0.25976252])
+'error'
+array([ 0.25962884])
+'error'
+array([ 0.25949536])
+'error'
+array([ 0.25936208])
+'error'
+array([ 0.25922902])
+'error'
+array([ 0.25909615])
+'error'
+array([ 0.25896349])
+'error'
+array([ 0.25883103])
+'error'
+array([ 0.25869878])
+'error'
+array([ 0.25856673])
+'error'
+array([ 0.25843488])
+'error'
+array([ 0.25830324])
+'error'
+array([ 0.25817179])
+'error'
+array([ 0.25804055])
+'error'
+array([ 0.25790951])
+'error'
+array([ 0.25777867])
+'error'
+array([ 0.25764802])
+'error'
+array([ 0.25751758])
+'error'
+array([ 0.25738734])
+'error'
+array([ 0.2572573])
+'error'
+array([ 0.25712745])
+'error'
+array([ 0.25699781])
+'error'
+array([ 0.25686836])
+'error'
+array([ 0.25673911])
+'error'
+array([ 0.25661005])
+'error'
+array([ 0.2564812])
+'error'
+array([ 0.25635254])
+'error'
+array([ 0.25622407])
+'error'
+array([ 0.2560958])
+'error'
+array([ 0.25596773])
+'error'
+array([ 0.25583985])
+'error'
+array([ 0.25571217])
+'error'
+array([ 0.25558468])
+'error'
+array([ 0.25545738])
+'error'
+array([ 0.25533028])
+'error'
+array([ 0.25520337])
+'error'
+array([ 0.25507666])
+'error'
+array([ 0.25495013])
+'error'
+array([ 0.2548238])
+'error'
+array([ 0.25469766])
+'error'
+array([ 0.25457172])
+'error'
+array([ 0.25444596])
+'error'
+array([ 0.25432039])
+'error'
+array([ 0.25419502])
+'error'
+array([ 0.25406983])
+'error'
+array([ 0.25394483])
+'error'
+array([ 0.25382003])
+'error'
+array([ 0.25369541])
+'error'
+array([ 0.25357098])
+'error'
+array([ 0.25344674])
+'error'
+array([ 0.25332268])
+'error'
+array([ 0.25319882])
+'error'
+array([ 0.25307514])
+'error'
+array([ 0.25295165])
+'error'
+array([ 0.25282834])
+'error'
+array([ 0.25270522])
+'error'
+array([ 0.25258229])
+'error'
+array([ 0.25245954])
+'error'
+array([ 0.25233698])
+'error'
+array([ 0.2522146])
+'error'
+array([ 0.25209241])
+'error'
+array([ 0.2519704])
+'error'
+array([ 0.25184857])
+'error'
+array([ 0.25172693])
+'error'
+array([ 0.25160547])
+'error'
+array([ 0.25148419])
+'error'
+array([ 0.2513631])
+'error'
+array([ 0.25124218])
+'error'
+array([ 0.25112145])
+'error'
+array([ 0.2510009])
+'error'
+array([ 0.25088053])
+'error'
+array([ 0.25076035])
+'error'
+array([ 0.25064034])
+'error'
+array([ 0.25052051])
+'error'
+array([ 0.25040086])
+'error'
+array([ 0.25028139])
+'error'
+array([ 0.2501621])
+'error'
+array([ 0.25004299])
+'error'
+array([ 0.24992406])
+'error'
+array([ 0.24980531])
+'error'
+array([ 0.24968673])
+'error'
+array([ 0.24956833])
+'error'
+array([ 0.24945011])
+'error'
+array([ 0.24933206])
+'error'
+array([ 0.24921419])
+'error'
+array([ 0.2490965])
+'error'
+array([ 0.24897898])
+'error'
+array([ 0.24886164])
+'error'
+array([ 0.24874447])
+'error'
+array([ 0.24862748])
+'error'
+array([ 0.24851066])
+'error'
+array([ 0.24839402])
+'error'
+array([ 0.24827755])
+'error'
+array([ 0.24816125])
+'error'
+array([ 0.24804513])
+'error'
+array([ 0.24792918])
+'error'
+array([ 0.2478134])
+'error'
+array([ 0.24769779])
+'error'
+array([ 0.24758236])
+'error'
+array([ 0.2474671])
+'error'
+array([ 0.247352])
+'error'
+array([ 0.24723708])
+'error'
+array([ 0.24712233])
+'error'
+array([ 0.24700775])
+'error'
+array([ 0.24689335])
+'error'
+array([ 0.24677911])
+'error'
+array([ 0.24666503])
+'error'
+array([ 0.24655113])
+'error'
+array([ 0.2464374])
+'error'
+array([ 0.24632384])
+'error'
+array([ 0.24621044])
+'error'
+array([ 0.24609721])
+'error'
+array([ 0.24598415])
+'error'
+array([ 0.24587126])
+'error'
+array([ 0.24575853])
+'error'
+array([ 0.24564597])
+'error'
+array([ 0.24553357])
+'error'
+array([ 0.24542135])
+'error'
+array([ 0.24530928])
+'error'
+array([ 0.24519739])
+'error'
+array([ 0.24508565])
+'error'
+array([ 0.24497409])
+'error'
+array([ 0.24486268])
+'error'
+array([ 0.24475144])
+'error'
+array([ 0.24464037])
+'error'
+array([ 0.24452946])
+'error'
+array([ 0.24441871])
+'error'
+array([ 0.24430812])
+'error'
+array([ 0.2441977])
+'error'
+array([ 0.24408744])
+'error'
+array([ 0.24397734])
+'error'
+array([ 0.2438674])
+'error'
+array([ 0.24375763])
+'error'
+array([ 0.24364801])
+'error'
+array([ 0.24353856])
+'error'
+array([ 0.24342927])
+'error'
+array([ 0.24332013])
+'error'
+array([ 0.24321116])
+'error'
+array([ 0.24310235])
+'error'
+array([ 0.24299369])
+'error'
+array([ 0.2428852])
+'error'
+array([ 0.24277686])
+'error'
+array([ 0.24266868])
+'error'
+array([ 0.24256067])
+'error'
+array([ 0.2424528])
+'error'
+array([ 0.2423451])
+'error'
+array([ 0.24223755])
+'error'
+array([ 0.24213016])
+'error'
+array([ 0.24202293])
+'error'
+array([ 0.24191585])
+'error'
+array([ 0.24180893])
+'error'
+array([ 0.24170217])
+'error'
+array([ 0.24159556])
+'error'
+array([ 0.24148911])
+'error'
+array([ 0.24138281])
+'error'
+array([ 0.24127667])
+'error'
+array([ 0.24117068])
+'error'
+array([ 0.24106484])
+'error'
+array([ 0.24095916])
+'error'
+array([ 0.24085363])
+'error'
+array([ 0.24074826])
+'error'
+array([ 0.24064304])
+'error'
+array([ 0.24053797])
+'error'
+array([ 0.24043305])
+'error'
+array([ 0.24032829])
+'error'
+array([ 0.24022368])
+'error'
+array([ 0.24011922])
+'error'
+array([ 0.24001491])
+'error'
+array([ 0.23991075])
+'error'
+array([ 0.23980674])
+'error'
+array([ 0.23970289])
+'error'
+array([ 0.23959918])
+'error'
+array([ 0.23949563])
+'error'
+array([ 0.23939222])
+'error'
+array([ 0.23928896])
+'error'
+array([ 0.23918586])
+'error'
+array([ 0.2390829])
+'error'
+array([ 0.23898009])
+'error'
+array([ 0.23887743])
+'error'
+array([ 0.23877491])
+'error'
+array([ 0.23867255])
+'error'
+array([ 0.23857033])
+'error'
+array([ 0.23846826])
+'error'
+array([ 0.23836633])
+'error'
+array([ 0.23826456])
+'error'
+array([ 0.23816293])
+'error'
+array([ 0.23806144])
+'error'
+array([ 0.2379601])
+'error'
+array([ 0.23785891])
+'error'
+array([ 0.23775786])
+'error'
+array([ 0.23765696])
+'error'
+array([ 0.2375562])
+'error'
+array([ 0.23745559])
+'error'
+array([ 0.23735512])
+'error'
+array([ 0.2372548])
+'error'
+array([ 0.23715462])
+'error'
+array([ 0.23705458])
+'error'
+array([ 0.23695469])
+'error'
+array([ 0.23685494])
+'error'
+array([ 0.23675533])
+'error'
+array([ 0.23665586])
+'error'
+array([ 0.23655654])
+'error'
+array([ 0.23645736])
+'error'
+array([ 0.23635832])
+'error'
+array([ 0.23625942])
+'error'
+array([ 0.23616067])
+'error'
+array([ 0.23606205])
+'error'
+array([ 0.23596357])
+'error'
+array([ 0.23586524])
+'error'
+array([ 0.23576705])
+'error'
+array([ 0.23566899])
+'error'
+array([ 0.23557108])
+'error'
+array([ 0.2354733])
+'error'
+array([ 0.23537567])
+'error'
+array([ 0.23527817])
+'error'
+array([ 0.23518081])
+'error'
+array([ 0.23508359])
+'error'
+array([ 0.23498651])
+'error'
+array([ 0.23488957])
+'error'
+array([ 0.23479276])
+'error'
+array([ 0.23469609])
+'error'
+array([ 0.23459956])
+'error'
+array([ 0.23450317])
+'error'
+array([ 0.23440691])
+'error'
+array([ 0.23431079])
+'error'
+array([ 0.2342148])
+'error'
+array([ 0.23411895])
+'error'
+array([ 0.23402324])
+'error'
+array([ 0.23392766])
+'error'
+array([ 0.23383222])
+'error'
+array([ 0.23373691])
+'error'
+array([ 0.23364174])
+'error'
+array([ 0.2335467])
+'error'
+array([ 0.2334518])
+'error'
+array([ 0.23335703])
+'error'
+array([ 0.23326239])
+'error'
+array([ 0.23316789])
+'error'
+array([ 0.23307352])
+'error'
+array([ 0.23297928])
+'error'
+array([ 0.23288518])
+'error'
+array([ 0.23279121])
+'error'
+array([ 0.23269737])
+'error'
+array([ 0.23260366])
+'error'
+array([ 0.23251009])
+'error'
+array([ 0.23241664])
+'error'
+array([ 0.23232333])
+'error'
+array([ 0.23223015])
+'error'
+array([ 0.2321371])
+'error'
+array([ 0.23204418])
+'error'
+array([ 0.23195139])
+'error'
+array([ 0.23185873])
+'error'
+array([ 0.2317662])
+'error'
+array([ 0.2316738])
+'error'
+array([ 0.23158153])
+'error'
+array([ 0.23148939])
+'error'
+array([ 0.23139738])
+'error'
+array([ 0.2313055])
+'error'
+array([ 0.23121374])
+'error'
+array([ 0.23112212])
+'error'
+array([ 0.23103062])
+'error'
+array([ 0.23093925])
+'error'
+array([ 0.23084801])
+'error'
+array([ 0.23075689])
+'error'
+array([ 0.2306659])
+'error'
+array([ 0.23057504])
+'error'
+array([ 0.23048431])
+'error'
+array([ 0.2303937])
+'error'
+array([ 0.23030322])
+'error'
+array([ 0.23021286])
+'error'
+array([ 0.23012263])
+'error'
+array([ 0.23003253])
+'error'
+array([ 0.22994255])
+'error'
+array([ 0.2298527])
+'error'
+array([ 0.22976297])
+'error'
+array([ 0.22967336])
+'error'
+array([ 0.22958388])
+'error'
+array([ 0.22949453])
+'error'
+array([ 0.2294053])
+'error'
+array([ 0.22931619])
+'error'
+array([ 0.2292272])
+'error'
+array([ 0.22913834])
+'error'
+array([ 0.22904961])
+'error'
+array([ 0.22896099])
+'error'
+array([ 0.2288725])
+'error'
+array([ 0.22878413])
+'error'
+array([ 0.22869588])
+'error'
+array([ 0.22860776])
+'error'
+array([ 0.22851975])
+'error'
+array([ 0.22843187])
+'error'
+array([ 0.22834411])
+'error'
+array([ 0.22825647])
+'error'
+array([ 0.22816895])
+'error'
+array([ 0.22808155])
+'error'
+array([ 0.22799427])
+'error'
+array([ 0.22790712])
+'error'
+array([ 0.22782008])
+'error'
+array([ 0.22773316])
+'error'
+array([ 0.22764636])
+'error'
+array([ 0.22755968])
+'error'
+array([ 0.22747313])
+'error'
+array([ 0.22738669])
+'error'
+array([ 0.22730036])
+'error'
+array([ 0.22721416])
+'error'
+array([ 0.22712808])
+'error'
+array([ 0.22704211])
+'error'
+array([ 0.22695626])
+'error'
+array([ 0.22687053])
+'error'
+array([ 0.22678492])
+'error'
+array([ 0.22669942])
+'error'
+array([ 0.22661404])
+'error'
+array([ 0.22652878])
+'error'
+array([ 0.22644363])
+'error'
+array([ 0.2263586])
+'error'
+array([ 0.22627369])
+'error'
+array([ 0.22618889])
+'error'
+array([ 0.22610421])
+'error'
+array([ 0.22601965])
+'error'
+array([ 0.2259352])
+'error'
+array([ 0.22585086])
+'error'
+array([ 0.22576664])
+'error'
+array([ 0.22568254])
+'error'
+array([ 0.22559855])
+'error'
+array([ 0.22551467])
+'error'
+array([ 0.22543091])
+'error'
+array([ 0.22534726])
+'error'
+array([ 0.22526373])
+'error'
+array([ 0.22518031])
+'error'
+array([ 0.225097])
+'error'
+array([ 0.22501381])
+'error'
+array([ 0.22493073])
+'error'
+array([ 0.22484776])
+'error'
+array([ 0.2247649])
+'error'
+array([ 0.22468216])
+'error'
+array([ 0.22459953])
+'error'
+array([ 0.22451701])
+'error'
+array([ 0.2244346])
+'error'
+array([ 0.22435231])
+'error'
+array([ 0.22427012])
+'error'
+array([ 0.22418805])
+'error'
+array([ 0.22410609])
+'error'
+array([ 0.22402423])
+'error'
+array([ 0.22394249])
+'error'
+array([ 0.22386086])
+'error'
+array([ 0.22377934])
+'error'
+array([ 0.22369793])
+'error'
+array([ 0.22361663])
+'error'
+array([ 0.22353544])
+'error'
+array([ 0.22345436])
+'error'
+array([ 0.22337339])
+'error'
+array([ 0.22329252])
+'error'
+array([ 0.22321177])
+'error'
+array([ 0.22313112])
+'error'
+array([ 0.22305059])
+'error'
+array([ 0.22297016])
+'error'
+array([ 0.22288984])
+'error'
+array([ 0.22280962])
+'error'
+array([ 0.22272952])
+'error'
+array([ 0.22264952])
+'error'
+array([ 0.22256963])
+'error'
+array([ 0.22248984])
+'error'
+array([ 0.22241017])
+'error'
+array([ 0.2223306])
+'error'
+array([ 0.22225113])
+'error'
+array([ 0.22217178])
+'error'
+array([ 0.22209253])
+'error'
+array([ 0.22201338])
+'error'
+array([ 0.22193434])
+'error'
+array([ 0.22185541])
+'error'
+array([ 0.22177658])
+'error'
+array([ 0.22169786])
+'error'
+array([ 0.22161924])
+'error'
+array([ 0.22154073])
+'error'
+array([ 0.22146232])
+'error'
+array([ 0.22138401])
+'error'
+array([ 0.22130581])
+'error'
+array([ 0.22122772])
+'error'
+array([ 0.22114973])
+'error'
+array([ 0.22107184])
+'error'
+array([ 0.22099406])
+'error'
+array([ 0.22091638])
+'error'
+array([ 0.2208388])
+'error'
+array([ 0.22076132])
+'error'
+array([ 0.22068395])
+'error'
+array([ 0.22060668])
+'error'
+array([ 0.22052952])
+'error'
+array([ 0.22045245])
+'error'
+array([ 0.22037549])
+'error'
+array([ 0.22029863])
+'error'
+array([ 0.22022187])
+'error'
+array([ 0.22014521])
+'error'
+array([ 0.22006866])
+'error'
+array([ 0.2199922])
+'error'
+array([ 0.21991585])
+'error'
+array([ 0.2198396])
+'error'
+array([ 0.21976345])
+'error'
+array([ 0.21968739])
+'error'
+array([ 0.21961144])
+'error'
+array([ 0.21953559])
+'error'
+array([ 0.21945984])
+'error'
+array([ 0.21938419])
+'error'
+array([ 0.21930864])
+'error'
+array([ 0.21923319])
+'error'
+array([ 0.21915783])
+'error'
+array([ 0.21908258])
+'error'
+array([ 0.21900743])
+'error'
+array([ 0.21893237])
+'error'
+array([ 0.21885741])
+'error'
+array([ 0.21878255])
+'error'
+array([ 0.21870779])
+'error'
+array([ 0.21863313])
+'error'
+array([ 0.21855857])
+'error'
+array([ 0.2184841])
+'error'
+array([ 0.21840973])
+'error'
+array([ 0.21833546])
+'error'
+array([ 0.21826128])
+'error'
+array([ 0.2181872])
+'error'
+array([ 0.21811322])
+'error'
+array([ 0.21803934])
+'error'
+array([ 0.21796555])
+'error'
+array([ 0.21789186])
+'error'
+array([ 0.21781826])
+'error'
+array([ 0.21774477])
+'error'
+array([ 0.21767136])
+'error'
+array([ 0.21759805])
+'error'
+array([ 0.21752484])
+'error'
+array([ 0.21745173])
+'error'
+array([ 0.2173787])
+'error'
+array([ 0.21730578])
+'error'
+array([ 0.21723295])
+'error'
+array([ 0.21716021])
+'error'
+array([ 0.21708757])
+'error'
+array([ 0.21701502])
+'error'
+array([ 0.21694256])
+'error'
+array([ 0.2168702])
+'error'
+array([ 0.21679794])
+'error'
+array([ 0.21672577])
+'error'
+array([ 0.21665369])
+'error'
+array([ 0.2165817])
+'error'
+array([ 0.21650981])
+'error'
+array([ 0.21643801])
+'error'
+array([ 0.2163663])
+'error'
+array([ 0.21629469])
+'error'
+array([ 0.21622317])
+'error'
+array([ 0.21615174])
+'error'
+array([ 0.2160804])
+'error'
+array([ 0.21600916])
+'error'
+array([ 0.21593801])
+'error'
+array([ 0.21586695])
+'error'
+array([ 0.21579598])
+'error'
+array([ 0.2157251])
+'error'
+array([ 0.21565431])
+'error'
+array([ 0.21558362])
+'error'
+array([ 0.21551301])
+'error'
+array([ 0.2154425])
+'error'
+array([ 0.21537208])
+'error'
+array([ 0.21530174])
+'error'
+array([ 0.2152315])
+'error'
+array([ 0.21516135])
+'error'
+array([ 0.21509129])
+'error'
+array([ 0.21502132])
+'error'
+array([ 0.21495143])
+'error'
+array([ 0.21488164])
+'error'
+array([ 0.21481194])
+'error'
+array([ 0.21474232])
+'error'
+array([ 0.2146728])
+'error'
+array([ 0.21460336])
+'error'
+array([ 0.21453402])
+'error'
+array([ 0.21446476])
+'error'
+array([ 0.21439559])
+'error'
+array([ 0.2143265])
+'error'
+array([ 0.21425751])
+'error'
+array([ 0.2141886])
+'error'
+array([ 0.21411979])
+'error'
+array([ 0.21405106])
+'error'
+array([ 0.21398241])
+'error'
+array([ 0.21391386])
+'error'
+array([ 0.21384539])
+'error'
+array([ 0.21377701])
+'error'
+array([ 0.21370872])
+'error'
+array([ 0.21364051])
+'error'
+array([ 0.21357239])
+'error'
+array([ 0.21350435])
+'error'
+array([ 0.21343641])
+'error'
+array([ 0.21336854])
+'error'
+array([ 0.21330077])
+'error'
+array([ 0.21323308])
+'error'
+array([ 0.21316548])
+'error'
+array([ 0.21309796])
+'error'
+array([ 0.21303052])
+'error'
+array([ 0.21296318])
+'error'
+array([ 0.21289591])
+'error'
+array([ 0.21282874])
+'error'
+array([ 0.21276164])
+'error'
+array([ 0.21269464])
+'error'
+array([ 0.21262771])
+'error'
+array([ 0.21256087])
+'error'
+array([ 0.21249412])
+'error'
+array([ 0.21242745])
+'error'
+array([ 0.21236086])
+'error'
+array([ 0.21229436])
+'error'
+array([ 0.21222794])
+'error'
+array([ 0.21216161])
+'error'
+array([ 0.21209536])
+'error'
+array([ 0.21202919])
+'error'
+array([ 0.2119631])
+'error'
+array([ 0.2118971])
+'error'
+array([ 0.21183118])
+'error'
+array([ 0.21176534])
+'error'
+array([ 0.21169959])
+'error'
+array([ 0.21163392])
+'error'
+array([ 0.21156833])
+'error'
+array([ 0.21150282])
+'error'
+array([ 0.21143739])
+'error'
+array([ 0.21137205])
+'error'
+array([ 0.21130679])
+'error'
+array([ 0.21124161])
+'error'
+array([ 0.21117651])
+'error'
+array([ 0.21111149])
+'error'
+array([ 0.21104655])
+'error'
+array([ 0.2109817])
+'error'
+array([ 0.21091692])
+'error'
+array([ 0.21085223])
+'error'
+array([ 0.21078762])
+'error'
+array([ 0.21072308])
+'error'
+array([ 0.21065863])
+'error'
+array([ 0.21059426])
+'error'
+array([ 0.21052997])
+'error'
+array([ 0.21046575])
+'error'
+array([ 0.21040162])
+'error'
+array([ 0.21033757])
+'error'
+array([ 0.21027359])
+'error'
+array([ 0.2102097])
+'error'
+array([ 0.21014588])
+'error'
+array([ 0.21008215])
+'error'
+array([ 0.21001849])
+'error'
+array([ 0.20995491])
+'error'
+array([ 0.20989141])
+'error'
+array([ 0.20982799])
+'error'
+array([ 0.20976465])
+'error'
+array([ 0.20970139])
+'error'
+array([ 0.2096382])
+'error'
+array([ 0.20957509])
+'error'
+array([ 0.20951206])
+'error'
+array([ 0.20944911])
+'error'
+array([ 0.20938624])
+'error'
+array([ 0.20932344])
+'error'
+array([ 0.20926072])
+'error'
+array([ 0.20919807])
+'error'
+array([ 0.20913551])
+'error'
+array([ 0.20907302])
+'error'
+array([ 0.20901061])
+'error'
+array([ 0.20894827])
+'error'
+array([ 0.20888601])
+'error'
+array([ 0.20882383])
+'error'
+array([ 0.20876173])
+'error'
+array([ 0.2086997])
+'error'
+array([ 0.20863774])
+'error'
+array([ 0.20857587])
+'error'
+array([ 0.20851406])
+'error'
+array([ 0.20845234])
+'error'
+array([ 0.20839069])
+'error'
+array([ 0.20832911])
+'error'
+array([ 0.20826761])
+'error'
+array([ 0.20820618])
+'error'
+array([ 0.20814483])
+'error'
+array([ 0.20808356])
+'error'
+array([ 0.20802236])
+'error'
+array([ 0.20796123])
+'error'
+array([ 0.20790018])
+'error'
+array([ 0.20783921])
+'error'
+array([ 0.2077783])
+'error'
+array([ 0.20771747])
+'error'
+array([ 0.20765672])
+'error'
+array([ 0.20759604])
+'error'
+array([ 0.20753543])
+'error'
+array([ 0.2074749])
+'error'
+array([ 0.20741444])
+'error'
+array([ 0.20735405])
+'error'
+array([ 0.20729374])
+'error'
+array([ 0.2072335])
+'error'
+array([ 0.20717333])
+'error'
+array([ 0.20711324])
+'error'
+array([ 0.20705322])
+'error'
+array([ 0.20699327])
+'error'
+array([ 0.20693339])
+'error'
+array([ 0.20687359])
+'error'
+array([ 0.20681386])
+'error'
+array([ 0.2067542])
+'error'
+array([ 0.20669461])
+'error'
+array([ 0.20663509])
+'error'
+array([ 0.20657565])
+'error'
+array([ 0.20651628])
+'error'
+array([ 0.20645698])
+'error'
+array([ 0.20639775])
+'error'
+array([ 0.20633859])
+'error'
+array([ 0.2062795])
+'error'
+array([ 0.20622049])
+'error'
+array([ 0.20616154])
+'error'
+array([ 0.20610267])
+'error'
+array([ 0.20604387])
+'error'
+array([ 0.20598513])
+'error'
+array([ 0.20592647])
+'error'
+array([ 0.20586788])
+'error'
+array([ 0.20580936])
+'error'
+array([ 0.20575091])
+'error'
+array([ 0.20569252])
+'error'
+array([ 0.20563421])
+'error'
+array([ 0.20557597])
+'error'
+array([ 0.2055178])
+'error'
+array([ 0.2054597])
+'error'
+array([ 0.20540166])
+'error'
+array([ 0.2053437])
+'error'
+array([ 0.2052858])
+'error'
+array([ 0.20522798])
+'error'
+array([ 0.20517022])
+'error'
+array([ 0.20511253])
+'error'
+array([ 0.20505491])
+'error'
+array([ 0.20499736])
+'error'
+array([ 0.20493988])
+'error'
+array([ 0.20488247])
+'error'
+array([ 0.20482512])
+'error'
+array([ 0.20476784])
+'error'
+array([ 0.20471063])
+'error'
+array([ 0.20465349])
+'error'
+array([ 0.20459642])
+'error'
+array([ 0.20453941])
+'error'
+array([ 0.20448247])
+'error'
+array([ 0.2044256])
+'error'
+array([ 0.2043688])
+'error'
+array([ 0.20431206])
+'error'
+array([ 0.20425539])
+'error'
+array([ 0.20419879])
+'error'
+array([ 0.20414225])
+'error'
+array([ 0.20408578])
+'error'
+array([ 0.20402938])
+'error'
+array([ 0.20397304])
+'error'
+array([ 0.20391677])
+'error'
+array([ 0.20386057])
+'error'
+array([ 0.20380443])
+'error'
+array([ 0.20374836])
+'error'
+array([ 0.20369236])
+'error'
+array([ 0.20363642])
+'error'
+array([ 0.20358055])
+'error'
+array([ 0.20352474])
+'error'
+array([ 0.203469])
+'error'
+array([ 0.20341332])
+'error'
+array([ 0.20335771])
+'error'
+array([ 0.20330216])
+'error'
+array([ 0.20324668])
+'error'
+array([ 0.20319127])
+'error'
+array([ 0.20313591])
+'error'
+array([ 0.20308063])
+'error'
+array([ 0.20302541])
+'error'
+array([ 0.20297025])
+'error'
+array([ 0.20291516])
+'error'
+array([ 0.20286013])
+'error'
+array([ 0.20280517])
+'error'
+array([ 0.20275027])
+'error'
+array([ 0.20269543])
+'error'
+array([ 0.20264066])
+'error'
+array([ 0.20258595])
+'error'
+array([ 0.20253131])
+'error'
+array([ 0.20247673])
+'error'
+array([ 0.20242221])
+'error'
+array([ 0.20236776])
+'error'
+array([ 0.20231336])
+'error'
+array([ 0.20225904])
+'error'
+array([ 0.20220477])
+'error'
+array([ 0.20215057])
+'error'
+array([ 0.20209643])
+'error'
+array([ 0.20204236])
+'error'
+array([ 0.20198835])
+'error'
+array([ 0.2019344])
+'error'
+array([ 0.20188051])
+'error'
+array([ 0.20182668])
+'error'
+array([ 0.20177292])
+'error'
+array([ 0.20171922])
+'error'
+array([ 0.20166558])
+'error'
+array([ 0.201612])
+'error'
+array([ 0.20155849])
+'error'
+array([ 0.20150503])
+'error'
+array([ 0.20145164])
+'error'
+array([ 0.20139831])
+'error'
+array([ 0.20134504])
+'error'
+array([ 0.20129184])
+'error'
+array([ 0.20123869])
+'error'
+array([ 0.2011856])
+'error'
+array([ 0.20113258])
+'error'
+array([ 0.20107962])
+'error'
+array([ 0.20102671])
+'error'
+array([ 0.20097387])
+'error'
+array([ 0.20092109])
+'error'
+array([ 0.20086837])
+'error'
+array([ 0.20081571])
+'error'
+array([ 0.20076311])
+'error'
+array([ 0.20071057])
+'error'
+array([ 0.20065809])
+'error'
+array([ 0.20060567])
+'error'
+array([ 0.20055331])
+'error'
+array([ 0.20050101])
+'error'
+array([ 0.20044877])
+'error'
+array([ 0.20039659])
+'error'
+array([ 0.20034447])
+'error'
+array([ 0.20029241])
+'error'
+array([ 0.20024041])
+'error'
+array([ 0.20018847])
+'error'
+array([ 0.20013659])
+'error'
+array([ 0.20008476])
+'error'
+array([ 0.200033])
+'error'
+array([ 0.19998129])
+'error'
+array([ 0.19992964])
+'error'
+array([ 0.19987805])
+'error'
+array([ 0.19982652])
+'error'
+array([ 0.19977505])
+'error'
+array([ 0.19972364])
+'error'
+array([ 0.19967228])
+'error'
+array([ 0.19962098])
+'error'
+array([ 0.19956974])
+'error'
+array([ 0.19951856])
+'error'
+array([ 0.19946744])
+'error'
+array([ 0.19941637])
+'error'
+array([ 0.19936537])
+'error'
+array([ 0.19931442])
+'error'
+array([ 0.19926352])
+'error'
+array([ 0.19921269])
+'error'
+array([ 0.19916191])
+'error'
+array([ 0.19911119])
+'error'
+array([ 0.19906053])
+'error'
+array([ 0.19900992])
+'error'
+array([ 0.19895937])
+'error'
+array([ 0.19890888])
+'error'
+array([ 0.19885844])
+'error'
+array([ 0.19880806])
+'error'
+array([ 0.19875774])
+'error'
+array([ 0.19870747])
+'error'
+array([ 0.19865726])
+'error'
+array([ 0.19860711])
+'error'
+array([ 0.19855701])
+'error'
+array([ 0.19850697])
+'error'
+array([ 0.19845699])
+'error'
+array([ 0.19840706])
+'error'
+array([ 0.19835718])
+'error'
+array([ 0.19830737])
+'error'
+array([ 0.19825761])
+'error'
+array([ 0.1982079])
+'error'
+array([ 0.19815825])
+'error'
+array([ 0.19810865])
+'error'
+array([ 0.19805911])
+'error'
+array([ 0.19800963])
+'error'
+array([ 0.1979602])
+'error'
+array([ 0.19791082])
+'error'
+array([ 0.1978615])
+'error'
+array([ 0.19781224])
+'error'
+array([ 0.19776303])
+'error'
+array([ 0.19771387])
+'error'
+array([ 0.19766477])
+'error'
+array([ 0.19761573])
+'error'
+array([ 0.19756674])
+'error'
+array([ 0.1975178])
+'error'
+array([ 0.19746892])
+'error'
+array([ 0.19742009])
+'error'
+array([ 0.19737131])
+'error'
+array([ 0.19732259])
+'error'
+array([ 0.19727392])
+'error'
+array([ 0.19722531])
+'error'
+array([ 0.19717675])
+'error'
+array([ 0.19712824])
+'error'
+array([ 0.19707979])
+'error'
+array([ 0.19703139])
+'error'
+array([ 0.19698305])
+'error'
+array([ 0.19693475])
+'error'
+array([ 0.19688652])
+'error'
+array([ 0.19683833])
+'error'
+array([ 0.1967902])
+'error'
+array([ 0.19674212])
+'error'
+array([ 0.19669409])
+'error'
+array([ 0.19664611])
+'error'
+array([ 0.19659819])
+'error'
+array([ 0.19655032])
+'error'
+array([ 0.19650251])
+'error'
+array([ 0.19645474])
+'error'
+array([ 0.19640703])
+'error'
+array([ 0.19635937])
+'error'
+array([ 0.19631176])
+'error'
+array([ 0.19626421])
+'error'
+array([ 0.19621671])
+'error'
+array([ 0.19616925])
+'error'
+array([ 0.19612185])
+'error'
+array([ 0.19607451])
+'error'
+array([ 0.19602721])
+'error'
+array([ 0.19597997])
+'error'
+array([ 0.19593277])
+'error'
+array([ 0.19588563])
+'error'
+array([ 0.19583854])
+'error'
+array([ 0.1957915])
+'error'
+array([ 0.19574451])
+'error'
+array([ 0.19569758])
+'error'
+array([ 0.19565069])
+'error'
+array([ 0.19560386])
+'error'
+array([ 0.19555707])
+'error'
+array([ 0.19551034])
+'error'
+array([ 0.19546366])
+'error'
+array([ 0.19541703])
+'error'
+array([ 0.19537044])
+'error'
+array([ 0.19532391])
+'error'
+array([ 0.19527743])
+'error'
+array([ 0.195231])
+'error'
+array([ 0.19518462])
+'error'
+array([ 0.19513829])
+'error'
+array([ 0.19509201])
+'error'
+array([ 0.19504578])
+'error'
+array([ 0.1949996])
+'error'
+array([ 0.19495347])
+'error'
+array([ 0.19490739])
+'error'
+array([ 0.19486136])
+'error'
+array([ 0.19481538])
+'error'
+array([ 0.19476945])
+'error'
+array([ 0.19472357])
+'error'
+array([ 0.19467773])
+'error'
+array([ 0.19463195])
+'error'
+array([ 0.19458621])
+'error'
+array([ 0.19454053])
+'error'
+array([ 0.19449489])
+'error'
+array([ 0.1944493])
+matrix([[ 0.66828007,  0.63018531,  0.72885229,  0.99130695,  0.91983145,
+          1.01903616,  1.15297219,  1.00519582,  0.84978203,  0.89778396,
+          0.63660944,  0.38939065,  0.8986342 ,  0.93567057,  0.72639979,
+          1.13057176,  0.8674311 ,  0.83509132,  1.02336551,  1.01257458,
+          0.79523441,  1.08357321,  0.94508415,  1.02158834, -0.01423749,
+          0.31231746,  0.45138804,  0.23038233,  0.48912628, -0.13679524,
+          0.55336955, -0.02497587,  0.90348643, -0.02425624,  0.66559785,
+          0.29945892,  0.4708437 ,  0.91136839,  0.72956961, -0.00714113,
+          0.73516935,  0.62070383,  0.38759972,  0.90874905,  0.80298063,
+          0.91180547,  0.86643223,  0.90851631,  0.91150072,  0.78079584,
+          0.90061357,  1.10110741,  1.03873628,  0.98543925,  0.96245018,
+          0.96163813, -0.18039718]])
+'regression'
+array([ 0.66828007,  0.63018531,  0.72885229,  0.99130695,  0.91983145,
+        1.01903616,  1.15297219,  1.00519582,  0.84978203,  0.89778396,
+        0.63660944,  0.38939065,  0.8986342 ,  0.93567057,  0.72639979,
+        1.13057176,  0.8674311 ,  0.83509132,  1.02336551,  1.01257458,
+        0.79523441,  1.08357321,  0.94508415,  1.02158834, -0.01423749,
+        0.31231746,  0.45138804,  0.23038233,  0.48912628, -0.13679524,
+        0.55336955, -0.02497587,  0.90348643, -0.02425624,  0.66559785,
+        0.29945892,  0.4708437 ,  0.91136839,  0.72956961, -0.00714113,
+        0.73516935,  0.62070383,  0.38759972,  0.90874905,  0.80298063,
+        0.91180547,  0.86643223,  0.90851631,  0.91150072,  0.78079584,
+        0.90061357,  1.10110741,  1.03873628,  0.98543925,  0.96245018,
+        0.96163813, -0.18039718])
+'MSE spam train'
+0.19444930347198494
+'MSE spam test'
+0.19144195159586355
