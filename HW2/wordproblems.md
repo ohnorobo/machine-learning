@@ -4,27 +4,27 @@ table
 
     decision tree
     spam
-    test: 0.22420294697213022
+    test:  0.22420294697213022
     train: 0.015287836100290475
     housing
-    test: 55.9635359129718
+    test:  55.9635359129718
     train: 8.7948615499824019
 
     regression, normal
     spam
-    test: 0.22745483944643188
+    test:  0.22745483944643188
     train: 0.11278389586859197
     housing
-    test: 21.483099127900058
+    test:  21.483099127900058
     train: 28.793140665812356
 
     regression, grad decent
     spam
-    test: 128.8881744492665
-    train: 404.75251502724228
+    test:  0.19144195159586358
+    train: 0.19444930347198494
     housing
-    test: 145.17677234162036
-    train: 18.459930216322494
+    test:  19.761704596502604
+    train: 28.088616380725817
 
     log regression:
     spam
@@ -116,3 +116,6 @@ bad optimization objective -
 ### DHS ch6 pb1
 
 #### Show that if the transfer function of the hidden units is linear, a three-layer network is equivalent to a two-layer one. Explain why, therefore, that a three-layer network with linear hidden units cannot solve a non-linearly separable problem such as XOR or n-bit parity.
+
+Mapping linear functions together with a linear function can only result in another linear function. If this is true for layers A+B then is is true for layers (A+B)+C
+Since non-linear problems cannot be solved by two linear layers with a linear transfer function then they also cannot be solved by 3-layer networks. The first 2 of the 3 layers (A+B) are equivalent to another single layer, (A+B) = D, so the 3 layer network is just like the 2 layer network D+C.

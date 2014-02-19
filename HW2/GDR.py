@@ -4,7 +4,7 @@ from pprint import pprint
 import csv, time
 
 LEARNING_RATE = .00001
-STOP = .00001
+STOP = 10
 
 def get_gd_function(X, Y):
   # add a column of 1s
@@ -18,9 +18,6 @@ def get_gd_function(X, Y):
 
   while True:
 
-    #pprint("old")
-    #pprint(ws)
-
     new_ws = np.array([0]*len(ws))
 
     deltas = derivatives(ws, X, Y)
@@ -30,6 +27,8 @@ def get_gd_function(X, Y):
     pprint("error")
     pprint(least_squares_error_no_bias(ws.A1, X, Y))
     #time.sleep(1)
+
+    pprint(deltas)
 
     if np.absolute(deltas).mean() < STOP:
       break
@@ -78,11 +77,11 @@ def least_squares_error(regression_weights, features, truths):
     item = np.append(features[i,:], 1) #add in bias term
     truth = truths[i]
 
-    pprint({"truth": truth, "guess": np.inner(regression_weights, item)})
+    #pprint({"truth": truth, "guess": np.inner(regression_weights, item)})
     #pprint(item)
 
-    error += pow(abs(truth - np.inner(regression_weights, item)), 2)
-  return error / truth.size
+    error += abs(truth - np.inner(regression_weights, item)) ** 2
+  return error / truths.size
 
 def least_squares_error_no_bias(regression_weights, features, truths):
   error = 0
@@ -90,8 +89,8 @@ def least_squares_error_no_bias(regression_weights, features, truths):
     item = features[i,:]
     truth = truths[i]
     #pprint({"truth": truth, "guess": np.inner(regression_weights, item)})
-    error += abs(truth - np.inner(regression_weights, item))
-  return error / truth.size
+    error += abs(truth - np.inner(regression_weights, item)) ** 2
+  return error / truths.size
 
 def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),
@@ -143,6 +142,9 @@ class TestLinearReg(unittest.TestCase):
 
 data_dir = "../../data/HW1/"
 def test_housing():
+  global STOP
+  STOP = 10
+
   housing_train_filename = data_dir + "housing/housing_train.txt"
   housing_test_filename = data_dir + "housing/housing_test.txt"
 
@@ -195,7 +197,7 @@ def test_spam():
   features = test[:,:56]
   truth = test[:,57]
   error = least_squares_error(regression, features, truth)
-  pprint("MSE spam")
+  pprint("MSE spam test")
   pprint(error)
 
 PORT_DATA = "../../data/HW2/ex3Data/"
@@ -219,6 +221,6 @@ def test_portland_housing():
 
 
 if __name__ == "__main__":
-  test_housing()
-  #test_spam()
+  #test_housing()
+  test_spam()
   #test_portland_housing()
