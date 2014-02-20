@@ -28,7 +28,7 @@ def get_gd_function(X, Y):
     pprint(least_squares_error_no_bias(ws.A1, X, Y))
     #time.sleep(1)
 
-    pprint(deltas)
+    #pprint(deltas)
 
     if np.absolute(deltas).mean() < STOP:
       break
@@ -46,32 +46,13 @@ def stop(deltas):
 #get the derivative of function <ws . x> around x
 def derivatives(ws, x, y):
   hyp = np.dot(x, ws.A1)
-  #pprint("hyp")
-  #pprint(hyp)
-  #pprint(y)
-
-  #loss = y.T - hyp
   loss = hyp - y.T
-  #pprint("loss")
-  #pprint(loss)
-  #pprint(loss.shape)
-  #pprint(x.shape)
-  #pprint(loss)
-  #pprint(x)
-
-  #pprint('x')
-  #pprint(x)
-
   grad = np.dot(loss, x)
-  #pprint("grad")
-  #pprint(grad.A1)
 
   return grad.A1
 
 def least_squares_error(regression_weights, features, truths):
   error = 0
-
-  #pprint(regression_weights)
 
   for i in range(0,len(truths)):
     item = np.append(features[i,:], 1) #add in bias term
@@ -117,7 +98,7 @@ def normalize_data(data):
 def standardize_data(data):
   a = data.T
   new_matrix = np.zeros(a.shape)
-  truth_column_index = a.shape[0] - 1
+  truth_column_index = a.shape[0] - 1 #don't normalize labels
 
   mus = a.mean(axis=1)
   sigmas = a.std(axis=1)
@@ -151,7 +132,6 @@ def test_housing():
   train_data = read_csv_as_numpy_matrix(housing_train_filename)
   test_data = read_csv_as_numpy_matrix(housing_test_filename)
 
-  #TODO don't normalize labels
   all_data = np.vstack((train_data, test_data))
   all_data = standardize_data(all_data)
   train_data = all_data[:433,:]
@@ -163,6 +143,8 @@ def test_housing():
   print(features.shape, truth.shape)
 
   regression = get_gd_function(features, truth)
+  pprint("regression")
+  pprint(regression)
 
   error = least_squares_error(regression, features, truth)
   pprint("MSE housing training")
@@ -189,6 +171,8 @@ def test_spam():
   pprint(truth)
 
   regression = get_gd_function(features, truth)
+  pprint("regression")
+  pprint(regression)
 
   error = least_squares_error(regression, features, truth)
   pprint("MSE spam train")
@@ -212,6 +196,9 @@ def test_portland_housing():
 
   regression = get_gd_function(features, truth)
 
+  pprint("regression")
+  pprint(regression)
+
   error = least_squares_error(regression, features, truth)
 
   pprint("Portland Housing Error")
@@ -221,6 +208,6 @@ def test_portland_housing():
 
 
 if __name__ == "__main__":
-  #test_housing()
-  test_spam()
+  test_housing()
+  #test_spam()
   #test_portland_housing()

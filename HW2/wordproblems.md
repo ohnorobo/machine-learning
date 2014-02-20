@@ -28,11 +28,11 @@ table
 
     log regression:
     spam
-    test:
-    train:
+    test:  0.18411413242569871
+    train: 0.15090437475048965
     housing
-    test:
-    train:
+    test:  NA
+    train: NA
 
 
 ## problem 2
