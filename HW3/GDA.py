@@ -1,12 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
 
+import csv, math
+import numpy as np
+
 
 STOP = .1
 
 class GaussianMixtureModel():
 
-  def __init__(self, num_gaussians):
+  def __init__(self, num_gaussians, num_features):
     # list of gaussians
     # each gaussian is a tuple of mu and sigma
 
@@ -14,23 +17,23 @@ class GaussianMixtureModel():
     self.gaussian_weights = []
 
     for _ in xrange(num_gaussians):
-      mu = 
-      sigma = 
+      mu = 0
+      sigma = np.random.rand(num_gaussians, num_features)
       self.gaussians.append((mu, sigma))
       self.gaussian_weights.append(1/num_gaussians)
 
-  def train(data, truth):
+  def train(self, data, truth):
     self.features = data.T #TODO, ever used?
     self.items = data
     self.truth = truth
 
-   self.last_likelyhood = self.likelyhood()
+    self.last_likelyhood = self.likelyhood()
 
     while not self.convergence():
       gamma, n = self.set_expectations()
       self.maximize(gamma, n)
 
-  def set_expectations():
+  def set_expectations(self):
     gamma = np.zeroes((len(self.items), len(self.gaussians)))
     n = np.zeroes(len(self.gaussians))
 
@@ -46,14 +49,14 @@ class GaussianMixtureModel():
       n[j] = sum(gamma[:,j])
 
 
-  def maximize(gamma, n):
+  def maximize(self, gamma, n):
     new_mus = np.zeros(len(self.gaussians))
     new_sigmas = np.zeros(len(self.gaussians))
 
     y = self.truth #TODO ??
 
-    for j in range(len(self.gaussians))
-      self.gaussian_weights[j] = n[j] / len(self.items))
+    for j in range(len(self.gaussians)):
+      self.gaussian_weights[j] = n[j] / len(self.items)
 
       new_mus[j] = np.inner(gamma[:,j], y) / n[j]
 
@@ -62,30 +65,30 @@ class GaussianMixtureModel():
 
     self.gaussians = zip(new_mus, new_sigmas)
 
-  def convergence():
+  def convergence(self):
     new_likelyhood = likelyhood()
 
     if abs(self.last_likelyhood - new_likelyhood) < STOP:
       self.last_likelyhood = new_likelyhood
       return true
-    else
+    else:
       self.last_likelyhood = new_likelyhood
       return false
 
 
-  def likelyhood():
+  def likelyhood(self):
     densities = [self.density(item) for item in self.items]
     densities_logged = filter(math.ln, densities)
     return sum(densities_logged) / len(self.items)
 
 
   # density of x for a particulr gaussian, no weighting
-  def one_gaussian_density(x, gaussian):
+  def one_gaussian_density(self,x, gaussian):
     mu = gaussian[0]
     sigma = gaussian[1]
 
-    return (math.e, ** (-1/2 * (x - mu).T * sigma.inverse * (x - mu))) /
-           (2 * math.pi) ** d * sigma.absolute) ** 1/2
+    return (math.e ** (-1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu))) / \
+           ((2 * math.pi) ** d * sigma.absolute) ** 1/2
 
   #density over all gaussians/weights for x
   def density(self, x):
@@ -94,6 +97,46 @@ class GaussianMixtureModel():
     return np.inner(self.gaussian_weights, densities_per_gaussian)
 
 
+def read_csv_as_numpy_matrix(filename):
+  return np.matrix(list(csv.reader(open(filename,"rb"),
+                   delimiter=','))).astype('float')
 
+data_dir1 = "../../data/HW1/"
+data_dir3 = "../../data/HW3/"
 
+def test_spam():
+  spam_filename = data_dir1 + "spambase/spambase.data"
+  data = read_csv_as_numpy_matrix(spam_filename)
 
+  train = data[:4000,:]
+  test = data[4001:,:]
+
+  features = train[:,:56]
+  truth = train[:,57]
+
+  gmm = GaussianMixtureModel(3, 57)
+  gmm.train(features, truth)
+
+def test_two_gaussians():
+  filename = data_dir3 + "2gaussian.txt"
+  data = read_csv_as_numpy_matrix(filename)
+
+  features = data[:,:1]
+  truth = data[:,1]
+
+  gmm = GaussianMixtureModel(3, 1)
+  gmm.train(features, truth)
+
+def test_three_gaussians():
+  filename = data_dir3 + "3gaussian.txt"
+  data = read_csv_as_numpy_matrix(filename)
+
+  features = data[:,:1]
+  truth = data[:,1]
+
+  gmm = GaussianMixtureModel(3, 1)
+  gmm.train(features, truth)
+
+if __name__ == "__main__":
+  test_two_gaussians()
+  test_three_gaussians()
