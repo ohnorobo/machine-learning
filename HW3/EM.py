@@ -3,6 +3,8 @@
 
 import csv, math
 import numpy as np
+from pprint import pprint
+from scipy import linalg
 
 
 STOP = .1
@@ -18,9 +20,13 @@ class GaussianMixtureModel():
 
     for _ in xrange(num_gaussians):
       mu = 0
-      sigma = np.random.rand(num_gaussians, num_features)
+      sigma = np.random.rand(num_features, num_features)
       self.gaussians.append((mu, sigma))
       self.gaussian_weights.append(1/num_gaussians)
+
+    pprint("initial weights/gaussians")
+    pprint(self.gaussian_weights)
+    pprint(self.gaussians)
 
   def train(self, data, truth):
     self.features = data.T #TODO, ever used?
@@ -29,9 +35,13 @@ class GaussianMixtureModel():
 
     self.last_likelyhood = self.likelyhood()
 
+    i = 0
+
     while not self.convergence():
       gamma, n = self.set_expectations()
       self.maximize(gamma, n)
+      pprint("no convergence" + str(i))
+      i += 1
 
   def set_expectations(self):
     gamma = np.zeroes((len(self.items), len(self.gaussians)))
@@ -78,22 +88,44 @@ class GaussianMixtureModel():
 
   def likelyhood(self):
     densities = [self.density(item) for item in self.items]
-    densities_logged = filter(math.ln, densities)
-    return sum(densities_logged) / len(self.items)
+    pprint(densities)
+    densities_logged = filter(lambda x: math.log(x, math.e), densities)
+    likelyhood =  sum(densities_logged) / len(self.items)
+
+    pprint("likelyhood")
+    pprint(likelyhood)
+
+    return likelyhood
 
 
   # density of x for a particulr gaussian, no weighting
-  def one_gaussian_density(self,x, gaussian):
+  def one_gaussian_density(self, x, gaussian):
     mu = gaussian[0]
     sigma = gaussian[1]
+    dimension = len(gaussian[1][0])
 
-    return (math.e ** (-1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu))) / \
-           ((2 * math.pi) ** d * sigma.absolute) ** 1/2
+    #pprint(x)
+    #pprint(gaussian)
+    #pprint(-1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu))
+
+    a_v = -1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu)
+    b_v = linalg.expm(a_v)
+    c_v = (2 * math.pi) ** dimension * np.linalg.det(sigma)
+    d_v = c_v ** 1/2
+
+    return (b_v/d_v)[0][0]
+
+    #return (math.e ** (-1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu))) / \
+    #       ((2 * math.pi) ** d * numpy.linalg.det(sigma.absolute)) ** 1/2
 
   #density over all gaussians/weights for x
   def density(self, x):
     densities_per_gaussian = [self.one_gaussian_density(x, gaussian)
                               for gaussian in self.gaussians]
+
+    #pprint("densities")
+    #pprint(densities_per_gaussian)
+
     return np.inner(self.gaussian_weights, densities_per_gaussian)
 
 
