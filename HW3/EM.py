@@ -22,7 +22,7 @@ class GaussianMixtureModel():
       mu = 0
       sigma = np.random.rand(num_features, num_features)
       self.gaussians.append((mu, sigma))
-      self.gaussian_weights.append(1/num_gaussians)
+      self.gaussian_weights.append(1.0/num_gaussians)
 
     pprint("initial weights/gaussians")
     pprint(self.gaussian_weights)
@@ -76,19 +76,19 @@ class GaussianMixtureModel():
     self.gaussians = zip(new_mus, new_sigmas)
 
   def convergence(self):
-    new_likelyhood = likelyhood()
+    new_likelyhood = self.likelyhood()
 
     if abs(self.last_likelyhood - new_likelyhood) < STOP:
       self.last_likelyhood = new_likelyhood
-      return true
+      return True
     else:
       self.last_likelyhood = new_likelyhood
-      return false
+      return False
 
 
   def likelyhood(self):
     densities = [self.density(item) for item in self.items]
-    pprint(densities)
+    pprint(np.array(densities))
     densities_logged = filter(lambda x: math.log(x, math.e), densities)
     likelyhood =  sum(densities_logged) / len(self.items)
 
@@ -125,6 +125,8 @@ class GaussianMixtureModel():
 
     #pprint("densities")
     #pprint(densities_per_gaussian)
+    #pprint(self.gaussian_weights)
+    #pprint(np.inner(self.gaussian_weights, densities_per_gaussian))
 
     return np.inner(self.gaussian_weights, densities_per_gaussian)
 
