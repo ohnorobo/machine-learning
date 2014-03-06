@@ -11,69 +11,95 @@ STOP = .1
 
 class GaussianMixtureModel():
 
-  def __init__(self, num_gaussians, num_features):
+  def __init__(self, num_gaussians):
     # list of gaussians
     # each gaussian is a tuple of mu and sigma
 
+    self.num_gaussians = num_gaussians
     self.gaussians = []
     self.gaussian_weights = []
 
-    for _ in xrange(num_gaussians):
-      mu = 0
+  def train(self, data):
+    self.items = data
+    pprint(data.shape)
+    num_features = data.shape[1]
+
+    # initialize
+    for _ in xrange(self.num_gaussians):
+      mu = np.zeros(num_features, dtype='float16')
       sigma = np.random.rand(num_features, num_features)
+      #sigma = np.cov(data, rowvar=0)
       self.gaussians.append((mu, sigma))
-      self.gaussian_weights.append(1.0/num_gaussians)
+      self.gaussian_weights.append(100.0/self.num_gaussians)
 
     pprint("initial weights/gaussians")
     pprint(self.gaussian_weights)
     pprint(self.gaussians)
 
-  def train(self, data, truth):
-    self.features = data.T #TODO, ever used?
-    self.items = data
-    self.truth = truth
-
-    self.last_likelyhood = self.likelyhood()
-
+    self.last_likelyhood = float("-inf")
     i = 0
 
+    # iterate
     while not self.convergence():
+      print("iteration", i)
       gamma, n = self.set_expectations()
+      pprint("gamma, n")
+      pprint((gamma, n))
+      pprint((gamma.shape, n.shape))
       self.maximize(gamma, n)
       pprint("no convergence" + str(i))
       i += 1
 
   def set_expectations(self):
-    gamma = np.zeroes((len(self.items), len(self.gaussians)))
-    n = np.zeroes(len(self.gaussians))
+    gamma = np.zeros((len(self.items), len(self.gaussians)), dtype='float16')
+    n = np.zeros(len(self.gaussians), dtype='float16')
 
     for i in range(len(self.items)):
       densities_sum = self.density(self.items[i])
 
       for j in range(len(self.gaussians)):
-        gamma[i,j] = w[j] * \
+        gamma[i,j] = self.gaussian_weights[j] * \
                      self.one_gaussian_density(self.items[i], self.gaussians[j]) \
                      / densities_sum
 
     for j in range(len(self.gaussians)):
       n[j] = sum(gamma[:,j])
 
+    return gamma, n
+
 
   def maximize(self, gamma, n):
-    new_mus = np.zeros(len(self.gaussians))
-    new_sigmas = np.zeros(len(self.gaussians))
+    new_mus = np.zeros(len(self.gaussians), dtype='float16')
+    new_sigmas = []
 
-    y = self.truth #TODO ??
+    y = self.items #TODO??
 
     for j in range(len(self.gaussians)):
+      pprint(j)
       self.gaussian_weights[j] = n[j] / len(self.items)
 
-      new_mus[j] = np.inner(gamma[:,j], y) / n[j]
+      pprint("gamma, y, n")
+      pprint((gamma[:,j], y[:,j].A1, n[j]))
+      pprint((gamma[:,j].shape, y[:,j].A1.shape, n[j].shape))
+      new_mus[j] = np.inner(gamma[:,j], y[:,j].A1) / n[j]
 
-      difference = y = new_mus
-      new_sigmas[j] = np.dot(gamma[:,j], difference * difference.T) / n[j]
+      new_sigma = np.zeros(self.gaussians[0][1].shape, dtype='float16')
+                  #same shape as prev sigmas
+      for i in range(len(self.items)):
+        #difference = y[i] - new_mus
+        difference = y - new_mus[j]
+        #new_sigmas[j] = np.dot(gamma[i,j], difference * difference.T) / n[j]
+        #pprint((gamma[i,j], difference, difference.T))
+        #pprint((gamma[i,j].shape, difference.shape, difference.T.shape))
+
+        new_sigma += gamma[i,j] * difference.T * difference
+        new_sigma = new_sigma / n[j]
+      new_sigmas.append(new_sigma)
 
     self.gaussians = zip(new_mus, new_sigmas)
+
+    pprint("new gaussians")
+    pprint(self.gaussians)
 
   def convergence(self):
     new_likelyhood = self.likelyhood()
@@ -88,7 +114,7 @@ class GaussianMixtureModel():
 
   def likelyhood(self):
     densities = [self.density(item) for item in self.items]
-    pprint(np.array(densities))
+    #pprint(np.array(densities))
     densities_logged = filter(lambda x: math.log(x, math.e), densities)
     likelyhood =  sum(densities_logged) / len(self.items)
 
@@ -102,10 +128,13 @@ class GaussianMixtureModel():
   def one_gaussian_density(self, x, gaussian):
     mu = gaussian[0]
     sigma = gaussian[1]
-    dimension = len(gaussian[1][0])
+    dimension = len(mu)
+
+    x = x.A1
 
     #pprint(x)
-    #pprint(gaussian)
+    #pprint(mu)
+    #pprint(sigma)
     #pprint(-1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu))
 
     a_v = -1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu)
@@ -133,44 +162,55 @@ class GaussianMixtureModel():
 
 def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),
-                   delimiter=','))).astype('float')
+                   delimiter=','))).astype('float16')
 
-data_dir1 = "../../data/HW1/"
+
+import unittest
+class TestGDA(unittest.TestCase):
+
+  def test_initial_em_step(self):
+    # three gaussians in 2 dimensions
+
+    gmm = GaussianMixtureModel(3)
+
+    filename = data_dir3 + "3gaussian.txt"
+    data = read_csv_as_numpy_matrix(filename)
+
+    gmm.last_likelyhood = float("-inf")
+    gmm.items = data
+    gmm.gaussian_weights = [33.333333333333336, 33.333333333333336, 33.333333333333336]
+    gmm.gaussians = [(np.array([ 0.,  0.], dtype='float16'),
+                      np.array([[ 0.88252301,  0.54174647],
+                             [ 0.36648134,  0.5903604 ]])),
+                     (np.array([ 0.,  0.], dtype='float16'),
+                      np.array([[ 0.57356298,  0.1492326 ],
+                             [ 0.41697418,  0.86501807]])),
+                     (np.array([ 0.,  0.], dtype='float16'),
+                      np.array([[ 0.3101249 ,  0.39345224],
+                             [ 0.72807404,  0.9316527 ]]))]
+
+    self.assertFalse(gmm.convergence())
+    gamma, n = gmm.set_expectations()
+    pprint((gamma, n))
+    gmm.maximize(gamma, n)
+
+
 data_dir3 = "../../data/HW3/"
 
-def test_spam():
-  spam_filename = data_dir1 + "spambase/spambase.data"
-  data = read_csv_as_numpy_matrix(spam_filename)
-
-  train = data[:4000,:]
-  test = data[4001:,:]
-
-  features = train[:,:56]
-  truth = train[:,57]
-
-  gmm = GaussianMixtureModel(3, 57)
-  gmm.train(features, truth)
-
-def test_two_gaussians():
+def two_gaussians():
   filename = data_dir3 + "2gaussian.txt"
   data = read_csv_as_numpy_matrix(filename)
 
-  features = data[:,:1]
-  truth = data[:,1]
+  gmm = GaussianMixtureModel(2)
+  gmm.train(data)
 
-  gmm = GaussianMixtureModel(3, 1)
-  gmm.train(features, truth)
-
-def test_three_gaussians():
+def three_gaussians():
   filename = data_dir3 + "3gaussian.txt"
   data = read_csv_as_numpy_matrix(filename)
 
-  features = data[:,:1]
-  truth = data[:,1]
-
-  gmm = GaussianMixtureModel(3, 1)
-  gmm.train(features, truth)
+  gmm = GaussianMixtureModel(3)
+  gmm.train(data)
 
 if __name__ == "__main__":
-  test_two_gaussians()
-  test_three_gaussians()
+  #two_gaussians()
+  three_gaussians()
