@@ -78,10 +78,13 @@ class GaussianMixtureModel():
       pprint(j)
       self.gaussian_weights[j] = n[j] / len(self.items)
 
-      pprint("gamma, y, n")
-      pprint((gamma[:,j], y[:,j].A1, n[j]))
-      pprint((gamma[:,j].shape, y[:,j].A1.shape, n[j].shape))
-      new_mus[j] = np.inner(gamma[:,j], y[:,j].A1) / n[j]
+      #print("gamma, y, n")
+      #pprint((gamma.shape, y.shape, n.shape))
+      #pprint((gamma[:,j], y, n[j]))
+      #pprint((gamma[:,j].shape, y, n[j].shape))
+      #pprint(np.dot(gamma[:,j], y) / n[j])
+      #pprint(np.sum(np.dot(gamma[:,j], y)) / n[j])
+      new_mus[j] = np.sum(np.dot(gamma[:,j], y)) / n[j]
 
       new_sigma = np.zeros(self.gaussians[0][1].shape, dtype='float16')
                   #same shape as prev sigmas
@@ -114,7 +117,7 @@ class GaussianMixtureModel():
 
   def likelyhood(self):
     densities = [self.density(item) for item in self.items]
-    #pprint(np.array(densities))
+    pprint(np.array(densities))
     densities_logged = filter(lambda x: math.log(x, math.e), densities)
     likelyhood =  sum(densities_logged) / len(self.items)
 
@@ -140,6 +143,8 @@ class GaussianMixtureModel():
     a_v = -1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu)
     b_v = linalg.expm(a_v)
     c_v = (2 * math.pi) ** dimension * np.linalg.det(sigma)
+    pprint("det")
+    pprint(np.linalg.det(sigma))
     d_v = c_v ** 1/2
 
     return (b_v/d_v)[0][0]
@@ -193,6 +198,8 @@ class TestGDA(unittest.TestCase):
     gamma, n = gmm.set_expectations()
     pprint((gamma, n))
     gmm.maximize(gamma, n)
+
+    self.assertTrue(False)
 
 
 data_dir3 = "../../data/HW3/"
