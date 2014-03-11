@@ -5,9 +5,9 @@ import csv, math
 import numpy as np
 from pprint import pprint
 from scipy import linalg
+from scipy.stats import multivariate_normal
 
-
-STOP = .1
+STOP = .00001
 
 class GaussianMixtureModel():
 
@@ -26,11 +26,11 @@ class GaussianMixtureModel():
 
     # initialize
     for _ in xrange(self.num_gaussians):
-      mu = np.zeros(num_features, dtype='float16')
+      mu = np.random.rand(num_features)
       sigma = np.random.rand(num_features, num_features)
-      #sigma = np.cov(data, rowvar=0)
+      sigma = np.cov(data, rowvar=0)
       self.gaussians.append((mu, sigma))
-      self.gaussian_weights.append(100.0/self.num_gaussians)
+      self.gaussian_weights.append(1.0/self.num_gaussians)
 
     pprint("initial weights/gaussians")
     pprint(self.gaussian_weights)
@@ -43,16 +43,22 @@ class GaussianMixtureModel():
     while not self.convergence():
       print("iteration", i)
       gamma, n = self.set_expectations()
-      pprint("gamma, n")
-      pprint((gamma, n))
-      pprint((gamma.shape, n.shape))
+      #pprint("gamma, n")
+      #pprint((gamma, n))
+      #pprint((gamma.shape, n.shape))
       self.maximize(gamma, n)
-      pprint("no convergence" + str(i))
+
+      pprint("means, gaussians")
+      pprint(self.gaussian_weights)
+      pprint(self.gaussians)
+      pprint("no convergence " + str(i))
       i += 1
 
+    pprint("converged on iteration " + str(i))
+
   def set_expectations(self):
-    gamma = np.zeros((len(self.items), len(self.gaussians)), dtype='float16')
-    n = np.zeros(len(self.gaussians), dtype='float16')
+    gamma = np.zeros((len(self.items), len(self.gaussians)))
+    n = np.zeros(len(self.gaussians))
 
     for i in range(len(self.items)):
       densities_sum = self.density(self.items[i])
@@ -69,13 +75,13 @@ class GaussianMixtureModel():
 
 
   def maximize(self, gamma, n):
-    new_mus = np.zeros(len(self.gaussians), dtype='float16')
+    new_mus = [0] * self.num_gaussians
     new_sigmas = []
 
     y = self.items #TODO??
 
     for j in range(len(self.gaussians)):
-      pprint(j)
+      pprint("updating gaussian #" + str(j))
       self.gaussian_weights[j] = n[j] / len(self.items)
 
       #print("gamma, y, n")
@@ -84,9 +90,11 @@ class GaussianMixtureModel():
       #pprint((gamma[:,j].shape, y, n[j].shape))
       #pprint(np.dot(gamma[:,j], y) / n[j])
       #pprint(np.sum(np.dot(gamma[:,j], y)) / n[j])
-      new_mus[j] = np.sum(np.dot(gamma[:,j], y)) / n[j]
 
-      new_sigma = np.zeros(self.gaussians[0][1].shape, dtype='float16')
+      new_mus[j] = (np.dot(gamma[:,j], y) / n[j]).A1
+      #mus should be num_gaussians x num_features
+
+      new_sigma = np.zeros(self.gaussians[0][1].shape)
                   #same shape as prev sigmas
       for i in range(len(self.items)):
         #difference = y[i] - new_mus
@@ -101,8 +109,8 @@ class GaussianMixtureModel():
 
     self.gaussians = zip(new_mus, new_sigmas)
 
-    pprint("new gaussians")
-    pprint(self.gaussians)
+    #pprint("new gaussians")
+    #pprint(self.gaussians)
 
   def convergence(self):
     new_likelyhood = self.likelyhood()
@@ -117,7 +125,7 @@ class GaussianMixtureModel():
 
   def likelyhood(self):
     densities = [self.density(item) for item in self.items]
-    pprint(np.array(densities))
+    #pprint(np.array(densities))
     densities_logged = filter(lambda x: math.log(x, math.e), densities)
     likelyhood =  sum(densities_logged) / len(self.items)
 
@@ -127,6 +135,7 @@ class GaussianMixtureModel():
     return likelyhood
 
 
+  '''
   # density of x for a particulr gaussian, no weighting
   def one_gaussian_density(self, x, gaussian):
     mu = gaussian[0]
@@ -151,6 +160,10 @@ class GaussianMixtureModel():
 
     #return (math.e ** (-1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu))) / \
     #       ((2 * math.pi) ** d * numpy.linalg.det(sigma.absolute)) ** 1/2
+  '''
+
+  def one_gaussian_density(self, x, gaussian):
+    return multivariate_normal.pdf(x, mean=gaussian[0], cov=gaussian[1])
 
   #density over all gaussians/weights for x
   def density(self, x):
@@ -184,13 +197,13 @@ class TestGDA(unittest.TestCase):
     gmm.last_likelyhood = float("-inf")
     gmm.items = data
     gmm.gaussian_weights = [33.333333333333336, 33.333333333333336, 33.333333333333336]
-    gmm.gaussians = [(np.array([ 0.,  0.], dtype='float16'),
+    gmm.gaussians = [(np.array([ 0.,  0.]),
                       np.array([[ 0.88252301,  0.54174647],
                              [ 0.36648134,  0.5903604 ]])),
-                     (np.array([ 0.,  0.], dtype='float16'),
+                     (np.array([ 0.,  0.]),
                       np.array([[ 0.57356298,  0.1492326 ],
                              [ 0.41697418,  0.86501807]])),
-                     (np.array([ 0.,  0.], dtype='float16'),
+                     (np.array([ 0.,  0.]),
                       np.array([[ 0.3101249 ,  0.39345224],
                              [ 0.72807404,  0.9316527 ]]))]
 
