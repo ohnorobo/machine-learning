@@ -2,7 +2,7 @@
 import numpy as np
 #from scipy.stats import multivariate_normal
 from scipy.stats import norm
-from sklearn.metrics import roc_curve, auc
+#from sklearn.metrics import roc_curve, auc
 import pylab as pl
 from pprint import pprint
 from copy import deepcopy
@@ -311,6 +311,45 @@ def column_means(a):
 
 def column_stds(a):
   return [np.std(l) for l in a.T]
+
+def roc_curve(truths, predictions):
+  # return fpr, tpr, threshholds
+  both = zip(predictions, truths)
+  both = sorted(both, key=lambda x: x[0]) #sort by predictions
+  predictions, truths = zip(*both)
+
+  fprs = []
+  tprs = []
+
+  for i, (prediction, truth) in enumerate(zip(predictions, truths)):
+
+    if i != 0:
+      tpr = len(filter(lambda x: x == 1, truths[:i]))
+      # predicted negatives that are actually positive
+      fpr = len(filter(lambda x: x == 0, truths[i:]))
+      # predicted positives that are actually negative
+
+      num_negatives = len(filter(lambda x: x==0, truths))
+      num_positives = len(filter(lambda x: x==1, truths))
+
+      fprs.append(float(fpr) / num_negatives)
+      tprs.append(1 + -1*(float(tpr) / num_positives))
+
+  return fprs, tprs, predictions[1:]
+
+def auc(fprs, tprs):
+  #returns area under curve defined by xs and ys
+
+  both = zip(fprs, tprs)
+  both = sorted(both, key=lambda x: x[0]) #sort by fprs
+  fprs, tprs = zip(*both)
+
+  trapezoids = []
+
+  for i in range(2, len(fprs)):
+    trapezoids.append((fprs[i] - fprs[i-1]) * (tprs[i] + tprs[i-1]))
+
+  return sum(trapezoids) / 2
 
 ############## Test
 
