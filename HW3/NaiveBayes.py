@@ -1,20 +1,31 @@
 #!/usr/bin/python
 import numpy as np
-from scipy.stats import multivariate_normal
+#from scipy.stats import multivariate_normal
+from scipy.stats import norm
+from sklearn.metrics import roc_curve, auc
+import pylab as pl
 from pprint import pprint
 from copy import deepcopy
+import pandas
 import csv
 
 K_FOLDS = 10
+
+#how much to widen gaussians with no standard deviation
+SIGMA_SMOOTHING = .001
+
+CUTOFF = .5
 
 
 class NaiveBayes():
 
   def __init__(self, features, truths):
-    # Makes a Naive bayes classifier modeling each feature as one of
-    # "bernoulli"
-    # "gaussian"
-    # "histogram"
+    # Makes a Naive bayes classifier
+
+    # Subclasses:
+    # bernoulli
+    # gaussian
+    # histogram
 
     self.items = features
     # truth values must be only 0s and 1s
@@ -47,7 +58,10 @@ class NaiveBayes():
     p1 = p1 * self.prob_per_class(clazz)
 
     #pprint(("  ", p0, p1))
-    return p1 / (p0 + p1)
+    if p0 == 0 and p1 == 0:
+      return .5
+    else:
+      return p1 / (p0 + p1)
 
 
   def classify_all(self, items):
@@ -58,6 +72,57 @@ class NaiveBayes():
     differences = map(lambda x: abs(x[0]-x[1]), zip(predictions, truths))
     return sum(differences) / len(differences)
 
+  def error_tables(self, items, truths):
+    misclassified = 0
+    false_pos = 0
+    false_neg = 0
+
+    ones = filter(lambda x: x == 1, truths)
+    zeros = filter(lambda x: x == 0, truths)
+
+    predictions = self.classify_all(items)
+
+    for truth, prediction in zip(truths, predictions):
+
+      if prediction > CUTOFF:
+        guess = 1
+      else:
+        guess = 0
+
+      if guess != truth:
+        misclassified += 1
+
+        if truth == 0:
+          false_pos += 1
+        elif truth == 1:
+          false_neg += 1
+
+    values = {"Misclassified": [float(misclassified) / len(truths)],
+              "False Pos": [float(false_pos) / len(zeros)],
+              "False Neg": [float(false_neg) / len(ones)]}
+
+    print(pandas.DataFrame(values))
+
+  def roc_curve_data(self, items, truths):
+    predictions = self.classify_all(items)
+
+    #taken from http://scikit-learn.org/0.11/auto_examples/plot_roc.html
+
+    # Compute ROC curve and area the curve
+    fpr, tpr, thresholds = roc_curve(truths, predictions)
+    roc_auc = auc(fpr, tpr)
+    print "\nAUC : %f" % roc_auc
+
+    pl.clf()
+    pl.plot(fpr, tpr, label='ROC curve (area = %0.2f)' % roc_auc)
+    pl.plot([0, 1], [0, 1], 'k--')
+    pl.xlim([0.0, 1.0])
+    pl.ylim([0.0, 1.0])
+    pl.xlabel('False Positive Rate')
+    pl.ylabel('True Positive Rate')
+    pl.title('ROC curve')
+    pl.legend(loc="lower right")
+    pl.show()
 
   def prob_per_feature_value(self, feature_index, feature_value, clazz):
     # p(feature_value | feature_index, clazz)
@@ -117,26 +182,123 @@ class BernoulliNaiveBayes(NaiveBayes):
 
 
 class GaussianNaiveBayes(NaiveBayes):
-   # gaussian, choose gaussian(m, sigma) for each feature (1Dimensional)
-   # p(m_0, sigma_0 | 0)
-   # p(m_0, sigma_0 | 1)
-   # = gaussian.prob_density(m, sigma, value)
+  # gaussian, choose gaussian(m, sigma) for each feature (1Dimensional)
+  # p(m_0, sigma_0 | 0)
+  # p(m_0, sigma_0 | 1)
+  # = gaussian.prob_density(m, sigma, value)
 
-   pass
+  def train_features(self):
+
+    zeroes, ones = separate_classes(self.items, self.truths)
+
+    mus0 = column_means(zeroes)
+    sigmas0 = self.smooth_sigmas(column_stds(zeroes))
+
+    mus1 = column_means(ones)
+    sigmas1 = self.smooth_sigmas(column_stds(ones))
+
+    self.gaussians = {0: zip(mus0, sigmas0), 1: zip(mus1, sigmas1)}
+
+    # pprint(self.gaussians)
+
+  def prob_per_feature_value(self, feature_index, feature_value, clazz):
+    mu = self.gaussians[clazz][feature_index][0]
+    sigma = self.gaussians[clazz][feature_index][1]
+
+    return norm.pdf(feature_value, loc=mu, scale=sigma)
+
+  def smooth_sigmas(self, sigmas):
+    # add a slight bump if any sigmas = 0
+    return map(lambda s: SIGMA_SMOOTHING if s == 0 else s, sigmas)
+
+def separate_classes(items, truths):
+  # returns two arrays of items,
+  # one for items where truth=0 and one where truth=1
+
+  class0 = []
+  class1 = []
+
+  for item, truth in zip(items, truths):
+    if truth == 0:
+      class0.append(item)
+    elif truth == 1:
+      class1.append(item)
+    else:
+      raise Exception("truth != 0 or 1, was: " + str(truth))
+
+  return np.array(class0), np.array(class1)
+
+
 
 class HistogramNaiveBayes(NaiveBayes):
-   # histogram, choose values [min, low-class-mean, mean, high-class-mean, max]
-   # class means = means for just 0 or 1
-   #
-   # make 4 buckets, one for each interval between those values
-   # b1 = [min, low-class-mean)
-   # b2 = [low-class-mean, mean)
-   # b3 = [mean, high-class-mean)
-   # b4 = [high-class-mean, max)
-   #
-   # calculate prob of each class given 0 or 1
+  # histogram, choose values [min, low-class-mean, mean, high-class-mean, max]
+  # class means = means for just 0 or 1
+  #
+  # make 4 buckets, one for each interval between those values
+  # b1 = [min, low-class-mean)
+  # b2 = [low-class-mean, mean)
+  # b3 = [mean, high-class-mean)
+  # b4 = [high-class-mean, max)
+  #
+  # calculate prob of each class given 0 or 1
 
-   pass
+  def train_features(self):
+    num_features = len(self.items.T)
+    self.bucket_edges = [0]*num_features
+
+    zeroes, ones = separate_classes(self.items, self.truths)
+
+    for i, (feature, feature0, feature1) in enumerate(zip(self.items.T, zeroes.T, ones.T)):
+      max_val = max(feature)
+      min_val = min(feature)
+      mean_val = sum(feature) / len(feature)
+      mean0 = sum(feature0) / len(feature0)
+      mean1 = sum(feature1) / len(feature1)
+
+      if mean0 < mean1:
+        self.bucket_edges[i] = [min_val, mean0, mean_val, mean1, max_val]
+      else:
+        self.bucket_edges[i] = [min_val, mean1, mean_val, mean0, max_val]
+
+    self.bucket_counts = {0: [0]*num_features, 1: [0]*num_features}
+    for i in range(num_features):
+      self.bucket_counts[0][i] = [0, 0, 0, 0] #start with 0 in all buckets
+      self.bucket_counts[1][i] = [0, 0, 0, 0] #start with 0 in all buckets
+
+    for item, truth in zip(self.items, self.truths):
+      for i, feature_value in enumerate(item):
+        min_val, low_mean, mean, high_mean, max_val = self.bucket_edges[i]
+        buckets = self.bucket_counts[truth][i]
+
+        # we're never actually checking the min and max here
+        # since it can only cause smoothing problems
+        if feature_value < low_mean:
+          buckets[0] += 1
+        elif low_mean <= feature_value < mean:
+          buckets[1] += 1
+        elif mean <= feature_value < high_mean:
+          buckets[2] += 1
+        elif high_mean <= feature_value:
+          buckets[3] += 1
+        else:
+          raise Exception("illegal feature value " + str(feature_value))
+
+  def prob_per_feature_value(self, feature_index, feature_value, clazz):
+    min_val, low_mean, mean, high_mean, max_val = self.bucket_edges[feature_index]
+    buckets = self.bucket_counts[clazz][feature_index]
+
+    if feature_value < low_mean:
+      count = buckets[0]
+    elif low_mean <= feature_value < mean:
+      count = buckets[1]
+    elif mean <= feature_value < high_mean:
+      count = buckets[2]
+    elif high_mean <= feature_value:
+      count = buckets[3]
+    else:
+      raise Exception("illegal feature value " + str(feature_value))
+
+    return float(count) / sum(buckets)
 
 
 ############# Utility Functions
@@ -145,13 +307,16 @@ def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),delimiter=','))).astype('float')
 
 def column_means(a):
-    return [float(sum(l))/len(l) for l in a.T]
+  return [float(sum(l))/len(l) for l in a.T]
+
+def column_stds(a):
+  return [np.std(l) for l in a.T]
 
 ############## Test
 
 data_dir = "../../data/HW1/"
+spam_filename = data_dir + "spambase/spambase.data"
 def cross_validate_spam(NaiveBayesClass):
-  spam_filename = data_dir + "spambase/spambase.data"
   data = read_csv_as_numpy_matrix(spam_filename)[:4600,:]
 
   np.random.shuffle(data) #truffle shuffle
@@ -184,14 +349,36 @@ def cross_validate_spam(NaiveBayesClass):
     pprint("cv: " + str(i))
     pprint(error)
 
+
   pprint("avg error")
   pprint(total_error / K_FOLDS)
 
+def error_tables(NaiveBayesClass):
+  data = read_csv_as_numpy_matrix(spam_filename)[:4600,:]
+  np.random.shuffle(data)
+  train = data[:4000,:]
+  test = data[4001:,:]
+
+  features = np.array(train[:,:56])
+  truths = train[:,57].A1
+  nb = NaiveBayesClass(features, truths)
+  nb.train()
+
+  features = np.array(test[:,:56])
+  truths = test[:,57].A1
+
+  nb.error_tables(features, truths)
+  roc_datapoints = nb.roc_curve_data(features, truths)
+
+def do_all_the_things(clazz):
+  #cross_validate_spam(clazz)
+  error_tables(clazz)
+
 if __name__ =="__main__":
-  pprint("Bernoulli")
-  cross_validate_spam(BernoulliNaiveBayes)
-  #pprint("Gaussian")
-  #cross_validate_spam(GaussianNaiveBayes)
-  #pprint("Histogram")
-  #cross_validate_spam(HistogramNaiveBayes)
+  print("\nBernoulli")
+  do_all_the_things(BernoulliNaiveBayes)
+  print("\nGaussian")
+  do_all_the_things(GaussianNaiveBayes)
+  print("\nHistogram")
+  do_all_the_things(HistogramNaiveBayes)
 
