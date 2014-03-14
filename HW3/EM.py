@@ -9,8 +9,8 @@ from scipy.stats import multivariate_normal
 from sklearn.cluster import k_means
 
 STOP = .00001
-TOO_LOW = .01
-BUMP = .5 #minimum variance value allowed
+#TOO_LOW = .01
+BUMP = .1 #minimum variance value allowed
 
 class GaussianMixtureModel():
 
@@ -28,7 +28,6 @@ class GaussianMixtureModel():
 
   def init_given_data(self, data):
     self.items = data
-    pprint(data.shape)
     num_features = data.shape[1]
 
     all_mus = self.get_initial_clusters(data, self.num_gaussians)
@@ -54,18 +53,17 @@ class GaussianMixtureModel():
     while not self.convergence():
       print("iteration", i)
       gamma, n = self.set_expectations()
-      pprint("gamma, n")
-      pprint((gamma, n))
-      #pprint((gamma.shape, n.shape))
+      #pprint("gamma, n")
+      #pprint((gamma, n))
       self.maximize(gamma, n)
+
+      #self.smooth_sigma_diagonal()
 
       pprint("means, gaussians")
       pprint(self.gaussian_weights)
       pprint(self.gaussians)
       pprint("no convergence " + str(i))
       i += 1
-
-      #self.smooth_sigma_diagonal()
 
     pprint("converged on iteration " + str(i))
 
@@ -74,14 +72,10 @@ class GaussianMixtureModel():
     return centroids
 
   def smooth_sigma_diagonal(self):
+    diag = BUMP * np.eye(self.gaussians[0][1].shape[0])
+    #pprint(("diag", diag))
     for mus, sigmas in self.gaussians:
-      for i, sig in enumerate(sigmas):
-        for j, s in enumerate(sig):
-          if i == j:
-            #pprint(("checking", s))
-            if s < TOO_LOW:
-              pprint("too low")
-              sigmas[i][j] += BUMP
+      sigmas += diag
 
   def set_expectations(self):
     gamma = np.zeros((len(self.items), len(self.gaussians)))
@@ -105,39 +99,27 @@ class GaussianMixtureModel():
     new_mus = [0] * self.num_gaussians
     new_sigmas = []
 
-    y = self.items #TODO??
+    y = self.items
 
     for j in range(len(self.gaussians)):
       pprint("updating gaussian #" + str(j))
       self.gaussian_weights[j] = n[j] / len(self.items)
 
-      #print("gamma, y, n")
-      #pprint((gamma.shape, y.shape, n.shape))
-      #pprint((gamma[:,j], y, n[j]))
-      #pprint((gamma[:,j].shape, y, n[j].shape))
-      #pprint(np.dot(gamma[:,j], y) / n[j])
-      #pprint(np.sum(np.dot(gamma[:,j], y)) / n[j])
-
       new_mus[j] = (np.dot(gamma[:,j], y) / n[j]).A1
-      #mus should be num_gaussians x num_features
+      #mus should be num_gaussians by num_features
 
-      new_sigma = np.zeros(self.gaussians[0][1].shape)
+      new_sigma_j = np.zeros(self.gaussians[0][1].shape)
                   #same shape as prev sigmas
       for i in range(len(self.items)):
-        #difference = y[i] - new_mus
-        difference = y - new_mus[j]
-        #new_sigmas[j] = np.dot(gamma[i,j], difference * difference.T) / n[j]
-        #pprint((gamma[i,j], difference, difference.T))
-        #pprint((gamma[i,j].shape, difference.shape, difference.T.shape))
+        difference = y[i] - new_mus[j]
+        new_sigma_j += gamma[i,j] * difference.T * difference
 
-        new_sigma += gamma[i,j] * difference.T * difference
-        new_sigma = new_sigma / n[j]
-      new_sigmas.append(new_sigma)
+      new_sigma_j = new_sigma_j / n[j]
+      #pprint(("new sigma j" , new_sigma_j))
+      new_sigmas.append(new_sigma_j)
 
     self.gaussians = zip(new_mus, new_sigmas)
 
-    #pprint("new gaussians")
-    #pprint(self.gaussians)
 
   def convergence(self):
     new_likelyhood = self.likelyhood()
@@ -208,7 +190,7 @@ class TestGDA(unittest.TestCase):
 
     self.assertFalse(gmm.convergence())
     gamma, n = gmm.set_expectations()
-    pprint((gamma, n))
+    #pprint((gamma, n))
     gmm.maximize(gamma, n)
 
     self.assertTrue(False)
@@ -238,6 +220,44 @@ class TestGDA(unittest.TestCase):
     self.assertTrue(False)
 
 
+def test_cheng():
+  '''
+  [ 0.23  0.32  0.45]
+  means:
+  [[ 3.6   3.44]
+  [ 6.64  4.63]
+  [ 4.99  6.74]]
+  covariances:
+  [[[ 2.14  0.83]
+  [ 0.83  4.2 ]]
+  [[ 1.7  -0.19]
+  [-0.19  2.37]]
+  [[ 1.43  0.07]
+  [ 0.07  1.92]]]
+  '''
+
+  gmm = GaussianMixtureModel(3)
+
+  filename = data_dir3 + "3gaussian.txt"
+  data = read_csv_as_numpy_matrix(filename)
+
+  gmm.last_likelyhood = float("-inf")
+  gmm.items = data
+  gmm.gaussian_weights = np.array([ 0.23,  0.32,  0.45])
+  gmm.gaussians = [(np.array([ 3.6,   3.44]),
+                    np.array([[ 2.14,  0.83],
+                              [ 0.83,  4.2 ]])),
+                   (np.array([ 6.64,  4.63]),
+                    np.array([[ 1.7,  -0.19],
+                              [-0.19,  2.37]])),
+                   (np.array([ 4.99,  6.74]),
+                    np.array([[ 1.43,  0.07],
+                              [ 0.07, 1.92]]))]
+
+  gmm.em()
+
+
+
 
 data_dir3 = "../../data/HW3/"
 
@@ -258,3 +278,4 @@ def three_gaussians():
 if __name__ == "__main__":
   two_gaussians()
   #three_gaussians()
+  #test_cheng()
