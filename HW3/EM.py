@@ -6,8 +6,11 @@ import numpy as np
 from pprint import pprint
 from scipy import linalg
 from scipy.stats import multivariate_normal
+from sklearn.cluster import k_means
 
 STOP = .00001
+TOO_LOW = .01
+BUMP = .5 #minimum variance value allowed
 
 class GaussianMixtureModel():
 
@@ -20,14 +23,20 @@ class GaussianMixtureModel():
     self.gaussian_weights = []
 
   def train(self, data):
+    self.init_given_data(data)
+    self.em()
+
+  def init_given_data(self, data):
     self.items = data
     pprint(data.shape)
     num_features = data.shape[1]
 
+    all_mus = self.get_initial_clusters(data, self.num_gaussians)
+
     # initialize
-    for _ in xrange(self.num_gaussians):
-      mu = np.random.rand(num_features)
-      sigma = np.random.rand(num_features, num_features)
+    for i in range(self.num_gaussians):
+      mu = all_mus[i]
+      # try initializing by kmeans instead
       sigma = np.cov(data, rowvar=0)
       self.gaussians.append((mu, sigma))
       self.gaussian_weights.append(1.0/self.num_gaussians)
@@ -37,14 +46,16 @@ class GaussianMixtureModel():
     pprint(self.gaussians)
 
     self.last_likelyhood = float("-inf")
+
+  def em(self):
     i = 0
 
     # iterate
     while not self.convergence():
       print("iteration", i)
       gamma, n = self.set_expectations()
-      #pprint("gamma, n")
-      #pprint((gamma, n))
+      pprint("gamma, n")
+      pprint((gamma, n))
       #pprint((gamma.shape, n.shape))
       self.maximize(gamma, n)
 
@@ -54,7 +65,23 @@ class GaussianMixtureModel():
       pprint("no convergence " + str(i))
       i += 1
 
+      #self.smooth_sigma_diagonal()
+
     pprint("converged on iteration " + str(i))
+
+  def get_initial_clusters(self, data, num_gaussians):
+    centroids, label, inertia = k_means(data, n_clusters=num_gaussians)
+    return centroids
+
+  def smooth_sigma_diagonal(self):
+    for mus, sigmas in self.gaussians:
+      for i, sig in enumerate(sigmas):
+        for j, s in enumerate(sig):
+          if i == j:
+            #pprint(("checking", s))
+            if s < TOO_LOW:
+              pprint("too low")
+              sigmas[i][j] += BUMP
 
   def set_expectations(self):
     gamma = np.zeros((len(self.items), len(self.gaussians)))
@@ -134,34 +161,6 @@ class GaussianMixtureModel():
 
     return likelyhood
 
-
-  '''
-  # density of x for a particulr gaussian, no weighting
-  def one_gaussian_density(self, x, gaussian):
-    mu = gaussian[0]
-    sigma = gaussian[1]
-    dimension = len(mu)
-
-    x = x.A1
-
-    #pprint(x)
-    #pprint(mu)
-    #pprint(sigma)
-    #pprint(-1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu))
-
-    a_v = -1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu)
-    b_v = linalg.expm(a_v)
-    c_v = (2 * math.pi) ** dimension * np.linalg.det(sigma)
-    pprint("det")
-    pprint(np.linalg.det(sigma))
-    d_v = c_v ** 1/2
-
-    return (b_v/d_v)[0][0]
-
-    #return (math.e ** (-1/2 * (x - mu).T * np.linalg.pinv(sigma) * (x - mu))) / \
-    #       ((2 * math.pi) ** d * numpy.linalg.det(sigma.absolute)) ** 1/2
-  '''
-
   def one_gaussian_density(self, x, gaussian):
     return multivariate_normal.pdf(x, mean=gaussian[0], cov=gaussian[1])
 
@@ -186,7 +185,7 @@ def read_csv_as_numpy_matrix(filename):
 import unittest
 class TestGDA(unittest.TestCase):
 
-  def test_initial_em_step(self):
+  def dont_initial_em_step(self):
     # three gaussians in 2 dimensions
 
     gmm = GaussianMixtureModel(3)
@@ -214,6 +213,31 @@ class TestGDA(unittest.TestCase):
 
     self.assertTrue(False)
 
+  def test_given_covar(self):
+
+    gmm = GaussianMixtureModel(3)
+
+    filename = data_dir3 + "3gaussian.txt"
+    data = read_csv_as_numpy_matrix(filename)
+
+    gmm.last_likelyhood = float("-inf")
+    gmm.items = data
+    gmm.gaussian_weights = [33.333333333333336, 33.333333333333336, 33.333333333333336]
+    gmm.gaussians = [(np.array([ 3.0,  3.0]),
+                      np.array([[ 1.0,  0.0],
+                             [ 0.0,  3.0 ]])),
+                     (np.array([ 7.0,  4.0]),
+                      np.array([[ 1.0,  0.5 ],
+                             [ 0.5,  1.0]])),
+                     (np.array([ 5.0, 7.0]),
+                      np.array([[ 1.0 ,  0.2],
+                             [ 0.2,  1.0 ]]))]
+
+    gmm.em()
+
+    self.assertTrue(False)
+
+
 
 data_dir3 = "../../data/HW3/"
 
@@ -232,5 +256,5 @@ def three_gaussians():
   gmm.train(data)
 
 if __name__ == "__main__":
-  #two_gaussians()
-  three_gaussians()
+  two_gaussians()
+  #three_gaussians()
