@@ -10,7 +10,7 @@ from sklearn.cluster import k_means
 
 STOP = .00001
 #TOO_LOW = .01
-BUMP = .1 #minimum variance value allowed
+BUMP = .01 #minimum variance value allowed
 
 class GaussianMixtureModel():
 
@@ -28,7 +28,7 @@ class GaussianMixtureModel():
 
   def init_given_data(self, data):
     self.items = data
-    num_features = data.shape[1]
+    num_features = np.matrix(data).shape[1] #turn into matrix to get at widths of 1
 
     all_mus = self.get_initial_clusters(data, self.num_gaussians)
 
@@ -57,15 +57,18 @@ class GaussianMixtureModel():
       #pprint((gamma, n))
       self.maximize(gamma, n)
 
-      #self.smooth_sigma_diagonal()
+      self.smooth_sigma_diagonal()
 
-      pprint("means, gaussians")
-      pprint(self.gaussian_weights)
-      pprint(self.gaussians)
-      pprint("no convergence " + str(i))
+      #pprint("means, gaussians")
+      #pprint(self.gaussian_weights)
+      #pprint(self.gaussians)
+      #pprint("no convergence " + str(i))
       i += 1
 
     pprint("converged on iteration " + str(i))
+    pprint("final means/gaussians")
+    pprint(self.gaussian_weights)
+    pprint(self.gaussians)
 
   def get_initial_clusters(self, data, num_gaussians):
     centroids, label, inertia = k_means(data, n_clusters=num_gaussians)
@@ -102,7 +105,7 @@ class GaussianMixtureModel():
     y = self.items
 
     for j in range(len(self.gaussians)):
-      pprint("updating gaussian #" + str(j))
+      #pprint("updating gaussian #" + str(j))
       self.gaussian_weights[j] = n[j] / len(self.items)
 
       new_mus[j] = (np.dot(gamma[:,j], y) / n[j]).A1
@@ -138,8 +141,8 @@ class GaussianMixtureModel():
     densities_logged = filter(lambda x: math.log(x, math.e), densities)
     likelyhood =  sum(densities_logged) / len(self.items)
 
-    pprint("likelyhood")
-    pprint(likelyhood)
+    #pprint("likelyhood")
+    #pprint(likelyhood)
 
     return likelyhood
 
@@ -276,6 +279,6 @@ def three_gaussians():
   gmm.train(data)
 
 if __name__ == "__main__":
-  two_gaussians()
-  #three_gaussians()
+  #two_gaussians()
+  three_gaussians()
   #test_cheng()

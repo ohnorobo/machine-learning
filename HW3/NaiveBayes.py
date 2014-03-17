@@ -7,14 +7,15 @@ import pylab as pl
 from pprint import pprint
 from copy import deepcopy
 import pandas
-import csv
+import csv, sys
+from EM import GaussianMixtureModel as GMM
 
 K_FOLDS = 10
-
 #how much to widen gaussians with no standard deviation
 SIGMA_SMOOTHING = .001
-
 CUTOFF = .5
+NUM_GAUSSIANS = 9
+
 
 
 class NaiveBayes():
@@ -26,6 +27,7 @@ class NaiveBayes():
     # bernoulli
     # gaussian
     # histogram
+    # gaussian mixture model
 
     self.items = features
     # truth values must be only 0s and 1s
@@ -188,7 +190,6 @@ class GaussianNaiveBayes(NaiveBayes):
   # = gaussian.prob_density(m, sigma, value)
 
   def train_features(self):
-
     zeroes, ones = separate_classes(self.items, self.truths)
 
     mus0 = column_means(zeroes)
@@ -199,8 +200,6 @@ class GaussianNaiveBayes(NaiveBayes):
 
     self.gaussians = {0: zip(mus0, sigmas0), 1: zip(mus1, sigmas1)}
 
-    # pprint(self.gaussians)
-
   def prob_per_feature_value(self, feature_index, feature_value, clazz):
     mu = self.gaussians[clazz][feature_index][0]
     sigma = self.gaussians[clazz][feature_index][1]
@@ -210,6 +209,38 @@ class GaussianNaiveBayes(NaiveBayes):
   def smooth_sigmas(self, sigmas):
     # add a slight bump if any sigmas = 0
     return map(lambda s: SIGMA_SMOOTHING if s == 0 else s, sigmas)
+
+class GMMNaiveBayes(NaiveBayes):
+
+  def train_features(self):
+    zeroes, ones = separate_classes(self.items, self.truths)
+    self.gmms = {0:[], 1:[]}
+
+    for i, (feature_zeroes, feature_ones) in enumerate(zip(zeroes.T, ones.T)):
+      print("training feature #" + str(i))
+
+      gmm0 = GMM(NUM_GAUSSIANS)
+      gmm1 = GMM(NUM_GAUSSIANS)
+
+      feature_zeroes = np.matrix(feature_zeroes).T
+      feature_ones = np.matrix(feature_ones).T
+
+      pprint(feature_zeroes)
+      pprint(feature_ones)
+
+      pprint(np.matrix(feature_zeroes).shape)
+
+      gmm0.train(feature_zeroes)
+      gmm1.train(feature_ones)
+
+      self.gmms[0].append(gmm0)
+      self.gmms[1].append(gmm1)
+
+      sys.stdout.flush() # to make print work correctly
+
+  def prob_per_feature_value(self, feature_index, feature_value, clazz):
+    gmm = self.gmms[clazz][feature_index]
+    return gmm.density(feature_value)
 
 def separate_classes(items, truths):
   # returns two arrays of items,
@@ -414,10 +445,12 @@ def do_all_the_things(clazz):
   error_tables(clazz)
 
 if __name__ =="__main__":
-  print("\nBernoulli")
-  do_all_the_things(BernoulliNaiveBayes)
-  print("\nGaussian")
-  do_all_the_things(GaussianNaiveBayes)
-  print("\nHistogram")
-  do_all_the_things(HistogramNaiveBayes)
+  #print("\nBernoulli")
+  #do_all_the_things(BernoulliNaiveBayes)
+  #print("\nGaussian")
+  #do_all_the_things(GaussianNaiveBayes)
+  #print("\nHistogram")
+  #do_all_the_things(HistogramNaiveBayes)
+  print("\nGaussian Mixture Model")
+  do_all_the_things(GMMNaiveBayes)
 
