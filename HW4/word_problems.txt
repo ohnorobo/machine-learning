@@ -1,0 +1,13 @@
+# problem 6
+
+What is the VC dimension for the class of hyphothesis of:
+
+## a) unions of two rectangles
+
+## b) circles
+
+## c) triangles
+
+## d) multidimensional "sphere" given by f(x) = sign [(x-c)(x-c) -b] in the Euclidian space with m dimensions ℝ m .
+
+Justify your answers !
