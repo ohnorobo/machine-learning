@@ -47,19 +47,23 @@ class AdaBoost():
   def convert_to_0_1s(self, truths, feature_types):
     return map(lambda truth: convert(feature_types, truth), truths)
 
-
   def train(self):
+
+    pprint({"number of classifiers": len(self.classifiers)})
 
     # iterate through all classifiers
     for t, classifier in enumerate(self.classifiers):
 
-      classifier.precompute() #recalculate results for classifier
-
       # compute error rate e_t
       error = self.error(classifier)
+      #pprint({"error": error})
 
       # assign weight a_t to classifier f_t
-      a = math.log((1-error)/error)
+      if error != 0:
+        a = math.log((1-error)/error)
+      else:
+        a = 1.0
+
       #pprint({"error":error, "a":a})
       self.classifier_weights[t] = a
 
@@ -109,30 +113,28 @@ class AdaBoost():
       values = self.items.T[feature_index].A1
       threshholds = sorted(set(values))
       for value in threshholds:
-        classifiers.append(NumericDecisionStump(value, feature_index, feature,
-                                                self.truths, self.item_weights))
+        classifiers.append(NumericDecisionStump(value, feature_index))
     else:
       for label in feature_type:
-        classifiers.append(DiscreteDecisionStump(label, feature_index, feature,
-                                                 self.truths, self.item_weights))
-
+        classifiers.append(DiscreteDecisionStump(label, feature_index))
     return classifiers
 
   def classify(self, item):
     scores = [classifier.check(item) for classifier in self.classifiers]
-    return round(np.inner(self.classifier_weights, scores) / len(self.classifiers))
+    return sign(np.inner(self.classifier_weights, scores))
+
+def sign(x):
+  if 0 < x:
+    return 0
+  if x < 0:
+    return 1
 
 
 class DecisionStump():
 
-  def __init__(self, value, value_index, feature, truths, item_weights):
+  def __init__(self, value, value_index):
     self.value = value  # label or threshhold
     self.value_index = value_index  # index of the relevant feature in a given item
-    self.item_weights = item_weights  # weight of each item in the current iteration
-    self.truths = truths  # true labels for each item
-    self.feature = feature  # relevant feature
-
-    self.precompute() #choose answers
 
   def check(self, item):
     raise Exception("should be overridden")
@@ -143,45 +145,9 @@ class DiscreteDecisionStump(DecisionStump):
       item = item.A1 #numpy type systems :(
 
     if item[self.value_index] == self.value:
-      return self.when_equal
+      return 1.0
     else:
-      return self.when_not_equal
-
-  def precompute(self):
-    matches_label = {1:0, 0:0}
-    doesnt_match_label = {1:0, 0:0}
-    for feature_value, truth, weight in zip(self.feature, self.truths, self.item_weights):
-      if feature_value == self.value:
-        matches_label[truth] += weight
-      else:
-        doesnt_match_label[truth] += weight
-
-    m0 = matches_label[0]
-    m1 = matches_label[1]
-    dm0 = matches_label[0]
-    dm1 = matches_label[1]
-
-    if m1 < m1:
-      self.when_equal = 1
-    else:
-      self.when_equal = 0
-
-    if dm0 < dm1:
-      self.when_not_equal = 1
-    else:
-      self.when_not_equal = 0
-
-    '''
-    if m > .5:
-      self.when_equal = 1
-    else:
-      self.when_equal = 0
-    if dm > .5:
-      self.when_not_equal = 1
-    else:
-      self.when_not_equal = 0
-    '''
-
+      return 0.0
 
   def __repr__(self):
     return "[=" + str(self.value) + " " + str(self.matches_label) + "] : " +\
@@ -193,45 +159,9 @@ class NumericDecisionStump(DecisionStump):
       item = item.A1 # numpy type systems
 
     if self.value < item[self.value_index]:
-      return self.greater
+      return 0.0
     else:
-      return self.lesser
-
-  def precompute(self):
-    gt_label = {1:0, 0:0}
-    lt_label = {1:0, 0:0}
-    for feature_value, truth, weight in zip(self.feature, self.truths, self.item_weights):
-      if self.value < feature_value:
-        gt_label[truth] += weight
-      else:
-        lt_label[truth] += weight
-
-    gt0 = gt_label[0]
-    gt1 = gt_label[1]
-    lt0 = lt_label[0]
-    lt1 = lt_label[1]
-
-    if gt0 < gt1:
-      self.greater = 1
-    else:
-      self.greater = 0
-
-    if lt0 < lt1:
-      self.lesser = 1
-    else:
-      self.lesser = 0
-
-    '''
-    if gt > .5:
-      self.greater = 1
-    else:
-      self.greater = 0
-    if lt > .5:
-      self.lesser = 1
-    else:
-      self.lesser = 0
-    '''
-
+      return 1.0
 
   def __repr__(self):
     return "[<" + str(self.value) + " " + str(self.greater) + "] : " + str(self.value_index)
@@ -263,6 +193,7 @@ def read_config_file(config_filename, data_filename):
         if value == "?":
           point.append(float("NaN")) # TODO ???
         else:
+          #pprint(value)
           point.append(float(value))
       else: #discrete values
         if not (value in feature_type or value == "?"):
@@ -283,21 +214,27 @@ def test_data_sample(name):
   data, feature_types = read_config_file(config, data)
   np.random.shuffle(data)
 
-  #pprint((data, feature_types))
-
   split = round(len(data) / SPLIT)
 
   train = data[:-split,:]
   test = data[-split+1:,:]
 
-  #pprint(train.shape)
-
   features = np.array(train[:,:train.shape[1]-1])
   truths = train[:,train.shape[1]-1].A1
 
-  #pprint((features, truths))
-
   ada = AdaBoost(data, truths, feature_types)
+
+  errors = 0
+
+  for item, truth in zip(features, truths):
+    guess = ada.classify(item)
+    item_labels = feature_types[-1]
+    guess = item_labels[int(guess)]
+
+    if guess != truth:
+      errors +=1
+
+  pprint(("training error", float(errors)/len(truths)))
 
   features = np.array(test[:,:test.shape[1]-1])
   truths = test[:,test.shape[1]-1].A1
@@ -312,24 +249,23 @@ def test_data_sample(name):
     if guess != truth:
       errors +=1
 
-  pprint(("error", float(errors)/len(truths)))
+  pprint(("testing error", float(errors)/len(truths)))
 
 
 if __name__ == "__main__":
-  print "CRX"
-  test_data_sample("crx")
-  print "VOTE"
-  test_data_sample("vote")
+  titles = ["crx",
+            "vote",
+            #"bal", # multi-class
+            #"band", # illegal value
+            #"car", # multi-class
+            #"cmc", # multi-class
+            "monk",
+            #"nur", # multi-class
+            "tic",
+            "spam", # slow
+            "agr"] # slow
 
-  #print "AGR"
-  #test_data_sample("agr")
-  print "BAL"
-  test_data_sample("bal")
-  print "BAND"
-  test_data_sample("band")
-
-
-
-
-
+  for title in titles:
+    pprint(title)
+    test_data_sample(title)
 
