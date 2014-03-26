@@ -15,6 +15,7 @@ def convert(classes, element):
   elif element == classes[1]:
     return 1.0
   else:
+    pprint(element)
     raise Exception("unclassified point")
 
 
@@ -59,7 +60,7 @@ class AdaBoost():
 
       # assign weight a_t to classifier f_t
       a = math.log((1-error)/error)
-      pprint({"error":error, "a":a})
+      #pprint({"error":error, "a":a})
       self.classifier_weights[t] = a
 
       # add weight to misclassed points
@@ -75,7 +76,7 @@ class AdaBoost():
     for i, (point, truth) in enumerate(zip(self.items, self.truths)):
       if self.misclassed(classifier, point, truth):
         error += self.item_weights[i]
-    pprint({"error":error, "total":sum(self.item_weights)})
+    #pprint({"error":error, "total":sum(self.item_weights)})
     return error
 
   def reweight_misclassed_points(self, a, classifier):
@@ -260,12 +261,12 @@ def read_config_file(config_filename, data_filename):
     for value, feature_type in zip(entries, feature_types):
       if feature_type == 'numeric':
         if value == "?":
-          point.append(0.0) # TODO ???
+          point.append(float("NaN")) # TODO ???
         else:
           point.append(float(value))
       else: #discrete values
         if not (value in feature_type or value == "?"):
-          #pprint((value, feature_type))
+          pprint((value, feature_type))
           assert(value in feature_type)
         else:
           point.append(value)
@@ -317,8 +318,17 @@ def test_data_sample(name):
 if __name__ == "__main__":
   print "CRX"
   test_data_sample("crx")
-  #print "VOTE"
-  #test_data_sample("vote")
+  print "VOTE"
+  test_data_sample("vote")
+
+  #print "AGR"
+  #test_data_sample("agr")
+  print "BAL"
+  test_data_sample("bal")
+  print "BAND"
+  test_data_sample("band")
+
+
 
 
 
