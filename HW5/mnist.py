@@ -8,11 +8,11 @@ def read(digits, dataset = "training", path = "."):
     """
 
     if dataset is "training":
-        fname_img = os.path.join(path, 'train-images-idx3-ubyte')
-        fname_lbl = os.path.join(path, 'train-labels-idx1-ubyte')
+        fname_img = os.path.join(path, 'train-images')
+        fname_lbl = os.path.join(path, 'train-labels')
     elif dataset is "testing":
-        fname_img = os.path.join(path, 't10k-images-idx3-ubyte')
-        fname_lbl = os.path.join(path, 't10k-labels-idx1-ubyte')
+        fname_img = os.path.join(path, 'test-images')
+        fname_lbl = os.path.join(path, 'test-labels')
     else:
         raise ValueError, "dataset must be 'testing' or 'training'"
 
