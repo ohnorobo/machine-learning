@@ -37,6 +37,11 @@ class GaussianMixtureModel():
       mu = all_mus[i]
       # try initializing by kmeans instead
       sigma = np.cov(data, rowvar=0)
+
+      #pprint(sigma)
+      #if (sigma == 0):
+      #  sigma += BUMP #smooth no variance
+
       self.gaussians.append((mu, sigma))
       self.gaussian_weights.append(1.0/self.num_gaussians)
 
@@ -279,6 +284,6 @@ def three_gaussians():
   gmm.train(data)
 
 if __name__ == "__main__":
-  #two_gaussians()
-  three_gaussians()
+  two_gaussians()
+  #three_gaussians()
   #test_cheng()

@@ -14,7 +14,7 @@ K_FOLDS = 10
 #how much to widen gaussians with no standard deviation
 SIGMA_SMOOTHING = .001
 CUTOFF = .5
-NUM_GAUSSIANS = 9
+NUM_GAUSSIANS = 4
 
 
 
@@ -193,10 +193,12 @@ class GaussianNaiveBayes(NaiveBayes):
     zeroes, ones = separate_classes(self.items, self.truths)
 
     mus0 = column_means(zeroes)
-    sigmas0 = self.smooth_sigmas(column_stds(zeroes))
+    #sigmas0 = self.smooth_sigmas(column_stds(zeroes))
+    sigmas0 = self.smooth_sigmas(column_stds(self.items))
 
     mus1 = column_means(ones)
-    sigmas1 = self.smooth_sigmas(column_stds(ones))
+    #sigmas1 = self.smooth_sigmas(column_stds(ones))
+    sigmas1 = self.smooth_sigmas(column_stds(self.items))
 
     self.gaussians = {0: zip(mus0, sigmas0), 1: zip(mus1, sigmas1)}
 
@@ -445,12 +447,12 @@ def do_all_the_things(clazz):
   error_tables(clazz)
 
 if __name__ =="__main__":
-  #print("\nBernoulli")
-  #do_all_the_things(BernoulliNaiveBayes)
-  #print("\nGaussian")
-  #do_all_the_things(GaussianNaiveBayes)
-  #print("\nHistogram")
-  #do_all_the_things(HistogramNaiveBayes)
-  print("\nGaussian Mixture Model")
-  do_all_the_things(GMMNaiveBayes)
+  print("\nBernoulli")
+  do_all_the_things(BernoulliNaiveBayes)
+  print("\nGaussian")
+  do_all_the_things(GaussianNaiveBayes)
+  print("\nHistogram")
+  do_all_the_things(HistogramNaiveBayes)
+  #print("\nGaussian Mixture Model")
+  #do_all_the_things(GMMNaiveBayes)
 
