@@ -40,14 +40,29 @@ class AdaBoost():
 
     self.item_weights = np.array([1.0/len(data)]*len(self.items))
 
-    #self.classifiers = self.get_all_classifiers()
-    #self.classifier_weights = np.array([float('NaN')]*len(self.classifiers))
-    self.classifiers = []
-    self.classifier_weights = []
+    self.classifiers = self.get_all_classifiers()
+    self.classifier_weights = np.array([float('NaN')]*len(self.classifiers))
+    #self.classifiers = []
+    #self.classifier_weights = []
 
     #pprint(self.classifiers)
 
     self.train()
+
+  def presort(self):
+    sorted_features = []
+    sorted_truths = []
+
+    for feature in self.items.T:
+      both = zip(feature, self.truths)
+      s = sorted(both, key=lambda x: x[0]) #sort according to feature
+      s_feature, s_truths = zip(s)
+
+      sorted_features.append(s_feature)
+      sorted_truths.append(s_truths)
+
+    self.sorted_features = sorted_features
+    self.sorted_truths = sorted_truths
 
   # convert whatever weird symbols are being used for classes into 0/1
   def convert_to_neg1_1s(self, truths, feature_types):
@@ -58,13 +73,13 @@ class AdaBoost():
     #pprint({"number of classifiers": len(self.classifiers)})
 
     # iterate through all classifiers
-    for i in range(ITERATIONS):
-    #for t, classifier in enumerate(self.classifiers):
+    #for i in range(ITERATIONS):
+    for t, classifier in enumerate(self.classifiers):
 
-      classifier, t, error = self.choose_best_classifier_and_error()
+      #classifier, t, error = self.choose_best_classifier_and_error()
 
       # compute error rate e_t
-      #error = self.error(classifier)
+      error = self.error(classifier)
       #pprint({"error": error})
 
       # assign weight a_t to classifier f_t
@@ -75,9 +90,9 @@ class AdaBoost():
         a = math.log((1-error)/error)
 
       pprint({"error":error, "a":a, "classifier":classifier})
-      #self.classifier_weights[t] = a
-      self.classifiers.append(classifier)
-      self.classifier_weights.append(a)
+      self.classifier_weights[t] = a
+      #self.classifiers.append(classifier)
+      #self.classifier_weights.append(a)
 
       # add weight to misclassed points
       self.reweight_misclassed_points(a, classifier)
@@ -87,10 +102,10 @@ class AdaBoost():
       #pprint(zip(self.classifiers, self.classifier_weights))
       #pprint(self.item_weights)
 
-    #a = zip(self.classifier_weights, self.classifiers)
-    #pprint(sorted(a, key=lambda x: abs(x[0])))
+    a = zip(self.classifier_weights, self.classifiers)
+    pprint(sorted(a, key=lambda x: abs(x[0])))
 
-  '''
+  #'''
   def choose_best_classifier(self):
     classifier_errors = [self.error(classifier) for classifier in self.classifiers]
 
@@ -101,7 +116,29 @@ class AdaBoost():
 
     classifier = both[0][1] #best classifier
     return classifier, self.classifiers.index(classifier) # and index
-  '''
+
+  def get_all_classifiers_per_feature(self, feature_index):
+    feature_type = self.feature_types[feature_index]
+    classifiers = []
+    feature = self.items.T[feature_index].T
+
+    if feature_type == 'numeric':
+      values = self.items.T[feature_index]
+      threshholds = sorted(set(values))
+      for value in threshholds:
+        classifiers.append(NumericDecisionStump(value, feature_index))
+    else:
+      for label in feature_type:
+        classifiers.append(DiscreteDecisionStump(label, feature_index))
+    return classifiers
+
+  def get_all_classifiers(self):
+    classifiers = []
+    for i in range(len(self.feature_types)):
+      c = self.get_all_classifiers_per_feature(i)
+      classifiers.extend(c)
+    return classifiers
+  #'''
 
   def error(self, classifier):
     error = 0.0
@@ -126,14 +163,6 @@ class AdaBoost():
     self.item_weights *= 1.0/sum(self.item_weights)
 
   '''
-  def get_all_classifiers(self):
-    classifiers = []
-    for i in range(len(self.feature_types)):
-      c = self.get_all_classifiers_per_feature(i)
-      classifiers.extend(c)
-    return classifiers
-  '''
-
   def get_all_classifiers_and_errors(self):
     classifiers = []
     errors = []
@@ -229,6 +258,7 @@ class AdaBoost():
       raise Exception("perfect classifier")
 
     return e
+  '''
 
   def choose_smallest_discriminant(self, data, n):
     # return n points with the smallest discriminant
@@ -244,36 +274,20 @@ class AdaBoost():
       d += classifier.discriminant(item) * weight
     return d
 
-
-  '''
-  def get_all_classifiers_per_feature(self, feature_index):
-    feature_type = self.feature_types[feature_index]
-    classifiers = []
-    feature = self.items.T[feature_index].T
-
-    if feature_type == 'numeric':
-      values = self.items.T[feature_index]
-      threshholds = sorted(set(values))
-      for value in threshholds:
-        classifiers.append(NumericDecisionStump(value, feature_index))
-    else:
-      for label in feature_type:
-        classifiers.append(DiscreteDecisionStump(label, feature_index))
-    return classifiers
-  '''
-
   def classify(self, item):
     return sign(self.classify_prob(item))
 
   # returns a value, not really a prob
   def classify_prob(self, item):
     scores = [classifier.check(item) for classifier in self.classifiers]
+    #pprint(zip(scores, self.classifier_weights))
+    #pprint(np.inner(scores, self.classifier_weights))
     return np.inner(scores, self.classifier_weights)
 
 def sign(x):
   if 0 < x:
     return 0
-  if x < 0:
+  if x <= 0:
     return 1
 
 class DecisionStump():
@@ -389,7 +403,7 @@ def read_config_file(config_filename, data_filename):
     data.append(point)
 
   #return np.matrix(data), feature_types
-  return np.matrix(data, dtype=float), feature_types #TODO this if for spambase
+  return np.matrix(data, dtype=float), feature_types #TODO this if for spambaset
 
 TOP_DIR = "../../data/HW4/UCI/"
 def read_in_data_config(name):
@@ -463,6 +477,8 @@ def test_data_sample(name, classifier_type):
   data, feature_types = read_in_data_config(name)
   np.random.shuffle(data)
 
+  #data = data[:100] #trim down for testing
+
   split = round(len(data) / SPLIT)
 
   train = data[:-split,:]
@@ -497,20 +513,21 @@ def calculate_error(ada, features, truths, feature_types):
     item_labels = feature_types[-1]
 
     if isinstance(guess, int):
-      guess = item_labels[int(guess)]
+      guess_label = item_labels[int(guess)]
+
     if guess != truth:
       errors +=1
 
   return float(errors) / len(truths)
 
 if __name__ == "__main__":
-  titles = ["crx",
-            "vote",
-            #"band", # illegal value
-            "monk",
-            "tic",
-            "spam", # slow
-            "agr"] # slow
+  #titles = ["crx",
+  #          "vote",
+  #          #"band", # illegal value
+  #          "monk",
+  #          "tic",
+  #          "spam", # slow
+  #          "agr"] # slow
 
   titles = ["spam"]
 
@@ -520,10 +537,10 @@ if __name__ == "__main__":
     #active_learning(title)
     #active_learning_add_best(title)
 
-  multiclass_titles = ["bal",
-                       "car",
-                       "cmc",
-                       "nur"]
+  #multiclass_titles = ["bal",
+  #                     "car",
+  #                     "cmc",
+  #                     "nur"]
 
   #for title in multiclass_titles:
   #  pprint(title)
