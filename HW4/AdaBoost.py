@@ -49,21 +49,6 @@ class AdaBoost():
 
     self.train()
 
-  def presort(self):
-    sorted_features = []
-    sorted_truths = []
-
-    for feature in self.items.T:
-      both = zip(feature, self.truths)
-      s = sorted(both, key=lambda x: x[0]) #sort according to feature
-      s_feature, s_truths = zip(s)
-
-      sorted_features.append(s_feature)
-      sorted_truths.append(s_truths)
-
-    self.sorted_features = sorted_features
-    self.sorted_truths = sorted_truths
-
   # convert whatever weird symbols are being used for classes into 0/1
   def convert_to_neg1_1s(self, truths, feature_types):
     return map(lambda truth: convert(feature_types, truth), truths)
@@ -162,110 +147,11 @@ class AdaBoost():
   def normalize_point_weights(self):
     self.item_weights *= 1.0/sum(self.item_weights)
 
-  '''
-  def get_all_classifiers_and_errors(self):
-    classifiers = []
-    errors = []
-    for i in range(len(self.feature_types)):
-      c, e = self.get_all_classifiers_and_errors_per_feature(i)
-      classifiers.extend(c)
-      errors.extend(e)
-    return classifiers, errors
-
-  def choose_best_classifier_and_error(self):
-    classifiers, errors = self.get_all_classifiers_and_errors()
-
-    both = zip(errors, classifiers)
-    both = sorted(both, key=lambda x: abs(x[0] - .5), reverse=True)
-
-    #pprint(list(reversed(both)))
-
-    classifier = both[0][1] #best classifier
-    error = both[0][0] # best error (furthest from .5)
-    return classifier, classifiers.index(classifier), error
-
-
-  def get_all_classifiers_and_errors_per_feature(self, feature_index):
-    feature_type = self.feature_types[feature_index]
-    classifiers = []
-    errors = []
-    feature = self.items.T[feature_index].T
-
-    if feature_type == 'numeric':
-      unsorted_values = self.items.T[feature_index]
-      threshholds = sorted(set(unsorted_values))
-
-      sorted_values = sorted(zip(unsorted_values, self.truths, self.item_weights), key=lambda x: x[0])
-      #sort by values
-      values, truths, weights = zip(*sorted_values)
-
-      for value in threshholds:
-        classifiers.append(NumericDecisionStump(value, feature_index))
-        #pprint(e)
-        errors.append(self.get_error_on_feature(value, truths, weights, values)) #all sorted
-    else:
-      for label in feature_type:
-        classifiers.append(DiscreteDecisionStump(label, feature_index))
-        errors.append(self.get_error_on_category_feature(label,
-                      self.truths, self.item_weights, feature))
-    return classifiers, errors
-
-  def get_error_on_category_feature(self, value, truths, weights, values):
-    a = zip(values, truths, weights)
-
-    eq = filter(lambda x: x[0]==value and x[1]==NEG, a) # -1s in label are wrong
-    not_eq = filter(lambda x: x[0]!=value and x[1]==POS, a) #1s out of label are wrong
-
-    if len(eq) == 0:
-      bad_eq_weights = []
-    else:
-      bad_eq_values, bad_eq_truths, bad_eq_weights = zip(*eq)
-
-    if len(not_eq) == 0:
-      bad_noteq_weights = []
-    else:
-      bad_noteq_values, bad_noteq_truths, bad_noteq_weights = zip(*not_eq)
-
-    return sum(bad_eq_weights) + sum(bad_noteq_weights)
-
-
-  def get_error_on_feature(self, value, truths, weights, values):
-    i = values.index(value)
-
-    low_bad = filter(lambda x: x[0] == POS, zip(truths, weights)[:i])
-    # 1s below the thresshold
-
-    #pprint(both)
-    if len(low_bad) == 0:
-      e = 0
-    else:
-      bad_truths, bad_weights = zip(*low_bad)
-      e = sum(bad_weights)
-
-    high_bad = filter(lambda x: x[0] == NEG, zip(truths, weights)[i:])
-    # -1s above the threshhold
-    if len(high_bad) == 0:
-      e += 0
-    else:
-      bad_truths, bad_weights = zip(*high_bad)
-      e += sum(bad_weights)
-
-    if e == 0:
-      pprint(zip(truths, weights)[:i])
-      pprint(zip(truths, weights)[i:])
-      pprint([low_bad, high_bad])
-      pprint(value)
-      raise Exception("perfect classifier")
-
-    return e
-  '''
-
   def choose_smallest_discriminant(self, data, n):
     # return n points with the smallest discriminant
     # and the rest of the points without
 
     d = sorted(data, key=lambda x: self.discriminant(x)) #TODO reverse?
-
     return data[:n], data[n:]
 
   def discriminant(self, item):
