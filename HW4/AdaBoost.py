@@ -111,17 +111,6 @@ class AdaBoost():
     self.sorted_indexes = sorted_indexes
     self.feature_thressholds = feature_thressholds
 
-  '''
-  # filter a bazillion classifiers down to only those with the highest weights
-  def pick_best_classifiers(self):
-    both = zip(self.classifiers, self.classifier_weights)
-    both = sorted(both, key=lambda x: abs(x[1]), reverse=True) #pick weights furthest from 0
-    c, w = zip(*both[:NUM_CLASSIFIERS])
-
-    self.classifiers = c
-    self.classifier_weights = w
-  '''
-
   def choose_best_classifier_and_error(self):
     best_classifier = None
     best_error = .5
@@ -132,21 +121,6 @@ class AdaBoost():
         best_classifier = c
         best_error = e
     return best_classifier, i, best_error
-
-  '''
-  def choose_best_classifier_and_error(self):
-    classifiers, errors = self.get_all_classifiers_and_errors()
-
-    both = zip(errors, classifiers)
-    both = sorted(both, key=lambda x: abs(x[0] - .5), reverse=True)
-
-    #pprint(list(reversed(both)))
-
-    classifier = both[0][1] #best classifier
-    error = both[0][0] # best error (furthest from .5)
-    return classifier, classifiers.index(classifier), error
-  '''
-
 
   def get_best_classifier_and_error_per_feature(self, feature_index):
     feature_type = self.feature_types[feature_index]
@@ -160,9 +134,6 @@ class AdaBoost():
     # start at the lowest feature value, nothing is below it
     pos_above = sum(map(lambda x: x[1],
                     filter(lambda x: x[0] == POS, zip(self.truths, self.item_weights))))
-    #neg_above = sum(map(lambda x: x[1],
-    #                filter(lambda x: x[0] == NEG, zip(self.truths, self.item_weights))))
-    #pos_below = 0
     neg_below = 0
 
     for i, (feature_value, index) in enumerate(zip(feature, indexes)):
@@ -171,9 +142,7 @@ class AdaBoost():
 
       if truth == POS:
         pos_above -= weight
-        #pos_below += weight
       elif truth == NEG:
-        #neg_above -= weight
         neg_below += weight
       else:
         raise Exception(("weird stuff", truth))
@@ -185,73 +154,11 @@ class AdaBoost():
 
     return NumericDecisionStump(best_cutoff, feature_index), best_error
 
-
-  '''
-  def get_error_on_category_feature(self, value, truths, weights, values):
-    a = zip(values, truths, weights)
-
-    eq = filter(lambda x: x[0]==value and x[1]==NEG, a) # -1s in label are wrong
-    not_eq = filter(lambda x: x[0]!=value and x[1]==POS, a) #1s out of label are wrong
-
-    if len(eq) == 0:
-      bad_eq_weights = []
-    else:
-      bad_eq_values, bad_eq_truths, bad_eq_weights = zip(*eq)
-
-    if len(not_eq) == 0:
-      bad_noteq_weights = []
-    else:
-      bad_noteq_values, bad_noteq_truths, bad_noteq_weights = zip(*not_eq)
-
-    return sum(bad_eq_weights) + sum(bad_noteq_weights)
-  '''
-
-
-  def get_error_on_feature(self, value, truths, weights, values):
-    i = values.index(value)
-
-    # TODO
-
-
-  def choose_best_classifier(self):
-    classifier_errors = [self.error(classifier) for classifier in self.classifiers]
-
-    both = zip(classifier_errors, self.classifiers)
-    both = sorted(both, key=lambda x: abs(x[0] - .5))
-
-    pprint(both)
-
-    classifier = both[0][1] #best classifier
-    return classifier, self.classifiers.index(classifier) # and index
-
-  def get_all_classifiers_per_feature(self, feature_index):
-    feature_type = self.feature_types[feature_index]
-    classifiers = []
-    feature = self.items.T[feature_index].T
-
-    if feature_type == 'numeric':
-      values = self.items.T[feature_index]
-      threshholds = sorted(set(values))
-      for value in threshholds:
-        classifiers.append(NumericDecisionStump(value, feature_index))
-    else:
-      for label in feature_type:
-        classifiers.append(DiscreteDecisionStump(label, feature_index))
-    return classifiers
-
-  def get_all_classifiers(self):
-    classifiers = []
-    for i in range(len(self.feature_types)):
-      c = self.get_all_classifiers_per_feature(i)
-      classifiers.extend(c)
-    return classifiers
-
   def error(self, classifier):
     error = 0.0
     for i, (point, truth) in enumerate(zip(self.items, self.truths)):
       if self.misclassed(classifier, point, truth):
         error += self.item_weights[i]
-    #pprint({"error":error, "total":sum(self.item_weights)})
     return error
 
   def reweight_misclassed_points(self, a, classifier):
@@ -261,7 +168,6 @@ class AdaBoost():
 
   def misclassed(self, classifier, point, truth):
     guess = classifier.check(point) # 0 or 1
-    #pprint({"guess": guess, "truth": truth})
     return guess == truth
 
   #sum weights should = 1
@@ -272,7 +178,7 @@ class AdaBoost():
     # return n points with the smallest discriminant
     # and the rest of the points without
 
-    pprint({"choosing":n, "from": len(data)})
+    #pprint({"choosing":n, "from": len(data)})
 
     d = sorted(data, key=lambda x: self.discriminant(x)) #TODO reverse?
     return data[:n], data[n:]
@@ -289,8 +195,6 @@ class AdaBoost():
   # returns a value, not really a prob
   def classify_prob(self, item):
     scores = [classifier.check(item) for classifier in self.classifiers]
-    #pprint(zip(scores, self.classifier_weights))
-    #pprint(np.inner(scores, self.classifier_weights))
     return np.inner(scores, self.classifier_weights)
 
 def sign(x):
