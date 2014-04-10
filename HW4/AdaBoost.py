@@ -5,7 +5,7 @@ from pprint import pprint
 import math
 from copy import deepcopy
 
-
+NUM_CLASSIFIERS = 300
 ITERATIONS = 10
 SPLIT = 10 # testing data is 1/SPLIT of data
 
@@ -40,10 +40,11 @@ class AdaBoost():
 
     self.item_weights = np.array([1.0/len(data)]*len(self.items))
 
-    self.classifiers = self.get_all_classifiers()
-    self.classifier_weights = np.array([float('NaN')]*len(self.classifiers))
-    #self.classifiers = []
-    #self.classifier_weights = []
+    #self.classifiers = self.get_all_classifiers()
+    #self.classifier_weights = np.array([float('NaN')]*len(self.classifiers))
+    self.classifiers = []
+    self.classifier_weights = []
+    self.presort()
 
     #pprint(self.classifiers)
 
@@ -58,26 +59,26 @@ class AdaBoost():
     #pprint({"number of classifiers": len(self.classifiers)})
 
     # iterate through all classifiers
-    #for i in range(ITERATIONS):
-    for t, classifier in enumerate(self.classifiers):
+    for i in range(ITERATIONS):
+    #for t, classifier in enumerate(self.classifiers):
 
-      #classifier, t, error = self.choose_best_classifier_and_error()
+      classifier, t, error = self.choose_best_classifier_and_error()
 
       # compute error rate e_t
       error = self.error(classifier)
       #pprint({"error": error})
 
       # assign weight a_t to classifier f_t
-      if error == 0:
+      if error == 0 or error == 1:
         pprint(classifier)
         raise Exception("prefect feature, problem")
       else:
         a = math.log((1-error)/error)
 
       pprint({"error":error, "a":a, "classifier":classifier})
-      self.classifier_weights[t] = a
-      #self.classifiers.append(classifier)
-      #self.classifier_weights.append(a)
+      #self.classifier_weights[t] = a
+      self.classifiers.append(classifier)
+      self.classifier_weights.append(a)
 
       # add weight to misclassed points
       self.reweight_misclassed_points(a, classifier)
@@ -87,10 +88,131 @@ class AdaBoost():
       #pprint(zip(self.classifiers, self.classifier_weights))
       #pprint(self.item_weights)
 
+    #self.pick_best_classifiers()
+
     a = zip(self.classifier_weights, self.classifiers)
     pprint(sorted(a, key=lambda x: abs(x[0])))
 
-  #'''
+  def presort(self):
+    sorted_features = []
+    sorted_indexes = [] #indexes into truths/weights corrosponding to sorted feature
+    feature_thressholds = []
+
+    for feature in self.items.T:
+      both = zip(feature, range(0, len(feature)))
+      s = sorted(both, key=lambda x: x[0]) #sort according to feature
+      s_feature, s_index = zip(*s)
+
+      sorted_features.append(s_feature)
+      sorted_indexes.append(s_index)
+      feature_thressholds.append(set(s_feature))
+
+    self.sorted_features = sorted_features
+    self.sorted_indexes = sorted_indexes
+    self.feature_thressholds = feature_thressholds
+
+  '''
+  # filter a bazillion classifiers down to only those with the highest weights
+  def pick_best_classifiers(self):
+    both = zip(self.classifiers, self.classifier_weights)
+    both = sorted(both, key=lambda x: abs(x[1]), reverse=True) #pick weights furthest from 0
+    c, w = zip(*both[:NUM_CLASSIFIERS])
+
+    self.classifiers = c
+    self.classifier_weights = w
+  '''
+
+  def choose_best_classifier_and_error(self):
+    best_classifier = None
+    best_error = .5
+
+    for i in range(len(self.feature_types)):
+      c, e = self.get_best_classifier_and_error_per_feature(i)
+      if abs(e - .5) > abs(best_error - .5):
+        best_classifier = c
+        best_error = e
+    return best_classifier, i, best_error
+
+  '''
+  def choose_best_classifier_and_error(self):
+    classifiers, errors = self.get_all_classifiers_and_errors()
+
+    both = zip(errors, classifiers)
+    both = sorted(both, key=lambda x: abs(x[0] - .5), reverse=True)
+
+    #pprint(list(reversed(both)))
+
+    classifier = both[0][1] #best classifier
+    error = both[0][0] # best error (furthest from .5)
+    return classifier, classifiers.index(classifier), error
+  '''
+
+
+  def get_best_classifier_and_error_per_feature(self, feature_index):
+    feature_type = self.feature_types[feature_index]
+
+    feature = self.sorted_features[feature_index]
+    indexes = self.sorted_indexes[feature_index]
+
+    best_error = .5
+    best_cutoff = feature[0]
+
+    # start at the lowest feature value, nothing is below it
+    pos_above = sum(map(lambda x: x[1],
+                    filter(lambda x: x[0] == POS, zip(self.truths, self.item_weights))))
+    #neg_above = sum(map(lambda x: x[1],
+    #                filter(lambda x: x[0] == NEG, zip(self.truths, self.item_weights))))
+    #pos_below = 0
+    neg_below = 0
+
+    for i, (feature_value, index) in enumerate(zip(feature, indexes)):
+      truth = self.truths[index]
+      weight = self.item_weights[index]
+
+      if truth == POS:
+        pos_above -= weight
+        #pos_below += weight
+      elif truth == NEG:
+        #neg_above -= weight
+        neg_below += weight
+      else:
+        raise Exception(("weird stuff", truth))
+
+      new_error = pos_above + neg_below
+      if abs(new_error - .5) > abs(best_error - .5):
+        best_error = new_error
+        best_cutoff = feature[i]
+
+    return NumericDecisionStump(best_cutoff, feature_index), best_error
+
+
+  '''
+  def get_error_on_category_feature(self, value, truths, weights, values):
+    a = zip(values, truths, weights)
+
+    eq = filter(lambda x: x[0]==value and x[1]==NEG, a) # -1s in label are wrong
+    not_eq = filter(lambda x: x[0]!=value and x[1]==POS, a) #1s out of label are wrong
+
+    if len(eq) == 0:
+      bad_eq_weights = []
+    else:
+      bad_eq_values, bad_eq_truths, bad_eq_weights = zip(*eq)
+
+    if len(not_eq) == 0:
+      bad_noteq_weights = []
+    else:
+      bad_noteq_values, bad_noteq_truths, bad_noteq_weights = zip(*not_eq)
+
+    return sum(bad_eq_weights) + sum(bad_noteq_weights)
+  '''
+
+
+  def get_error_on_feature(self, value, truths, weights, values):
+    i = values.index(value)
+
+    # TODO
+
+
   def choose_best_classifier(self):
     classifier_errors = [self.error(classifier) for classifier in self.classifiers]
 
@@ -123,7 +245,6 @@ class AdaBoost():
       c = self.get_all_classifiers_per_feature(i)
       classifiers.extend(c)
     return classifiers
-  #'''
 
   def error(self, classifier):
     error = 0.0
@@ -150,6 +271,8 @@ class AdaBoost():
   def choose_smallest_discriminant(self, data, n):
     # return n points with the smallest discriminant
     # and the rest of the points without
+
+    pprint({"choosing":n, "from": len(data)})
 
     d = sorted(data, key=lambda x: self.discriminant(x)) #TODO reverse?
     return data[:n], data[n:]
@@ -213,8 +336,8 @@ class NumericDecisionStump(DecisionStump):
     return "[<" + str(self.value) + "] : " + str(self.value_index)
 
   def discriminant(self, item):
-    pprint(item.shape)
-    pprint(item)
+    #pprint(item.shape)
+    #pprint(item)
     return abs(self.value - item[self.value_index])
 
 
@@ -305,20 +428,23 @@ def read_in_data_config(name):
 
 START = 5.0/100 #how much data to start with
 ADD = 5.0/100  #how much data to add each time
-STOP = 1.0/2
+STOP = 1.0/2 #when to stop
+
+TEST_AMT = 1.0/10
 
 def active_learning(name):
   data, feature_types = read_in_data_config(name)
+  np.random.shuffle(data)
 
   amt = START
 
-  while amt < STOP:
+  while amt <= STOP:
 
     pprint({"amt": amt})
 
     split = round(len(data) * amt)
     train = data[:-split,:]
-    test = data[-split+1:,:]
+    test = data[-round(len(data) * TEST_AMT):,:]
 
     run_cycle(train, test, AdaBoost, feature_types)
 
@@ -326,6 +452,9 @@ def active_learning(name):
 
 def active_learning_add_best(name):
   data, feature_types = read_in_data_config(name)
+  np.random.shuffle(data)
+
+  data = data[:1000] #trim down for testing
 
   amt = START
 
@@ -333,7 +462,8 @@ def active_learning_add_best(name):
 
   split = round(len(data) * amt)
   train = data[:-split,:]
-  test = data[-split+1:,:]
+  rest = data[-split+1:,:]
+  test = rest[-round(len(data) * TEST_AMT):,:]
 
   ada = run_cycle(train, test, AdaBoost, feature_types)
 
@@ -342,10 +472,10 @@ def active_learning_add_best(name):
     pprint({"amt": amt})
 
     # find best points in testing set
-    best, not_best = find_best(ada, test, round(ADD * len(data)))
+    best, not_best = find_best(ada, rest, round(ADD * len(data)))
     # add to training set
-    train.extend(best)
-    test = not_best
+    train = np.vstack((train, best))
+    test = not_best[-round(len(data) * TEST_AMT):,:]
 
     ada = run_cycle(train, test, AdaBoost, feature_types)
 
@@ -353,8 +483,8 @@ def find_best(ada, data, n):
   # given a dataset and a classifier return it split into two datasets
   # the first has the n best points in the set
   # the second has the rest of the points
-
-  return ada.choose_smallest_discriminant(data, n)
+  best, not_best = ada.choose_smallest_discriminant(data, n)
+  return best, not_best
 
 
 # problem 1
