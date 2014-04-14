@@ -96,7 +96,6 @@ class AdaBoost():
   def presort(self):
     sorted_features = []
     sorted_indexes = [] #indexes into truths/weights corrosponding to sorted feature
-    feature_thressholds = []
 
     for feature in self.items.T:
       both = zip(feature, range(0, len(feature)))
@@ -105,11 +104,9 @@ class AdaBoost():
 
       sorted_features.append(s_feature)
       sorted_indexes.append(s_index)
-      feature_thressholds.append(set(s_feature))
 
     self.sorted_features = sorted_features
     self.sorted_indexes = sorted_indexes
-    self.feature_thressholds = feature_thressholds
 
   def choose_best_classifier_and_error(self):
     best_classifier = None
@@ -123,6 +120,39 @@ class AdaBoost():
     return best_classifier, i, best_error
 
   def get_best_classifier_and_error_per_feature(self, feature_index):
+    if self.feature_types[feature_index] == 'numeric':
+      c, e = self.get_best_classifier_and_error_per_feature_numeric(feature_index)
+    else:
+      c, e = self.get_best_classifier_and_error_per_feature_cat(feature_index)
+
+    return c, e
+
+  def get_best_classifier_and_error_per_feature_cat(self, feature_index):
+    cats = self.feature_types[feature_index]
+    feature = self.items.T[feature_index]
+
+    best_error = .5
+    best_label = cats[0]
+
+    for cat in cats:
+      wrong_in = 0
+      wrong_out = 0
+
+      for truth, label, weight in zip(self.truths, feature, self.item_weights):
+        if label == cat and truth == NEG:
+          wrong_in += weight
+        if label != cat and truth == POS:
+          wrong_out += weight
+
+      new_error = wrong_in + wrong_out
+      #pprint({"new_error": new_error})
+      if abs(new_error - .5) > abs(best_error - .5):
+        best_error = new_error
+        best_label = cat
+    return DiscreteDecisionStump(best_label, feature_index), best_error
+
+
+  def get_best_classifier_and_error_per_feature_numeric(self, feature_index):
     feature_type = self.feature_types[feature_index]
 
     feature = self.sorted_features[feature_index]
@@ -178,16 +208,11 @@ class AdaBoost():
     # return n points with the smallest discriminant
     # and the rest of the points without
 
-    #pprint({"choosing":n, "from": len(data)})
+    pprint({"choosing":n, "from": len(data)})
 
-    d = sorted(data, key=lambda x: self.discriminant(x)) #TODO reverse?
+    d = sorted(data, key=lambda x: abs(self.classify_prob(x)))#, reverse=True)
+    # close to 0 is best
     return data[:n], data[n:]
-
-  def discriminant(self, item):
-    d = 0
-    for classifier, weight in zip(self.classifiers, self.classifier_weights):
-      d += classifier.discriminant(item) * weight
-    return d
 
   def classify(self, item):
     return sign(self.classify_prob(item))
@@ -195,6 +220,7 @@ class AdaBoost():
   # returns a value, not really a prob
   def classify_prob(self, item):
     scores = [classifier.check(item) for classifier in self.classifiers]
+    #pprint(np.inner(scores, self.classifier_weights))
     return np.inner(scores, self.classifier_weights)
 
 def sign(x):
@@ -202,6 +228,10 @@ def sign(x):
     return 0
   if x <= 0:
     return 1
+
+
+
+
 
 class DecisionStump():
 
@@ -245,36 +275,134 @@ class NumericDecisionStump(DecisionStump):
     return abs(self.value - item[self.value_index])
 
 
+
+
+NEWS = "../../data/HW4/20newsgroup/"
+NUM_WORDS = 11350
+# number of points:
+# in train  = 11314
+# in test = 7532
+def read_20_newsgroup_data(fname):
+
+  f = open(NEWS + fname)
+
+  lines = f.readlines()
+
+  data = np.zeros((len(lines), NUM_WORDS))
+  truths = []
+
+  for i, line in enumerate(lines):
+    bits = line.split()
+    truth = bits[0]
+    points = bits[1:-3]
+
+    truths.append(int(truth))
+
+    for point in points:
+      j, count = point.split(':')
+      data[i,int(j)] = int(count)
+
+  truths = np.array(truths).T
+  data = np.array(data).T
+
+  #pprint((truths, data))
+  pprint((truths.shape, data.shape))
+
+  a = np.vstack((data, truths))
+  a = a.T
+
+  #pprint(a)
+  pprint(a.shape)
+
+  return a
+
+
+# columns = f1 ... f6
+# rows = classes 0-7 (rel/comp/sale/auto/sport/med/space/pol)
+ECOC_M = [[0,0,0,1,1,1],
+          [0,0,1,1,1,0],
+          [0,1,0,1,0,1],
+          [0,1,1,1,0,0],
+          [1,0,0,0,1,1],
+          [1,0,1,0,1,0],
+          [1,1,0,0,0,1],
+          [1,1,1,0,0,0]]
+
 class ECOC():
   # runs ecoc on multiclass input
   # in this case on the 20 classes of newsgroups
 
   def __init__(self, features, truths, feature_types):
     classes = sorted(set(truths))
+    num_classes = len(classes)
+    self.ecoc = self.get_ecoc_matrix(num_classes)
 
-    classifiers = []
-    for clazz in classes:
-      # make a bunch of classifiers which split
-      new_truths = map(lambda x: 1 if x == clazz else 0, truths)
+    pprint(features)
+    pprint(set(truths))
 
-      feature_types_copy = deepcopy(feature_types)
-      feature_types_copy[-1] = [0, 1]
+    self.adas = []
 
-      ada = AdaBoost(features, new_truths, feature_types_copy)
+    for e_column in self.ecoc:
+      new_truths = self.convert_truths_to_1_0(truths, e_column)
 
-      classifiers.append(ada)
+      pprint(("should be 0,1", set(new_truths)))
 
-    self.classes = classes
-    self.classifiers = classifiers
+      new_feature_types = feature_types[:-1] #change class labels
+      new_feature_types.append([0,1])
 
-    # split each truths into into A and not-A for each label
-    # train an ada classifier for each A/not-A pair
+      ada = AdaBoost(features, new_truths, new_feature_types)
+      self.adas.append(ada)
+
+  def get_ecoc_matrix(self, m):
+    if m != 8:
+      raise Exception("only precomputed mat for 8")
+    else:
+      return np.array(ECOC_M).T
+
+  def convert_truths_to_1_0(self, truths, e_column):
+    pprint(truths.shape)
+    new_truths = []
+    for truth in truths:
+      new_truths.append(e_column[int(truth)])
+    return np.array(new_truths)
 
   def classify(self, item):
-    # run each classifier and return the majority vote
-    votes = [classifier.classify_prob(item) for classifier in self.classifiers]
-    ind = np.argmax(votes)
-    return self.classes[ind]
+    # run each classifier and return the vote
+    votes = [classifier.classify_prob(item) for classifier in self.adas]
+    #return ecoc row that has the closest edit distance to votes
+    return self.min_edit_distance(votes)
+
+  def min_edit_distance(self, votes):
+    distances = [self.calculate_edit_distance(row, votes) for row in self.ecoc.T]
+    return distances.index(min(distances))
+
+  def calculate_edit_distance(self, row, votes):
+    diff = 0
+    assert(len(row) == len(votes))
+    for a, b in zip(row, votes):
+      if a != b:
+        diff += 1
+    return diff
+
+
+def ecoc_news():
+  train = read_20_newsgroup_data("train.txt")
+  test = read_20_newsgroup_data("test.txt")
+
+  np.random.shuffle(train)
+  train = train[:500]
+
+  num_features = train.shape[0]-1
+  feature_types = ["numeric"]*num_features
+  feature_types.append([0,1,2,3,4,5,6,7]) #class labels
+
+  run_cycle(train, test, ECOC, feature_types)
+
+
+
+
+
+
 
 
 def read_config_file(config_filename, data_filename):
@@ -315,7 +443,7 @@ def read_config_file(config_filename, data_filename):
 
     data.append(point)
 
-  #return np.matrix(data), feature_types
+  #return np.matrix(data, dtype=object), feature_types
   return np.matrix(data, dtype=float), feature_types #TODO this if for spambaset
 
 TOP_DIR = "../../data/HW4/UCI/"
@@ -326,20 +454,36 @@ def read_in_data_config(name):
   return np.array(data), config
 
 
+
+
+
+
+
 ### Active Learning
 
-
+#START = 5.0/1000 #how much data to start with
+#ADD = 5.0/1000  #how much data to add each time
+#STOP = 1.0/10 #when to stop
 
 START = 5.0/100 #how much data to start with
 ADD = 5.0/100  #how much data to add each time
-STOP = 1.0/2 #when to stop
+STOP = 5.0/10 #when to stop
+
 
 TEST_AMT = 1.0/10
 
-def active_learning(name):
+def run_both(name):
   data, feature_types = read_in_data_config(name)
   np.random.shuffle(data)
 
+  pprint("RANDOM")
+  active_learning(data, feature_types)
+
+  pprint("BEST")
+  active_learning_add_best(data, feature_types)
+
+
+def active_learning(data, feature_types):
   amt = START
 
   while amt <= STOP:
@@ -347,27 +491,24 @@ def active_learning(name):
     pprint({"amt": amt})
 
     split = round(len(data) * amt)
-    train = data[:-split,:]
+    train = data[:split,:]
     test = data[-round(len(data) * TEST_AMT):,:]
 
     run_cycle(train, test, AdaBoost, feature_types)
 
     amt += ADD
 
-def active_learning_add_best(name):
-  data, feature_types = read_in_data_config(name)
-  np.random.shuffle(data)
-
-  data = data[:1000] #trim down for testing
-
+def active_learning_add_best(data, feature_types):
   amt = START
 
   pprint({"amt": amt})
 
   split = round(len(data) * amt)
-  train = data[:-split,:]
-  rest = data[-split+1:,:]
+  train = data[:split,:]
+  rest = data[split:-round(len(data) * TEST_AMT),:]
   test = rest[-round(len(data) * TEST_AMT):,:]
+
+  #pprint({"split":split, "train":train.shape, "rest":rest.shape, "test":test.shape})
 
   ada = run_cycle(train, test, AdaBoost, feature_types)
 
@@ -377,11 +518,21 @@ def active_learning_add_best(name):
 
     # find best points in testing set
     best, not_best = find_best(ada, rest, round(ADD * len(data)))
+    rest = not_best
+    pprint(("shapes", best.shape, not_best.shape))
+    pprint({"train shape":train.shape, "test shape":test.shape, "rest shape":rest.shape})
     # add to training set
     train = np.vstack((train, best))
-    test = not_best[-round(len(data) * TEST_AMT):,:]
+    #test = not_best[-round(len(data) * TEST_AMT):,:]
+
+    #pprint({"split":split, "train":train.shape, "rest":rest.shape, "test":test.shape})
 
     ada = run_cycle(train, test, AdaBoost, feature_types)
+
+
+
+
+
 
 def find_best(ada, data, n):
   # given a dataset and a classifier return it split into two datasets
@@ -435,27 +586,40 @@ def calculate_error(ada, features, truths, feature_types):
     if isinstance(guess, int):
       guess_label = item_labels[int(guess)]
 
+    #pprint((guess_label, truth))
+
+    #if guess_label != truth:
     if guess != truth:
       errors +=1
 
   return float(errors) / len(truths)
 
+
+
+
+
+
+
+
 if __name__ == "__main__":
-  #titles = ["crx",
-  #          "vote",
-  #          #"band", # illegal value
-  #          "monk",
-  #          "tic",
-  #          "spam", # slow
-  #          "agr"] # slow
+  titles = ["crx",
+            "vote",
+            #"band", # illegal value
+            "monk",
+            "tic",
+            "spam", # slow
+            "agr"] # slow
 
   titles = ["spam"]
+  #titles = ["crx"]
 
-  for title in titles:
-    pprint(title)
-    test_data_sample(title, AdaBoost)
-    #active_learning(title)
-    #active_learning_add_best(title)
+  #for title in titles:
+  #  pprint(title)
+  #  #test_data_sample(title, AdaBoost)
+  #  run_both(title)
+
+
+  ecoc_news()
 
   #multiclass_titles = ["bal",
   #                     "car",
