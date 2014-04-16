@@ -6,7 +6,7 @@ import math
 from copy import deepcopy
 
 NUM_CLASSIFIERS = 300
-ITERATIONS = 10
+ITERATIONS = 20
 SPLIT = 10 # testing data is 1/SPLIT of data
 
 NEG = -1
@@ -285,7 +285,6 @@ NUM_WORDS = 11350
 def read_20_newsgroup_data(fname):
 
   f = open(NEWS + fname)
-
   lines = f.readlines()
 
   data = np.zeros((len(lines), NUM_WORDS))
@@ -305,20 +304,25 @@ def read_20_newsgroup_data(fname):
   truths = np.array(truths).T
   data = np.array(data).T
 
-  #pprint((truths, data))
-  pprint((truths.shape, data.shape))
-
   a = np.vstack((data, truths))
   a = a.T
-
-  #pprint(a)
-  pprint(a.shape)
 
   return a
 
 
 # columns = f1 ... f6
 # rows = classes 0-7 (rel/comp/sale/auto/sport/med/space/pol)
+'''
+ECOC_M = [[0,0,0,1,1,1,1,0,0,0,1,0,0,0],
+          [0,0,1,1,1,0,0,1,0,0,0,1,0,0],
+          [0,1,0,1,0,1,0,0,1,0,0,0,1,0],
+          [0,1,1,1,0,0,0,0,0,1,0,0,0,1],
+          [1,0,0,0,1,1,1,0,0,0,1,0,0,0],
+          [1,0,1,0,1,0,0,1,0,0,0,1,0,0],
+          [1,1,0,0,0,1,0,0,1,0,0,0,1,0],
+          [1,1,1,0,0,0,0,0,0,1,0,0,0,1]]
+'''
+
 ECOC_M = [[0,0,0,1,1,1],
           [0,0,1,1,1,0],
           [0,1,0,1,0,1],
@@ -327,6 +331,7 @@ ECOC_M = [[0,0,0,1,1,1],
           [1,0,1,0,1,0],
           [1,1,0,0,0,1],
           [1,1,1,0,0,0]]
+
 
 class ECOC():
   # runs ecoc on multiclass input
@@ -368,12 +373,22 @@ class ECOC():
 
   def classify(self, item):
     # run each classifier and return the vote
-    votes = [classifier.classify_prob(item) for classifier in self.adas]
+    votes = [classifier.classify(item) for classifier in self.adas]
     #return ecoc row that has the closest edit distance to votes
     return self.min_edit_distance(votes)
 
   def min_edit_distance(self, votes):
     distances = [self.calculate_edit_distance(row, votes) for row in self.ecoc.T]
+
+    '''
+    #pprint({"distances": distances})
+    m = min(distances)
+    count = distances.count(m)
+    pprint(count)
+    if count > 1:
+      pprint(("tie", count, votes))
+    '''
+
     return distances.index(min(distances))
 
   def calculate_edit_distance(self, row, votes):
@@ -385,12 +400,13 @@ class ECOC():
     return diff
 
 
+
 def ecoc_news():
   train = read_20_newsgroup_data("train.txt")
   test = read_20_newsgroup_data("test.txt")
 
   np.random.shuffle(train)
-  train = train[:500]
+  train = train[:5000]
 
   num_features = train.shape[0]-1
   feature_types = ["numeric"]*num_features
