@@ -5,12 +5,26 @@ from pprint import pprint
 
 ITERATIONS = 10
 
+def most_common(lst):
+  return max(set(lst), key=lst.count)
+
 class KMeans():
 
-  def __init__(self, xs, num_classes):
+  def __init__(self, xs, ys, num_classes):
     self.centroids = np.random.rand(num_classes, xs.shape[1])
     pprint(self.centroids.shape)
     self.xs = xs
+    self.ys = ys
+
+    self.train()
+    self.select_labels()
+
+  def select_labels(self):
+    clusters = self.clusters_y()
+    labels = [most_common(cluster) for cluster in clusters]
+
+    self.labels = labels
+
 
   def train(self):
     for r in range(ITERATIONS):
@@ -24,7 +38,7 @@ class KMeans():
     #pprint(distances)
     return distances.index(min(distances))
 
-  def clusters():
+  def clusters(self):
     clusters = [[]] * len(self.centroids)
 
     for x in self.xs:
@@ -33,8 +47,18 @@ class KMeans():
 
     return clusters
 
+  def clusters_y(self):
+    clusters = [[]] * len(self.centroids)
+
+    for x, y in zip(self.xs, self.ys):
+      closest = self.find_closest_centroid_index(x)
+      clusters[closest].append(y)
+
+    return clusters
+
   def new_centroids(self, clusters):
     centroids = []
+    l = len(self.xs)
 
     for cluster in clusters:
       centroid = np.sum(cluster) / l
@@ -43,12 +67,13 @@ class KMeans():
     return centroids
 
   def classify(self, point):
-    return self.find_closest_centroid_index(point)
+    index = self.find_closest_centroid_index(point)
+    return self.labels[index]
 
 
 class Hierarchical():
 
-  def __init__(self, xs, num_classes):
+  def __init__(self, xs, ys, num_classes):
     pass
 
   def classify(self, point):
@@ -94,7 +119,7 @@ def run_cycle(train, test, classifier_type):
   features = train[:,:train.shape[1]-1]
   truths = train[:,train.shape[1]-1]
 
-  classifier = classifier_type(features, 20)
+  classifier = classifier_type(features, truths, 20)
 
   error = calculate_error(classifier, features, truths)
   pprint(("training error", error))
