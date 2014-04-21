@@ -8,16 +8,26 @@ ITERATIONS = 10
 def most_common(lst):
   return max(set(lst), key=lst.count)
 
-class KMeans():
 
-  def __init__(self, xs, ys, num_classes):
-    self.centroids = np.random.rand(num_classes, xs.shape[1])
-    pprint(self.centroids.shape)
-    self.xs = xs
-    self.ys = ys
+class Clustering():
 
-    self.train()
-    self.select_labels()
+  def classify(self, point):
+    index = self.find_closest_centroid_index(point)
+    return self.labels[index]
+
+  def find_closest_centroid_index(self, point):
+    distances = [np.linalg.norm(centroid - point) for centroid in self.centroids]
+    #pprint(distances)
+    return distances.index(min(distances))
+
+  def clusters_y(self):
+    clusters = [[] for x in xrange(0,len(self.centroids))]
+
+    for x, y in zip(self.xs, self.ys):
+      closest = self.find_closest_centroid_index(x)
+      clusters[closest].append(y)
+
+    return clusters
 
   def select_labels(self):
     clusters = self.clusters_y()
@@ -25,6 +35,43 @@ class KMeans():
 
     self.labels = labels
 
+  def calculate_centroid(self, cluster):
+    return np.sum(cluster, axis=0) / len(cluster)
+
+
+
+
+class KMeans(Clustering):
+
+  def __init__(self, xs, ys, num_classes):
+    self.xs = xs
+    self.ys = ys
+
+    self.centroids = self.pick_starting_centroids(num_classes)
+    pprint(self.centroids.shape)
+
+    self.train()
+    self.select_labels()
+
+  '''
+  def pick_starting_centroids(self, num_classes):
+    mins = self.xs.min(axis=0)
+    maxs = self.xs.max(axis=0)
+
+    centroids = []
+    for i in range(num_classes):
+      centroid = []
+      for mmin, mmax in zip(mins, maxs):
+        centroid.append(np.random.uniform(mmin, mmax))
+      centroids.append(centroid)
+    return np.array(centroids)
+  '''
+
+  def pick_starting_centroids(self, num_classes):
+    #pick 20 random points as initial centroids
+    pick = np.random.randint(len(self.xs), size=num_classes)
+    centroids = self.xs[pick,:]
+    return centroids
 
   def train(self):
     for r in range(ITERATIONS):
@@ -33,13 +80,8 @@ class KMeans():
       new_clusters = self.clusters()
       self.centroids = self.new_centroids(new_clusters)
 
-  def find_closest_centroid_index(self, point):
-    distances = [np.linalg.norm(centroid - point) for centroid in self.centroids]
-    #pprint(distances)
-    return distances.index(min(distances))
-
   def clusters(self):
-    clusters = [[]] * len(self.centroids)
+    clusters = [[] for x in xrange(0,len(self.centroids))]
 
     for x in self.xs:
       closest = self.find_closest_centroid_index(x)
@@ -47,37 +89,120 @@ class KMeans():
 
     return clusters
 
-  def clusters_y(self):
-    clusters = [[]] * len(self.centroids)
-
-    for x, y in zip(self.xs, self.ys):
-      closest = self.find_closest_centroid_index(x)
-      clusters[closest].append(y)
-
-    return clusters
-
   def new_centroids(self, clusters):
     centroids = []
-    l = len(self.xs)
 
     for cluster in clusters:
-      centroid = np.sum(cluster) / l
-      centroids.append(centroids)
+      centroid = self.calculate_centroid(cluster)
+      pprint(("cluster shape", len(cluster)))
+      pprint(("centroid shape", centroid.shape))
+      centroids.append(centroid)
 
-    return centroids
+    a_centroids = np.array(centroids, dtype=float)
 
-  def classify(self, point):
-    index = self.find_closest_centroid_index(point)
-    return self.labels[index]
+    pprint((a_centroids, a_centroids.shape))
 
+    return a_centroids
 
-class Hierarchical():
+HIGH = 10000.0
+
+class Hierarchical(Clustering):
 
   def __init__(self, xs, ys, num_classes):
-    pass
+    self.xs = xs
+    self.ys = ys
+    self.num_classes = num_classes
+    self.clusters = self.initial_clusters()
+    self.centroids = self.initial_centroids()
+    self.proximity_matrix = self.get_proximity_matrix()
 
-  def classify(self, point):
-    pass
+    self.train()
+    self.select_labels()
+
+    pprint(self.labels)
+
+  def initial_clusters(self):
+    c = []
+    for point in self.xs:
+      c.append([point]) #put each point in a 1-element list
+    return c
+
+  def initial_centroids(self):
+    c = []
+    for point in self.xs:
+      c.append(point)
+    return c
+
+  def get_proximity_matrix(self):
+    m = np.zeros((len(self.centroids), len(self.centroids)))
+
+    for i, centroid_a in enumerate(self.centroids):
+      for j, centroid_b in enumerate(self.centroids):
+        if i == j:
+          #pprint(i)
+          m[i,j] = float(HIGH)
+        else:
+          m[i,j] = np.linalg.norm(centroid_a - centroid_b)
+    return m
+
+
+  def train(self):
+    while len(self.centroids) > self.num_classes:
+      pprint(("num centroids and classes", len(self.centroids), self.num_classes))
+      pprint(("prox matrix", self.proximity_matrix, self.proximity_matrix.shape))
+      a,b = np.unravel_index(self.proximity_matrix.argmin(), self.proximity_matrix.shape)
+      pprint({"a":a, "b":b, "argmin":self.proximity_matrix.argmin(),
+              "value":self.proximity_matrix[a,b]})
+
+      merged = self.clusters[a]
+      merged.extend(self.clusters[b])
+      merged_centroid = self.calculate_centroid(merged)
+      #pprint(merged)
+
+      del self.clusters[min(a,b)]
+      del self.clusters[max(a,b)-1]
+      self.clusters.append(merged)
+
+      del self.centroids[min(a,b)]
+      del self.centroids[max(a,b)-1]
+      self.centroids.append(merged_centroid)
+
+      self.proximity_matrix = self.update_proximity_matrix(self.proximity_matrix,
+          merged_centroid, a, b)
+
+
+  def update_proximity_matrix(self, old_prox, new_centroid, a, b):
+    old_prox = np.delete(old_prox, [a,b], 0) #delete rows
+    old_prox = np.delete(old_prox, [a,b], 1) #delete cols
+
+    # add a line of zeroes on the right and bottom edges
+    mid = np.hstack((old_prox, np.zeros((old_prox.shape[0], 1), dtype=old_prox.dtype)))
+    pprint(("mid", mid, mid.shape))
+    new_prox = np.vstack((mid, np.zeros((1, mid.shape[1]), dtype=mid.dtype)))
+
+    pprint(("expanded", new_prox, new_prox.shape))
+
+    old_length = len(old_prox) - 1
+    new_length = len(new_prox) - 1
+
+    #fill them in with new comparisons
+    new_prox[new_length,new_length] = float(HIGH)
+
+    for i, centroid in enumerate(self.centroids[:-1]):
+      diff = np.linalg.norm(centroid - new_centroid)
+
+      pprint(("checking", diff, i))
+
+      new_prox[new_length,i] = diff
+      new_prox[i,new_length] = diff
+
+    pprint(("new prox", new_prox, new_prox.shape))
+
+    return new_prox
+
+
+
+
 
 
 
@@ -119,7 +244,9 @@ def run_cycle(train, test, classifier_type):
   features = train[:,:train.shape[1]-1]
   truths = train[:,train.shape[1]-1]
 
-  classifier = classifier_type(features, truths, 20)
+  pprint(set(truths))
+
+  classifier = classifier_type(features, truths, 8)
 
   error = calculate_error(classifier, features, truths)
   pprint(("training error", error))
@@ -144,9 +271,10 @@ train = read_20_newsgroup_data("train.txt")
 test = read_20_newsgroup_data("test.txt")
 
 np.random.shuffle(train)
-train = train[:1000]
+train = train[:100]
+train = train[:1000,:] #lose most features
 
-run_cycle(train, test, KMeans)
+#run_cycle(train, test, KMeans)
 run_cycle(train, test, Hierarchical)
 
 
