@@ -37,7 +37,9 @@ cannot be split by a triangle
 ## d) multidimensional "sphere" given by f(x) = sign [(x-c)(x-c) -b] in the Euclidian space with m dimensions ℝ m .
 
 point in R1 = 2
+
 circle in R2 = 4
+
 sphere in r3 = also 4, as long as the 4 points are in a plane the 'cross section' of the shpere is stil a circle
 
 
