@@ -4,9 +4,10 @@ import numpy as np
 from pprint import pprint
 import math
 from copy import deepcopy
+from multiprocessing import Pool
 
 NUM_CLASSIFIERS = 300
-ITERATIONS = 20
+ITERATIONS = 100
 SPLIT = 10 # testing data is 1/SPLIT of data
 
 NEG = -1
@@ -105,12 +106,16 @@ class AdaBoost():
       sorted_features.append(s_feature)
       sorted_indexes.append(s_index)
 
+    #pprint(np.array(sorted_features).shape)
+
     self.sorted_features = sorted_features
     self.sorted_indexes = sorted_indexes
 
   def choose_best_classifier_and_error(self):
     best_classifier = None
     best_error = .5
+
+    #pprint(("num features", len(self.feature_types)))
 
     for i in range(len(self.feature_types)):
       c, e = self.get_best_classifier_and_error_per_feature(i)
@@ -152,8 +157,11 @@ class AdaBoost():
     return DiscreteDecisionStump(best_label, feature_index), best_error
 
 
+  '''
   def get_best_classifier_and_error_per_feature_numeric(self, feature_index):
     feature_type = self.feature_types[feature_index]
+
+    #pprint(feature_index)
 
     feature = self.sorted_features[feature_index]
     indexes = self.sorted_indexes[feature_index]
@@ -183,6 +191,30 @@ class AdaBoost():
         best_cutoff = feature[i]
 
     return NumericDecisionStump(best_cutoff, feature_index), best_error
+  '''
+
+  # special only-splitting-at-0 version for 20newsgroup data
+  def get_best_classifier_and_error_per_feature_numeric(self, feature_index):
+    split = 0
+    feature = self.sorted_features[feature_index]
+    indexes = self.sorted_indexes[feature_index]
+
+    pos_below = 0.0
+    neg_above = 0.0
+
+    for i, (feature_value, index) in enumerate(zip(feature, indexes)):
+      truth = self.truths[index]
+      weight = self.item_weights[index]
+
+      if feature_value <= split and truth == POS:
+        pos_below += weight
+      elif split < feature_value and truth == NEG:
+        neg_above += weight
+
+    return NumericDecisionStump(split, feature_index), pos_below+neg_above
+
+
+
 
   def error(self, classifier):
     error = 0.0
@@ -277,7 +309,8 @@ class NumericDecisionStump(DecisionStump):
 
 
 
-NEWS = "../../data/HW4/20newsgroup/"
+NEWS = "/home/laplante/data/"
+#NEWS = "../../data/HW4/20newsgroup/"
 NUM_WORDS = 11350
 # number of points:
 # in train  = 11314
@@ -307,30 +340,79 @@ def read_20_newsgroup_data(fname):
   a = np.vstack((data, truths))
   a = a.T
 
+  #pprint("column sums")
+  #pprint(a.sum(axis=0).shape)
+  #pprint(list(a.sum(axis=0)))
+
   return a
+
+
+def delete_zeros(xs, ys):
+  tf = xs.sum(axis=0)
+  bad = []
+  for i, val in enumerate(tf):
+    if val <= 5: #remove all infrequent features
+      bad.append(i)
+  #pprint(("bad", bad))
+
+  x = np.delete(xs, bad, axis=1)
+  y = np.delete(ys, bad)
+
+
+def print_examples(self):
+  for i, cluster in enumerate(self.clusters()):
+    pprint({"cluster": i}) 
+    for point in cluster[:10]:
+      pprint(row_index(self.xs, point)[0][0])
 
 
 # columns = f1 ... f6
 # rows = classes 0-7 (rel/comp/sale/auto/sport/med/space/pol)
+           #     #               #              #
+ECOC_8 = [[0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,1,0],
+          [0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,1],
+          [0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0],
+          [0,1,1,0,0,0,1,0,0,0,1,1,0,0,1,0,0,1,0],
+          [1,0,0,1,0,0,0,1,0,0,0,0,1,0,0,1,0,0,1],
+          [1,0,1,0,1,0,0,0,1,0,0,0,0,1,0,0,1,0,0],
+          [1,1,0,0,0,1,0,0,0,1,0,1,0,0,1,0,0,1,0],
+          [1,1,1,0,0,0,1,0,0,0,1,0,1,0,0,1,0,0,1]]
 '''
-ECOC_M = [[0,0,0,1,1,1,1,0,0,0,1,0,0,0],
-          [0,0,1,1,1,0,0,1,0,0,0,1,0,0],
-          [0,1,0,1,0,1,0,0,1,0,0,0,1,0],
-          [0,1,1,1,0,0,0,0,0,1,0,0,0,1],
-          [1,0,0,0,1,1,1,0,0,0,1,0,0,0],
-          [1,0,1,0,1,0,0,1,0,0,0,1,0,0],
-          [1,1,0,0,0,1,0,0,1,0,0,0,1,0],
-          [1,1,1,0,0,0,0,0,0,1,0,0,0,1]]
+ECOC_8 = [[0,0,0],
+          [0,0,1],
+          [0,1,0],
+          [0,1,1],
+          [1,0,0],
+          [1,0,1],
+          [1,1,0],
+          [1,1,1]]
 '''
-
-ECOC_M = [[0,0,0,1,1,1],
-          [0,0,1,1,1,0],
-          [0,1,0,1,0,1],
-          [0,1,1,1,0,0],
-          [1,0,0,0,1,1],
-          [1,0,1,0,1,0],
-          [1,1,0,0,0,1],
-          [1,1,1,0,0,0]]
+ECOC_26 = [[0,0,0,0,0,1],
+           [0,0,0,0,1,0],
+           [0,0,0,1,0,1],
+           [0,0,0,1,1,1],
+           [0,0,1,0,0,0],
+           [0,0,1,1,1,0],
+           [0,1,0,0,0,1],
+           [0,1,0,0,1,1],
+           [0,1,0,1,0,0],
+           [0,1,1,0,1,0],
+           [0,1,1,1,0,1],
+           [0,1,1,1,1,1],
+           [0,1,1,1,1,0], #
+           [1,0,0,0,0,1],
+           [1,0,0,1,0,0],
+           [1,0,0,1,1,1],
+           [1,0,1,0,0,1],
+           [1,0,1,0,1,0],
+           [1,0,1,1,0,0],
+           [1,1,0,0,0,1],
+           [1,1,0,0,1,0],
+           [1,1,0,1,0,1],
+           [1,1,0,1,1,1],
+           [1,1,1,0,1,0],
+           [1,1,1,1,0,0],
+           [1,1,1,1,1,1]]
 
 
 class ECOC():
@@ -342,38 +424,42 @@ class ECOC():
     num_classes = len(classes)
     self.ecoc = self.get_ecoc_matrix(num_classes)
 
-    pprint(features)
-    pprint(set(truths))
+    self.features = features
+    self.truths = truths
+    self.feature_types = feature_types
 
-    self.adas = []
+    pprint(self.features)
+    pprint(set(self.truths))
 
-    for e_column in self.ecoc:
-      new_truths = self.convert_truths_to_1_0(truths, e_column)
+    self.adas = [None]*len(self.ecoc)
 
-      pprint(("should be 0,1", set(new_truths)))
+    num = len(self.ecoc)
 
-      new_feature_types = feature_types[:-1] #change class labels
-      new_feature_types.append([0,1])
-
-      ada = AdaBoost(features, new_truths, new_feature_types)
-      self.adas.append(ada)
+    pool = Pool(processes=20)
+    self.adas = pool.map(train_single, zip([self]*num, range(num)))
+    #self.train_single(i)
+    #func = Process(target=self.train_single, args=(self, i))
+    #func.start()
 
   def get_ecoc_matrix(self, m):
-    if m != 8:
-      raise Exception("only precomputed mat for 8")
+    if m == 8:
+      return np.array(ECOC_8).T
+    if m == 26:
+      return np.array(ECOC_26).T
     else:
-      return np.array(ECOC_M).T
+      raise Exception("only precomputed mat for 8")
 
-  def convert_truths_to_1_0(self, truths, e_column):
+  def convert_truths_to_1_0(self, truths, e_column, labels):
     pprint(truths.shape)
     new_truths = []
     for truth in truths:
-      new_truths.append(e_column[int(truth)])
+      #new_truths.append(e_column[int(truth)])
+      new_truths.append(e_column[labels.index(truth)])
     return np.array(new_truths)
 
   def classify(self, item):
     # run each classifier and return the vote
-    votes = [classifier.classify(item) for classifier in self.adas]
+    votes = [ada.classify(item) for ada in self.adas]
     #return ecoc row that has the closest edit distance to votes
     return self.min_edit_distance(votes)
 
@@ -399,6 +485,23 @@ class ECOC():
         diff += 1
     return diff
 
+#usually this would ba a method of ECOC, but it can't be for pickle reasons
+def train_single(args):
+  self = args[0]
+  i = args[1]
+
+  e_column = self.ecoc[i]
+  new_truths = self.convert_truths_to_1_0(self.truths, e_column, self.feature_types[-1])
+
+  pprint(("should be 0,1", set(new_truths)))
+
+  new_feature_types = self.feature_types[:-1] #change class labels
+  new_feature_types.append([0,1])
+
+  ada = AdaBoost(self.features, new_truths, new_feature_types)
+  return ada
+
+
 
 
 def ecoc_news():
@@ -406,7 +509,7 @@ def ecoc_news():
   test = read_20_newsgroup_data("test.txt")
 
   np.random.shuffle(train)
-  train = train[:5000]
+  #train = train
 
   num_features = train.shape[0]-1
   feature_types = ["numeric"]*num_features
@@ -414,6 +517,41 @@ def ecoc_news():
 
   run_cycle(train, test, ECOC, feature_types)
 
+
+
+def ecoc_letter():
+  data = read_letter_data()
+  pprint(data)
+  np.random.shuffle(data)
+
+  split = round(len(data) * .9)
+  train = data[:split,:]
+  test = data[split:,:]
+
+  pprint(train.shape)
+  pprint(test.shape)
+
+  num_features = train.shape[1]-1
+  feature_types = ["numeric"]*num_features
+  feature_types.append(['A','B','C','D','E','F','G','H',
+                        'I','J','K','L','M','N','O','P',
+                        'Q','R','S','T','U','V','W','X','Y','Z']) #class labels
+
+  run_cycle(train, test, ECOC, feature_types)
+
+LETTER = "../../data/HW4/letter_recognition/letter-recognition.data"
+def read_letter_data():
+  f = open(LETTER)
+  data = []
+
+  for line in f:
+    elements = line.strip().split(',')
+    y = elements[0]
+    point = [int(p) for p in elements[1:]]
+    point.append(y)
+    data.append(point)
+
+  return np.array(data, dtype=object)
 
 
 
@@ -452,7 +590,7 @@ def read_config_file(config_filename, data_filename):
           point.append(float(value))
       else: #discrete values
         if not (value in feature_type or value == "?"):
-          pprint((value, feature_type))
+          #pprint((value, feature_type))
           assert(value in feature_type)
         else:
           point.append(value)
@@ -579,6 +717,8 @@ def run_cycle(train, test, classifier_type, feature_types):
   features = train[:,:train.shape[1]-1]
   truths = train[:,train.shape[1]-1]
 
+  delete_zeros(features, truths)
+
   ada = classifier_type(features, truths, feature_types)
 
   error = calculate_error(ada, features, truths, feature_types)
@@ -602,10 +742,10 @@ def calculate_error(ada, features, truths, feature_types):
     if isinstance(guess, int):
       guess_label = item_labels[int(guess)]
 
-    #pprint((guess_label, truth))
+    #pprint((guess_label, guess, truth))
 
-    #if guess_label != truth:
-    if guess != truth:
+    if guess_label != truth:
+      #if guess != truth:
       errors +=1
 
   return float(errors) / len(truths)
@@ -636,6 +776,7 @@ if __name__ == "__main__":
 
 
   ecoc_news()
+  #ecoc_letter()
 
   #multiclass_titles = ["bal",
   #                     "car",
