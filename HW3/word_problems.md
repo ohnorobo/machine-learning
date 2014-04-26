@@ -79,3 +79,9 @@ So the probability of getting 6 tails on a row is
 
 ### b. show minimum error for g_j(x)
 
+    g_j(x) = sum(x_i * ln(p_ij / 1 - p_ij)) + sum(ln(1 - p_ij) + ln(P_w))
+
+    The first term ln(p_ij / 1- p_ij) means that probabilities close to .5 go to 0, while probabilities near 0 or 1 go to -inf and +inf. This means a matching x_i gets a large positive term in the sum, while a non-matching x_i gets a lerge negative term.
+
+    The second term is an inverse of the probability at p_ij, summed with the state of natue for that w_j
+
