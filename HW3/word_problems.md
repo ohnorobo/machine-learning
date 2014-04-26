@@ -7,20 +7,11 @@
              = p(c|a,b) * p(a|b) / p(c|b)
 
 
-    p(a|b ∩ c) =  p(b ∩ c|a) * p(a) / p(b ∩ c)
-
-    p(a|b ∩ c) =  p(b|a) * p(c|a) * p(a) / p(b ∩ c)
-
-    p(a|b) = p(b|a) * p(a) / p(b)
-    p(a|c) = p(c|a) * p(a) / p(c)
-
-    p(b|a) = p(a|b) * p(b) / p(a)
-    p(c|a) = p(a|c) * p(c) / p(a)
-
-    p(a ∩ b ∩ c) = p(a|b,c) * p(b|c) * p(c)
-
-
-
+    p(a∣b ∩ c) = 
+    p(a ∩ b ∩ c) / p(b ∩ c)
+    (p(a ∩ b ∩ c) / p(c)) / (p(b ∩ c) / p(c))
+    p(a ∩ b | c) / p(b | c)
+    p(b | a ∩ c) * p(a | c) / p(b | c)
 
 
 ### b. You are given a coin which you know is either fair or double-headed. You believe that the a priori odds of it being fair are F to 1; i.e., you believe that the a priori probability of the coin being fair is F/(F+1) . You now begin to flip the coin in order to learn more. Obviously, if you ever see a tail, you know immediately that the coin is fair. As a function of F, how many heads in a row would you need to see before becoming convinced that there is a better than even chance that the coin is double-headed?
