@@ -315,8 +315,8 @@ class NumericDecisionStump(DecisionStump):
 
 
 
-#NEWS = "/home/laplante/data/"
-NEWS = "../../data/HW4/20newsgroup/"
+NEWS = "/home/laplante/data/"
+#NEWS = "../../data/HW4/20newsgroup/"
 NUM_WORDS = 11350
 # number of points:
 # in train  = 11314
@@ -517,7 +517,7 @@ def ecoc_news():
   test = read_20_newsgroup_data("test.txt")
 
   np.random.shuffle(train)
-  train = train[:200]
+  #train = train[:200]
 
   num_features = train.shape[0]-1
   feature_types = ["numeric"]*num_features
