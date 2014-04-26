@@ -50,6 +50,7 @@ class AdaBoost():
     #pprint(self.classifiers)
 
     self.train()
+    self.release_sort()
 
   # convert whatever weird symbols are being used for classes into 0/1
   def convert_to_neg1_1s(self, truths, feature_types):
@@ -110,6 +111,11 @@ class AdaBoost():
 
     self.sorted_features = sorted_features
     self.sorted_indexes = sorted_indexes
+
+  # release expensive data structures back to GC
+  def release_sort(self):
+    self.sorted_features = []
+    self.sorted_indexes = []
 
   def choose_best_classifier_and_error(self):
     best_classifier = None
@@ -309,8 +315,8 @@ class NumericDecisionStump(DecisionStump):
 
 
 
-NEWS = "/home/laplante/data/"
-#NEWS = "../../data/HW4/20newsgroup/"
+#NEWS = "/home/laplante/data/"
+NEWS = "../../data/HW4/20newsgroup/"
 NUM_WORDS = 11350
 # number of points:
 # in train  = 11314
@@ -357,6 +363,8 @@ def delete_zeros(xs, ys):
 
   x = np.delete(xs, bad, axis=1)
   y = np.delete(ys, bad)
+
+  return x, y
 
 
 def print_examples(self):
@@ -435,7 +443,7 @@ class ECOC():
 
     num = len(self.ecoc)
 
-    pool = Pool(processes=20)
+    pool = Pool(processes=5)
     self.adas = pool.map(train_single, zip([self]*num, range(num)))
     #self.train_single(i)
     #func = Process(target=self.train_single, args=(self, i))
@@ -509,7 +517,7 @@ def ecoc_news():
   test = read_20_newsgroup_data("test.txt")
 
   np.random.shuffle(train)
-  #train = train
+  train = train[:200]
 
   num_features = train.shape[0]-1
   feature_types = ["numeric"]*num_features
@@ -717,7 +725,7 @@ def run_cycle(train, test, classifier_type, feature_types):
   features = train[:,:train.shape[1]-1]
   truths = train[:,train.shape[1]-1]
 
-  delete_zeros(features, truths)
+  #features, truths = delete_zeros(features, truths)
 
   ada = classifier_type(features, truths, feature_types)
 
