@@ -91,6 +91,15 @@ I'm picking 1 for the alpha's here since they're all the same distance from the 
     w = (1,1) + (2,0) + (-1,0) + (0,-1)
     w = (2,0)
 
+    w = -1
+
+    if the line is as (X,X) and b equals ?
+      (1, 0) - 1.5
+      (0, 1) - 1.5
+      (1, 1) - 2.0
+      (2, 0) - 2.0
+
+    so average b is 1.75
 
 
 
