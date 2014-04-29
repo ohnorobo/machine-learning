@@ -117,7 +117,7 @@ def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),delimiter=','))).astype('float')
 
 K_FOLDS = 10
-data_dir = "../../data/HW1/"
+data_dir = "./data/"
 spam_filename = data_dir + "spambase/spambase.data"
 def cross_validate_spam(clazz):
   data = read_csv_as_numpy_matrix(spam_filename)[:4600,:]

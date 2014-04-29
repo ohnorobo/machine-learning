@@ -118,7 +118,7 @@ class TestLinearReg(unittest.TestCase):
     error = least_squares_error(regression, data[:,1:], data[:,0])
 
 
-data_dir = "../../data/HW1/"
+data_dir = "./data/"
 def test_housing():
   global STOP
   STOP = 10

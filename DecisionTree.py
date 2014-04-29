@@ -213,7 +213,7 @@ def sort_columns(m):
 
 
 
-data_dir = "../../data/HW1/"
+data_dir = "./data/"
 class TestLinearReg(unittest.TestCase):
 
   def test_simple_case(self):

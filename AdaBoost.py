@@ -315,8 +315,8 @@ class NumericDecisionStump(DecisionStump):
 
 
 
-NEWS = "/home/laplante/data/"
-#NEWS = "../../data/HW4/20newsgroup/"
+#NEWS = "/home/laplante/data/"
+NEWS = "./data/20newsgroup/"
 NUM_WORDS = 11350
 # number of points:
 # in train  = 11314
@@ -547,7 +547,7 @@ def ecoc_letter():
 
   run_cycle(train, test, ECOC, feature_types)
 
-LETTER = "../../data/HW4/letter_recognition/letter-recognition.data"
+LETTER = "./data/letter_recognition/letter-recognition.data"
 def read_letter_data():
   f = open(LETTER)
   data = []
@@ -608,7 +608,7 @@ def read_config_file(config_filename, data_filename):
   #return np.matrix(data, dtype=object), feature_types
   return np.matrix(data, dtype=float), feature_types #TODO this if for spambaset
 
-TOP_DIR = "../../data/HW4/UCI/"
+TOP_DIR = "./data/UCI/"
 def read_in_data_config(name):
   config = TOP_DIR + name + "/" + name + ".config"
   data = TOP_DIR + name + "/" + name + ".data"
@@ -777,14 +777,14 @@ if __name__ == "__main__":
   titles = ["spam"]
   #titles = ["crx"]
 
-  #for title in titles:
-  #  pprint(title)
-  #  #test_data_sample(title, AdaBoost)
-  #  run_both(title)
+  for title in titles:
+    pprint(title)
+    #test_data_sample(title, AdaBoost)
+    run_both(title)
 
 
   ecoc_news()
-  #ecoc_letter()
+  ecoc_letter()
 
   #multiclass_titles = ["bal",
   #                     "car",

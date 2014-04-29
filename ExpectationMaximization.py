@@ -267,7 +267,7 @@ def test_cheng():
 
 
 
-data_dir3 = "../../data/HW3/"
+data_dir3 = "./data/"
 
 def two_gaussians():
   filename = data_dir3 + "2gaussian.txt"

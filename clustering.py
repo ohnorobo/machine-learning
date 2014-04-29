@@ -206,7 +206,7 @@ class Hierarchical(Clustering):
 
 
 
-NEWS = "../../data/HW4/20newsgroup/"
+NEWS = "./data/20newsgroup/"
 NUM_WORDS = 11350
 # number of points:
 # in train  = 11314

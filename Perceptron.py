@@ -53,7 +53,7 @@ def read_csv_as_numpy_matrix(filename):
 
 import unittest
 
-data_dir = "../../data/HW2/"
+data_dir = "./data/"
 class TestLinearReg(unittest.TestCase):
 
   def test_flip(self):

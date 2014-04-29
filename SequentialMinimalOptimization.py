@@ -228,7 +228,7 @@ def count_unique(keys):
 
 ## main
 
-DATAPATH = "../../data/HW5"
+DATAPATH = "./data/mnist/"
 digits = [0,1,2,3,4,5,6,7,8,9]
 
 TRAIN_AMT = 1000

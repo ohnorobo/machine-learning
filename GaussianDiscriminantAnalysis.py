@@ -5,7 +5,7 @@ import numpy as np
 from pprint import pprint
 from scipy.stats import multivariate_normal
 
-data_dir1 = "../../data/HW1/"
+data_dir1 = "./data/HW1/"
 
 def read_csv_as_numpy_matrix(filename):
   return np.matrix(list(csv.reader(open(filename,"rb"),

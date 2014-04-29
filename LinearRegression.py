@@ -47,7 +47,7 @@ def guess_all(regression, features):
 
 import unittest
 
-data_dir = "../../data/HW1/"
+data_dir = "./data/"
 class TestLinearReg(unittest.TestCase):
 
 

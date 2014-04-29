@@ -386,7 +386,7 @@ def auc(fprs, tprs):
 
 ############## Test
 
-data_dir = "../../data/HW1/"
+data_dir = "./data/"
 spam_filename = data_dir + "spambase/spambase.data"
 def cross_validate_spam(NaiveBayesClass):
   data = read_csv_as_numpy_matrix(spam_filename)[:4600,:]
