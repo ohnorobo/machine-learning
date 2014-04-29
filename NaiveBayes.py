@@ -8,7 +8,7 @@ from pprint import pprint
 from copy import deepcopy
 import pandas
 import csv, sys
-from EM import GaussianMixtureModel as GMM
+from ExpectationMaximization import GaussianMixtureModel as GMM
 
 K_FOLDS = 10
 #how much to widen gaussians with no standard deviation

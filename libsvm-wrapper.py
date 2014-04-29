@@ -36,7 +36,7 @@ m = svm_train(prob, param)
 SUBSAMPLE = 10000
 
 digits = [0,1,2,3,4,5,6,7,8,9]
-DATAPATH = "../../data/HW5"
+DATAPATH = "./data/mnist/"
 
 train_images, train_labels = mnist.read(digits, dataset='training', path=DATAPATH)
 x = np.array(train_images).tolist() #svm requires a list

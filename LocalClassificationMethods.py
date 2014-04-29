@@ -169,7 +169,7 @@ def calculate_error(classifier, features, truths):
 if __name__ == "__main__":
   #pprint("Fixed Window")
   #cross_validate_spam(FixedWindow)
-  #pprint("K Nearest Neighbors")
-  #cross_validate_spam(KNearestNeighbors)
-  pprint("Kernel Density")
-  cross_validate_spam(KernelDensity)
+  pprint("K Nearest Neighbors")
+  cross_validate_spam(KNearestNeighbors)
+  #pprint("Kernel Density")
+  #cross_validate_spam(KernelDensity)
