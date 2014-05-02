@@ -1,11 +1,4 @@
-
-Work for cs6140, Machine Learning
-
-at Northeastern
-
-in 2014
-
-with Virgil Pavlu
+Work for cs6140, Machine Learning - at Northeastern - in 2014 - with Virgil Pavlu
 
 
 Includes:
